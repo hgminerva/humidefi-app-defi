@@ -1,0 +1,59 @@
+html,
+body {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+}
+
+.header-wrap {
+  background-color: rgb(46, 0, 0);
+  position: relative;
+  height: 100%;
+}
+
+.header-wrap:before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  opacity: 0.4;
+  background-image: url("./assets/img/home/bg.png");
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: cover;
+}
+
+.header-content {
+  position: relative;
+  padding: 5% 15px;
+  overflow-x: hidden;
+}
+
+.connect-wallet-img {
+  width: 100%;
+  padding: 10px 25px 10px 25px;
+}
+
+.connect-wallet-title {
+  width: 100%;
+  padding: 10px 25px;
+  text-align: center;
+}
+
+.connect-wallet-button {
+  width: 100%;
+  padding: 10px 20px;
+  margin-top: 20px;
+  margin-bottom: 20px;
+  text-align: center;
+}
+
+.connect-wallet-footer {
+  width: 100%;
+  padding: 10px 15px;
+  text-align: center;
+  font-size: 15px;
+  color: rgb(131, 131, 131);
+}
