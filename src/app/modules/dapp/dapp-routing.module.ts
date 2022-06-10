@@ -3,6 +3,12 @@ import { RouterModule, Routes } from '@angular/router';
 
 import { DappComponent } from './dapp.component';
 import { DashboardComponent } from './dashboard/dashboard.component';
+import { PortfolioComponent } from './portfolio/portfolio.component';
+import { LoadBridgeComponent } from './load-bridge/load-bridge.component';
+import { LoadPurchaseComponent } from './load-purchase/load-purchase.component';
+import { SwapComponent } from './swap/swap.component';
+import { StakeComponent } from './stake/stake.component';
+import { WithdrawComponent } from './withdraw/withdraw.component';
 
 const routes: Routes = [
   {
@@ -10,7 +16,13 @@ const routes: Routes = [
     component: DappComponent,
     children: [
       { path: '', component: DashboardComponent },
-      { path: 'dashboard', component: DashboardComponent }
+      { path: 'dashboard', component: DashboardComponent },
+      { path: 'portfolio', component: PortfolioComponent },
+      { path: 'load-bridge', component: LoadBridgeComponent },
+      { path: 'load-purchase', component: LoadPurchaseComponent },
+      { path: 'swap', component: SwapComponent },
+      { path: 'stake', component: StakeComponent },
+      { path: 'withdraw', component: WithdrawComponent },
     ]
   }
 ];

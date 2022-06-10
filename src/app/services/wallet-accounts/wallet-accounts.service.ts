@@ -19,7 +19,6 @@ export class WalletAccountsService {
     if (extensions.length > 0) {
       let accounts = await web3Accounts();
       if (accounts.length > 0) {
-        console.log(accounts);
         for (let i = 0; i < accounts.length; i++) {
           walletAccounts.push({
             address: accounts[i].address,

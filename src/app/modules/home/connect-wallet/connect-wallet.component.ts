@@ -61,7 +61,8 @@ export class ConnectWalletComponent implements OnInit {
     let generateKeypair: Promise<string> = this.walletAccountsService.generateKeypair(this.selectedWallet.address);
     let keypair = (await generateKeypair);
     if (keypair != "") {
-      localStorage.setItem("keypair", keypair);
+      localStorage.setItem("wallet-meta-name", String(this.selectedWallet.metaName));
+      localStorage.setItem("wallet-keypair", keypair);
       this.router.navigate(['/dapp']);
     }
   }
