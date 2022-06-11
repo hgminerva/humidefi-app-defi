@@ -3,6 +3,9 @@ import { CommonModule } from '@angular/common';
 
 import { DappRoutingModule } from './dapp-routing.module';
 import { LayoutModule } from '../layout/layout.module';
+import { CardModule } from 'primeng/card';
+import { ButtonModule } from 'primeng/button';
+import { TableModule } from 'primeng/table';
 
 import { DappComponent } from './dapp.component';
 import { DashboardComponent } from './dashboard/dashboard.component';
@@ -27,7 +30,10 @@ import { WithdrawComponent } from './withdraw/withdraw.component';
   imports: [
     CommonModule,
     DappRoutingModule,
-    LayoutModule
+    LayoutModule,
+    CardModule,
+    ButtonModule,
+    TableModule
   ]
 })
 export class DappModule { }

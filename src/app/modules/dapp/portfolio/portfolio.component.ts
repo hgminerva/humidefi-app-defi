@@ -9,7 +9,14 @@ export class PortfolioComponent implements OnInit {
 
   constructor() { }
 
+  walletMetaName: string = "";
+  walletKeyPair: string = "";
+
+  holdings: any = [];
+
   ngOnInit(): void {
+    this.walletMetaName = localStorage.getItem("wallet-meta-name") || "";
+    this.walletKeyPair = localStorage.getItem("wallet-keypair") || "";
   }
 
 }
