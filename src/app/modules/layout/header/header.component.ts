@@ -75,6 +75,13 @@ export class HeaderComponent implements OnInit {
               { label: 'Stake' }
             ];
             break;
+          case '/dapp/transfer':
+            this.titleName = "Transfer";
+            this.menuItems = [
+              { label: 'Home' },
+              { label: 'Transfer' }
+            ];
+            break;
           case '/dapp/withdraw':
             this.titleName = "Withdraw";
             this.menuItems = [

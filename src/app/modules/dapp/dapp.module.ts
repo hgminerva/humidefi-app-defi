@@ -16,6 +16,7 @@ import { LoadBridgeComponent } from './load-bridge/load-bridge.component';
 import { LoadPurchaseComponent } from './load-purchase/load-purchase.component';
 import { SwapComponent } from './swap/swap.component';
 import { StakeComponent } from './stake/stake.component';
+import { TransferComponent } from './transfer/transfer.component';
 import { WithdrawComponent } from './withdraw/withdraw.component';
 
 @NgModule({
@@ -27,6 +28,7 @@ import { WithdrawComponent } from './withdraw/withdraw.component';
     LoadPurchaseComponent,
     SwapComponent,
     StakeComponent,
+    TransferComponent,
     WithdrawComponent
   ],
   imports: [

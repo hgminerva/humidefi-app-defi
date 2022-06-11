@@ -8,6 +8,7 @@ import { LoadBridgeComponent } from './load-bridge/load-bridge.component';
 import { LoadPurchaseComponent } from './load-purchase/load-purchase.component';
 import { SwapComponent } from './swap/swap.component';
 import { StakeComponent } from './stake/stake.component';
+import { TransferComponent } from './transfer/transfer.component';
 import { WithdrawComponent } from './withdraw/withdraw.component';
 
 const routes: Routes = [
@@ -22,6 +23,7 @@ const routes: Routes = [
       { path: 'load-purchase', component: LoadPurchaseComponent },
       { path: 'swap', component: SwapComponent },
       { path: 'stake', component: StakeComponent },
+      { path: 'transfer', component: TransferComponent },
       { path: 'withdraw', component: WithdrawComponent },
     ]
   }
