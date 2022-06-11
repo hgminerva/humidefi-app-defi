@@ -1,5 +1,9 @@
 import { Component, OnInit } from '@angular/core';
 
+interface SourceNetwork {
+  name: string,
+}
+
 @Component({
   selector: 'app-load-bridge',
   templateUrl: './load-bridge.component.html',
@@ -7,9 +11,20 @@ import { Component, OnInit } from '@angular/core';
 })
 export class LoadBridgeComponent implements OnInit {
 
-  constructor() { }
+  sourceNetworks: SourceNetwork[];
+
+  walletMetaName: string = "";
+  walletKeyPair: string = "";
+
+  constructor() {
+    this.sourceNetworks = [
+      { name: 'Acala' }
+    ];
+  }
 
   ngOnInit(): void {
+    this.walletMetaName = localStorage.getItem("wallet-meta-name") || "";
+    this.walletKeyPair = localStorage.getItem("wallet-keypair") || "";
   }
 
 }

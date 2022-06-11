@@ -6,6 +6,8 @@ import { LayoutModule } from '../layout/layout.module';
 import { CardModule } from 'primeng/card';
 import { ButtonModule } from 'primeng/button';
 import { TableModule } from 'primeng/table';
+import { DropdownModule } from 'primeng/dropdown';
+import { InputTextModule } from 'primeng/inputtext';
 
 import { DappComponent } from './dapp.component';
 import { DashboardComponent } from './dashboard/dashboard.component';
@@ -33,7 +35,9 @@ import { WithdrawComponent } from './withdraw/withdraw.component';
     LayoutModule,
     CardModule,
     ButtonModule,
-    TableModule
+    TableModule,
+    DropdownModule,
+    InputTextModule
   ]
 })
 export class DappModule { }
