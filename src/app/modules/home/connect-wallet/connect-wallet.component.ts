@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { WalletAccountsModel } from 'src/app/models/wallet-accounts.model';
-import { WalletAccountsService } from 'src/app/services/wallet-accounts/wallet-accounts.service';
+import { PolkadotService } from 'src/app/services/polkadot/polkadot.service';
 
 @Component({
   selector: 'app-connect-wallet',
@@ -11,7 +11,7 @@ import { WalletAccountsService } from 'src/app/services/wallet-accounts/wallet-a
 export class ConnectWalletComponent implements OnInit {
 
   constructor(
-    private walletAccountsService: WalletAccountsService,
+    private polkadotService: PolkadotService,
     private router: Router
   ) { }
 
@@ -29,7 +29,7 @@ export class ConnectWalletComponent implements OnInit {
   }
 
   async getWeb3Accounts(): Promise<void> {
-    let web3Accounts: Promise<WalletAccountsModel[]> = this.walletAccountsService.getWeb3Accounts();
+    let web3Accounts: Promise<WalletAccountsModel[]> = this.polkadotService.getWeb3Accounts();
     let data = (await web3Accounts);
 
     if (data.length > 0) {
@@ -50,7 +50,7 @@ export class ConnectWalletComponent implements OnInit {
   }
 
   async signAndVerify(): Promise<void> {
-    let signAndVerify: Promise<boolean> = this.walletAccountsService.signAndVerify(this.selectedWallet);
+    let signAndVerify: Promise<boolean> = this.polkadotService.signAndVerify(this.selectedWallet);
     let verified = (await signAndVerify);
     if (verified == true) {
       this.generateKeypair();
@@ -58,7 +58,7 @@ export class ConnectWalletComponent implements OnInit {
   }
 
   async generateKeypair(): Promise<void> {
-    let generateKeypair: Promise<string> = this.walletAccountsService.generateKeypair(this.selectedWallet.address);
+    let generateKeypair: Promise<string> = this.polkadotService.generateKeypair(this.selectedWallet.address);
     let keypair = (await generateKeypair);
     if (keypair != "") {
       localStorage.setItem("wallet-meta-name", String(this.selectedWallet.metaName));

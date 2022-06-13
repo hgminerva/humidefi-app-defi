@@ -4,13 +4,19 @@ import { Keyring } from '@polkadot/keyring';
 import { stringToHex, stringToU8a, u8aToHex } from '@polkadot/util';
 import { cryptoWaitReady, decodeAddress, signatureVerify } from '@polkadot/util-crypto';
 import { WalletAccountsModel } from 'src/app/models/wallet-accounts.model';
+import { ApiPromise, WsProvider } from '@polkadot/api';
+import { AppSettings } from 'src/app/app-settings';
 
 @Injectable({
   providedIn: 'root'
 })
-export class WalletAccountsService {
+export class PolkadotService {
 
-  constructor() { }
+  constructor(
+    private appSettings: AppSettings
+  ) { }
+
+  wsProvider = new WsProvider(this.appSettings.wsProviderEndpoint);
 
   async getWeb3Accounts(): Promise<WalletAccountsModel[]> {
     let walletAccounts: WalletAccountsModel[] = [];
@@ -64,5 +70,32 @@ export class WalletAccountsService {
     let hexPair = keyring.addFromAddress(address);
 
     return hexPair.address;
+  }
+
+  async getBalance(keypair: string): Promise<string> {
+    let api = await ApiPromise.create({ provider: this.wsProvider });
+    let { nonce, data: balance } = await api.query.system.account(keypair);
+
+    const [chain, nodeName, nodeVersion] = await Promise.all([
+      api.rpc.system.chain(),
+      api.rpc.system.name(),
+      api.rpc.system.version()
+    ]);
+    console.log(
+      `You are connected to chain ${chain} using ${nodeName} v${nodeVersion}`
+    );
+
+    const chain2 = await api.rpc.system.chain();
+
+    // Retrieve the latest header
+    const lastHeader = await api.rpc.chain.getHeader();
+
+    // Log the information
+    console.log(`${chain2}: last block #${lastHeader.number} has hash ${lastHeader.hash}`);
+
+    let accounts = await api.query;
+    console.log(accounts);
+
+    return (parseFloat(balance.free.toString()) / 1000000000000).toString();
   }
 }
