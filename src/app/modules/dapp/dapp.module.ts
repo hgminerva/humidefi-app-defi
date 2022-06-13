@@ -1,5 +1,6 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 
 import { DappRoutingModule } from './dapp-routing.module';
 import { LayoutModule } from '../layout/layout.module';
@@ -33,6 +34,8 @@ import { WithdrawComponent } from './withdraw/withdraw.component';
   ],
   imports: [
     CommonModule,
+    FormsModule,
+    ReactiveFormsModule,
     DappRoutingModule,
     LayoutModule,
     CardModule,

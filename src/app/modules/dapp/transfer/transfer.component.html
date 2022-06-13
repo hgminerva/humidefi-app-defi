@@ -15,8 +15,12 @@
                                         <div class="px-3 pt-3 font-bold text-gray-700">
                                             {{walletMetaName}}
                                         </div>
-                                        <div class="text-lg px-3 pt-2 pb-3 text-gray-500">
+                                        <div class="text-sm px-3 pt-2 text-gray-500">
                                             {{walletKeyPair}}
+                                        </div>
+                                        <div class="text-lg px-3 pt-2 pb-3">
+                                            <span class="text-gray-700">Balance:</span>&nbsp;<span
+                                                class="font-bold text-pink-900">{{walletBalance}}</span>
                                         </div>
                                     </div>
                                 </div>
@@ -39,7 +43,8 @@
                                     Amount
                                 </div>
                                 <div class="p-inputgroup">
-                                    <input type="number" pInputText placeholder="0" value="0">
+                                    <input type="number" pInputText placeholder="0" value="0"
+                                        [(ngModel)]="transferData.amount">
                                 </div>
                             </div>
                         </div>
@@ -50,13 +55,13 @@
                                     Destination Account (Wallet Address)
                                 </div>
                                 <input type="text" pInputText placeholder="" value="" class="p-inputtext-lg"
-                                    [style]="{'width':'100%'}">
+                                    [style]="{'width':'100%'}" [(ngModel)]="transferData.recipient">
                             </div>
                         </div>
                         <br />
                         <div class="mt-2 px-3 text-center">
-                            <button pButton type="button" label="Transfer"
-                                class="p-button-warning p-button-lg mr-2"></button>
+                            <button pButton type="button" label="Transfer" class="p-button-warning p-button-lg mr-2"
+                                (click)="transfer()"></button>
                         </div>
                         <br />
                     </div>

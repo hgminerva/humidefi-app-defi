@@ -5,3 +5,9 @@ export class WalletAccountsModel {
     metaSource: string | undefined = "";
     type: string | undefined = "";
 }
+
+export class TransferModel {
+    keypair: string = "";
+    recipient: string = "";
+    amount: number = 0;
+}

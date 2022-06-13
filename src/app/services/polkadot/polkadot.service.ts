@@ -1,9 +1,9 @@
 import { Injectable } from '@angular/core';
-import { web3Accounts, web3Enable, web3FromSource } from '@polkadot/extension-dapp';
+import { web3Accounts, web3Enable, web3FromAddress, web3FromSource } from '@polkadot/extension-dapp';
 import { Keyring } from '@polkadot/keyring';
 import { stringToHex, stringToU8a, u8aToHex } from '@polkadot/util';
 import { cryptoWaitReady, decodeAddress, signatureVerify } from '@polkadot/util-crypto';
-import { WalletAccountsModel } from 'src/app/models/wallet-accounts.model';
+import { TransferModel, WalletAccountsModel } from 'src/app/models/polkadot.model';
 import { ApiPromise, WsProvider } from '@polkadot/api';
 import { AppSettings } from 'src/app/app-settings';
 
@@ -20,10 +20,10 @@ export class PolkadotService {
 
   async getWeb3Accounts(): Promise<WalletAccountsModel[]> {
     let walletAccounts: WalletAccountsModel[] = [];
-    let extensions = await web3Enable('humidefi');
+    const extensions = await web3Enable('humidefi');
 
     if (extensions.length > 0) {
-      let accounts = await web3Accounts();
+      const accounts = await web3Accounts();
       if (accounts.length > 0) {
         for (let i = 0; i < accounts.length; i++) {
           walletAccounts.push({
@@ -41,14 +41,14 @@ export class PolkadotService {
   }
 
   async signAndVerify(walletAccount: WalletAccountsModel): Promise<boolean> {
-    let injector = await web3FromSource(String(walletAccount.metaSource));
-    let signRaw = injector?.signer?.signRaw;
+    const injector = await web3FromSource(String(walletAccount.metaSource));
+    const signRaw = injector?.signer?.signRaw;
 
     if (!!signRaw) {
       await cryptoWaitReady();
 
-      let message: string = 'Please sign before you proceed. Thank you!';
-      let { signature } = await signRaw({
+      const message: string = 'Please sign before you proceed. Thank you!';
+      const { signature } = await signRaw({
         address: walletAccount.address,
         data: stringToHex(message),
         type: 'bytes'
@@ -66,36 +66,42 @@ export class PolkadotService {
   }
 
   async generateKeypair(address: string): Promise<string> {
-    let keyring = new Keyring({ type: 'sr25519', ss58Format: 0 });
-    let hexPair = keyring.addFromAddress(address);
+    const keyring = new Keyring({ type: 'sr25519', ss58Format: 0 });
+    const hexPair = keyring.addFromAddress(address);
 
     return hexPair.address;
   }
 
   async getBalance(keypair: string): Promise<string> {
-    let api = await ApiPromise.create({ provider: this.wsProvider });
-    let { nonce, data: balance } = await api.query.system.account(keypair);
-
-    const [chain, nodeName, nodeVersion] = await Promise.all([
-      api.rpc.system.chain(),
-      api.rpc.system.name(),
-      api.rpc.system.version()
-    ]);
-    console.log(
-      `You are connected to chain ${chain} using ${nodeName} v${nodeVersion}`
-    );
-
-    const chain2 = await api.rpc.system.chain();
-
-    // Retrieve the latest header
-    const lastHeader = await api.rpc.chain.getHeader();
-
-    // Log the information
-    console.log(`${chain2}: last block #${lastHeader.number} has hash ${lastHeader.hash}`);
-
-    let accounts = await api.query;
-    console.log(accounts);
+    const api = await ApiPromise.create({ provider: this.wsProvider });
+    const { nonce, data: balance } = await api.query.system.account(keypair);
 
     return (parseFloat(balance.free.toString()) / 1000000000000).toString();
+  }
+
+  async transfer(data: TransferModel): Promise<void> {
+    const api = await ApiPromise.create({ provider: this.wsProvider });
+
+    const extensions = await web3Enable('humidefi');
+    const accounts = await web3Accounts();
+    const injector = await web3FromAddress(data.keypair);
+
+    let amount: number = data.amount * 1000000000000;
+
+    api.setSigner(injector.signer);
+    api.tx.balances.transfer(data.recipient, amount).signAndSend(data.keypair, ({ events = [], status }) => {
+      console.log('Transaction status:', status.type);
+
+      if (status.isInBlock) {
+        console.log('Included at block hash', status.asInBlock.toHex());
+        console.log('Events:');
+
+        events.forEach(({ event: { data, method, section }, phase }) => {
+          console.log('\t', phase.toString(), `: ${section}.${method}`, data.toString());
+        });
+      } else if (status.isFinalized) {
+        console.log('Finalized block hash', status.asFinalized.toHex());
+      }
+    });
   }
 }
