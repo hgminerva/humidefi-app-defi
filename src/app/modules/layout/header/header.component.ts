@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { NavigationEnd, NavigationError, NavigationStart, Router } from '@angular/router';
 import { MenuItem } from 'primeng/api';
-import { WalletAccountsModel } from 'src/app/models/wallet-accounts.model';
+import { WalletAccountsModel } from 'src/app/models/polkadot.model';
 import { PolkadotService } from 'src/app/services/polkadot/polkadot.service';
 
 @Component({
