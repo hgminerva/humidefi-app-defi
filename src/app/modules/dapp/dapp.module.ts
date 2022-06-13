@@ -9,6 +9,8 @@ import { ButtonModule } from 'primeng/button';
 import { TableModule } from 'primeng/table';
 import { DropdownModule } from 'primeng/dropdown';
 import { InputTextModule } from 'primeng/inputtext';
+import { DialogModule } from 'primeng/dialog';
+import { ProgressSpinnerModule } from 'primeng/progressspinner';
 
 import { DappComponent } from './dapp.component';
 import { DashboardComponent } from './dashboard/dashboard.component';
@@ -42,7 +44,9 @@ import { WithdrawComponent } from './withdraw/withdraw.component';
     ButtonModule,
     TableModule,
     DropdownModule,
-    InputTextModule
+    InputTextModule,
+    DialogModule,
+    ProgressSpinnerModule
   ]
 })
 export class DappModule { }

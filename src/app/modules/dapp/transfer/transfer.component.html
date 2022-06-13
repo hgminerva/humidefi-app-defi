@@ -61,7 +61,7 @@
                         <br />
                         <div class="mt-2 px-3 text-center">
                             <button pButton type="button" label="Transfer" class="p-button-warning p-button-lg mr-2"
-                                (click)="transfer()"></button>
+                                (click)="transfer()" [disabled]="isProcessing"></button>
                         </div>
                         <br />
                     </div>
@@ -71,3 +71,12 @@
         <div class="col-12 md:col-6 lg:col-2"></div>
     </div>
 </div>
+
+<p-dialog [(visible)]="showProcessDialog" [style]="{width: '25vw'}" [modal]="true" [closable]="false">
+    <div class="w-full text-lg font-bold text-center mb-3">
+        Processing
+    </div>
+    <div class="w-full text-center">
+        <p-progressSpinner></p-progressSpinner>
+    </div>
+</p-dialog>

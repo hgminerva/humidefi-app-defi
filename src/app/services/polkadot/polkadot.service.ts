@@ -6,6 +6,7 @@ import { cryptoWaitReady, decodeAddress, signatureVerify } from '@polkadot/util-
 import { TransferModel, WalletAccountsModel } from 'src/app/models/polkadot.model';
 import { ApiPromise, WsProvider } from '@polkadot/api';
 import { AppSettings } from 'src/app/app-settings';
+import { Hash } from '@polkadot/types/interfaces';
 
 @Injectable({
   providedIn: 'root'
@@ -79,29 +80,16 @@ export class PolkadotService {
     return (parseFloat(balance.free.toString()) / 1000000000000).toString();
   }
 
-  async transfer(data: TransferModel): Promise<void> {
+  async transfer(data: TransferModel): Promise<Hash> {
     const api = await ApiPromise.create({ provider: this.wsProvider });
 
-    const extensions = await web3Enable('humidefi');
-    const accounts = await web3Accounts();
+    await web3Enable('humidefi');
+    await web3Accounts();
     const injector = await web3FromAddress(data.keypair);
+    api.setSigner(injector.signer);
 
     let amount: number = data.amount * 1000000000000;
 
-    api.setSigner(injector.signer);
-    api.tx.balances.transfer(data.recipient, amount).signAndSend(data.keypair, ({ events = [], status }) => {
-      console.log('Transaction status:', status.type);
-
-      if (status.isInBlock) {
-        console.log('Included at block hash', status.asInBlock.toHex());
-        console.log('Events:');
-
-        events.forEach(({ event: { data, method, section }, phase }) => {
-          console.log('\t', phase.toString(), `: ${section}.${method}`, data.toString());
-        });
-      } else if (status.isFinalized) {
-        console.log('Finalized block hash', status.asFinalized.toHex());
-      }
-    });
+    return await api.tx.balances.transfer(data.recipient, amount).signAndSend(data.keypair);
   }
 }
