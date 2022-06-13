@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { NavigationEnd, NavigationError, NavigationStart, Router } from '@angular/router';
 import { MenuItem } from 'primeng/api';
 import { WalletAccountsModel } from 'src/app/models/wallet-accounts.model';
-import { WalletAccountsService } from 'src/app/services/wallet-accounts/wallet-accounts.service';
+import { PolkadotService } from 'src/app/services/polkadot/polkadot.service';
 
 @Component({
   selector: 'app-header',
@@ -17,7 +17,7 @@ export class HeaderComponent implements OnInit {
 
   constructor(
     private router: Router,
-    private walletAccountsService: WalletAccountsService,
+    private polkadotService: PolkadotService,
   ) {
     this.router.events.subscribe((event: any) => {
       if (event instanceof NavigationStart) {
@@ -122,7 +122,7 @@ export class HeaderComponent implements OnInit {
   }
 
   async getWeb3Accounts(): Promise<void> {
-    let web3Accounts: Promise<WalletAccountsModel[]> = this.walletAccountsService.getWeb3Accounts();
+    let web3Accounts: Promise<WalletAccountsModel[]> = this.polkadotService.getWeb3Accounts();
     let data = (await web3Accounts);
 
     if (data.length > 0) {
@@ -143,7 +143,7 @@ export class HeaderComponent implements OnInit {
   }
 
   async signAndVerify(): Promise<void> {
-    let signAndVerify: Promise<boolean> = this.walletAccountsService.signAndVerify(this.selectedWallet);
+    let signAndVerify: Promise<boolean> = this.polkadotService.signAndVerify(this.selectedWallet);
     let verified = (await signAndVerify);
     if (verified == true) {
       this.generateKeypair();
@@ -151,7 +151,7 @@ export class HeaderComponent implements OnInit {
   }
 
   async generateKeypair(): Promise<void> {
-    let generateKeypair: Promise<string> = this.walletAccountsService.generateKeypair(this.selectedWallet.address);
+    let generateKeypair: Promise<string> = this.polkadotService.generateKeypair(this.selectedWallet.address);
     let keypair = (await generateKeypair);
     if (keypair != "") {
       localStorage.setItem("wallet-meta-name", String(this.selectedWallet.metaName));
