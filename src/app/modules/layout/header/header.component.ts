@@ -11,29 +11,28 @@ import { PolkadotService } from 'src/app/services/polkadot/polkadot.service';
 })
 export class HeaderComponent implements OnInit {
 
+  iconName: string = "";
   titleName: string = "";
+  home!: MenuItem;
   menuItems: MenuItem[] = [];
-  loadingRoute: boolean = true;
 
   constructor(
     private router: Router,
     private polkadotService: PolkadotService,
   ) {
     this.router.events.subscribe((event: any) => {
-      if (event instanceof NavigationStart) {
-        this.loadingRoute = true;
-      }
-
+      if (event instanceof NavigationStart) { }
       if (event instanceof NavigationEnd) {
         switch (event.url) {
           case '/dapp':
+            this.iconName = "pi pi-home";
             this.titleName = "Home";
-
             this.menuItems = [
               { label: 'Home' }
             ];
             break;
           case '/dapp/dashboard':
+            this.iconName = "pi pi-home";
             this.titleName = "Home";
 
             this.menuItems = [
@@ -41,6 +40,7 @@ export class HeaderComponent implements OnInit {
             ];
             break;
           case '/dapp/portfolio':
+            this.iconName = "pi pi-briefcase";
             this.titleName = "Portfolio";
             this.menuItems = [
               { label: 'Home' },
@@ -48,13 +48,15 @@ export class HeaderComponent implements OnInit {
             ];
             break;
           case '/dapp/load-bridge':
-            this.titleName = "Bridge";
+            this.iconName = "pi pi-dollar";
+            this.titleName = "Load";
             this.menuItems = [
               { label: 'Home' },
               { label: 'Bridge' }
             ];
             break;
           case '/dapp/load-purchase':
+            this.iconName = "pi pi-shopping-bag";
             this.titleName = "Purchase";
             this.menuItems = [
               { label: 'Home' },
@@ -62,6 +64,7 @@ export class HeaderComponent implements OnInit {
             ];
             break;
           case '/dapp/swap':
+            this.iconName = "pi pi-arrows-h";
             this.titleName = "Swap";
             this.menuItems = [
               { label: 'Home' },
@@ -69,6 +72,7 @@ export class HeaderComponent implements OnInit {
             ];
             break;
           case '/dapp/stake':
+            this.iconName = "pi pi-box";
             this.titleName = "Stake";
             this.menuItems = [
               { label: 'Home' },
@@ -76,6 +80,7 @@ export class HeaderComponent implements OnInit {
             ];
             break;
           case '/dapp/transfer':
+            this.iconName = "pi pi-sort-alt";
             this.titleName = "Transfer";
             this.menuItems = [
               { label: 'Home' },
@@ -83,6 +88,7 @@ export class HeaderComponent implements OnInit {
             ];
             break;
           case '/dapp/withdraw':
+            this.iconName = "pi pi-credit-card";
             this.titleName = "Withdraw";
             this.menuItems = [
               { label: 'Home' },
@@ -93,16 +99,10 @@ export class HeaderComponent implements OnInit {
             break;
         }
 
-        setTimeout(() => {
-          this.loadingRoute = false;
-        }, 500);
+        this.home = { icon: 'pi pi-home', routerLink: '/dapp' };
       }
 
-      if (event instanceof NavigationError) {
-        setTimeout(() => {
-          this.loadingRoute = false;
-        }, 500);
-      }
+      if (event instanceof NavigationError) { }
     });
   }
 

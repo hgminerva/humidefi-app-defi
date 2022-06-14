@@ -3,11 +3,12 @@
         <div class="col-12 md:col-6 lg:col-4 px-2">
             <div class="card border-round-3xl" style="box-shadow: 3px 2px 5px 0px #999999 !important;">
                 <div class="flex-wrap card-container overflow-hidden w-full">
-                    <div class="bg-pink-900  px-6 pt-6 pb-4 text-white border-round-3xl" style="min-height: 180px;">
+                    <div class="px-5 pt-6 pb-4 text-white border-round-3xl"
+                        style="min-height: 180px; background-color: #ef4943;">
                         <div class="text-base font-medium text-white mb-2">
                             Total / Currency: PHP
                         </div>
-                        <div class="text-3xl font-medium text-white white-space-normal">
+                        <div class="text-xl font-medium text-white white-space-normal">
                             <span class="font-bold">PHP</span> {{balance}}
                         </div>
                     </div>
@@ -17,8 +18,8 @@
         <div class="col-12 md:col-6 lg:col-8 px-2">
             <div class="card border-round-3xl" style="box-shadow: 3px 2px 5px 0px #dfdfdf !important;">
                 <div class="flex-wrap card-container overflow-hidden w-full">
-                    <div class="bg-white px-6 pt-6 pb-4 border-round-3xl" style="min-height: 180px;">
-                        <div class="text-xl font-medium text-pink-700">
+                    <div class="bg-white px-5 pt-6 pb-4 border-round-3xl" style="min-height: 180px;">
+                        <div class="text-xl font-medium" style="color: #ef4943">
                             {{walletMetaName}}
                         </div>
                         <div class="text-base font-medium text-gray-700 white-space-normal">
@@ -40,8 +41,8 @@
             <div class="card border-round-3xl" style="box-shadow: 3px 2px 5px 0px #dfdfdf !important;">
                 <div class="flex-wrap card-container overflow-hidden w-full">
                     <div class="bg-white px-6 pt-4 pb-4 border-round-3xl" style="min-height: 180px;">
-                        <div class="text-xl font-medium text-pink-700 mb-3">
-                            Holdings / Currency: <span class="font-bold">PHP</span>
+                        <div class="text-xl font-medium mb-3" style="color: #ef4943">
+                            Holdings / Currency: PHP
                         </div>
                         <p-table responsiveLayout="scroll" [value]="holdings">
                             <ng-template pTemplate="header">
@@ -73,7 +74,7 @@
             <div class="card border-round-3xl" style="box-shadow: 3px 2px 5px 0px #dfdfdf !important;">
                 <div class="flex-wrap card-container overflow-hidden w-full">
                     <div class="bg-white px-6 pt-4 pb-4 border-round-3xl" style="min-height: 180px;">
-                        <div class="text-xl font-medium text-pink-700 mb-3 font-bold">
+                        <div class="text-xl font-medium mb-3" style="color: #ef4943">
                             Stake your UMI for 12 Months
                         </div>
                         <div class="grid mt-2 px-4">

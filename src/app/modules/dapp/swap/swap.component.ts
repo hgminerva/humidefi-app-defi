@@ -1,5 +1,9 @@
 import { Component, OnInit } from '@angular/core';
 
+interface SourceNetwork {
+  name: string,
+}
+
 @Component({
   selector: 'app-swap',
   templateUrl: './swap.component.html',
@@ -7,7 +11,13 @@ import { Component, OnInit } from '@angular/core';
 })
 export class SwapComponent implements OnInit {
 
-  constructor() { }
+  sourceNetworks: SourceNetwork[];
+
+  constructor() {
+    this.sourceNetworks = [
+      { name: 'UMI' }
+    ];
+  }
 
   ngOnInit(): void {
   }

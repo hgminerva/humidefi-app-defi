@@ -18,7 +18,7 @@ export class LoadBridgeComponent implements OnInit {
 
   constructor() {
     this.sourceNetworks = [
-      { name: 'Acala' }
+      { name: 'UMI' }
     ];
   }
 
