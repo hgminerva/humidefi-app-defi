@@ -52,7 +52,7 @@ export class HeaderComponent implements OnInit {
             this.titleName = "Load";
             this.menuItems = [
               { label: 'Home' },
-              { label: 'Bridge' }
+              { label: 'Load' }
             ];
             break;
           case '/dapp/load-purchase':
