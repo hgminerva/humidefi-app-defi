@@ -18,13 +18,16 @@ export class PolkadotService {
   ) { }
 
   wsProvider = new WsProvider(this.appSettings.wsProviderEndpoint);
+  api = ApiPromise.create({ provider: this.wsProvider });
+  extensions = web3Enable('humidefi');
+  accounts = web3Accounts();
 
+  // Get all accounts from Polkadot Extensions
   async getWeb3Accounts(): Promise<WalletAccountsModel[]> {
     let walletAccounts: WalletAccountsModel[] = [];
-    const extensions = await web3Enable('humidefi');
 
-    if (extensions.length > 0) {
-      const accounts = await web3Accounts();
+    if ((await this.extensions).length > 0) {
+      const accounts = await this.accounts;
       if (accounts.length > 0) {
         for (let i = 0; i < accounts.length; i++) {
           walletAccounts.push({
@@ -41,6 +44,7 @@ export class PolkadotService {
     return walletAccounts;
   }
 
+  // Sign and verify transactions from Polkadot Extensions
   async signAndVerify(walletAccount: WalletAccountsModel): Promise<boolean> {
     const injector = await web3FromSource(String(walletAccount.metaSource));
     const signRaw = injector?.signer?.signRaw;
@@ -66,6 +70,7 @@ export class PolkadotService {
     return false;
   }
 
+  // Generate key pairs for public key from Polkadot Keyrings
   async generateKeypair(address: string): Promise<string> {
     const keyring = new Keyring({ type: 'sr25519', ss58Format: 0 });
     const hexPair = keyring.addFromAddress(address);
@@ -73,23 +78,31 @@ export class PolkadotService {
     return hexPair.address;
   }
 
+  // Get Balances from Polkadot Query System Accounts
   async getBalance(keypair: string): Promise<string> {
-    const api = await ApiPromise.create({ provider: this.wsProvider });
+    const api = await this.api;
     const { nonce, data: balance } = await api.query.system.account(keypair);
 
     return (parseFloat(balance.free.toString()) / 1000000000000).toString();
   }
 
+  // Transfer Balances from Polkadot Transactions
   async transfer(data: TransferModel): Promise<Hash> {
-    const api = await ApiPromise.create({ provider: this.wsProvider });
+    const api = await this.api;
 
-    await web3Enable('humidefi');
-    await web3Accounts();
     const injector = await web3FromAddress(data.keypair);
     api.setSigner(injector.signer);
 
     let amount: number = data.amount * 1000000000000;
 
     return await api.tx.balances.transfer(data.recipient, amount).signAndSend(data.keypair);
+  }
+
+  // Retrieve chain tokens from Polkadot Registry (Chain Information)
+  async getChainTokens(keypair: string): Promise<string[]> {
+    const api = await this.api;
+    const tokens = api.registry.chainTokens;
+
+    return tokens;
   }
 }

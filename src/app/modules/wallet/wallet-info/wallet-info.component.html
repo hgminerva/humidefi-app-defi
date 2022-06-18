@@ -1,0 +1,15 @@
+<div class="text-xl font-medium" style="color: #ef4943">
+    {{walletMetaName}}
+</div>
+<div class="text-base font-medium text-gray-700 white-space-normal">
+    {{walletKeyPair}}
+</div>
+<br />
+<div class="mt-3">
+    <button pButton type="button" label="Change" class="p-button-text p-button-warning p-button-sm" icon="pi pi-pencil"
+        (click)="change()"></button>
+    <button pButton type="button" label="Copy" class="p-button-text p-button-warning p-button-sm" icon="pi pi-copy"
+        (click)="copy()"></button>
+    <button pButton type="button" label="Disconnect" class="p-button-text p-button-danger p-button-sm"
+        icon="pi pi-sign-out" style="float: right;" (click)="disconnect()"></button>
+</div>

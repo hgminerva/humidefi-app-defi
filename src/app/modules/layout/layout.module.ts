@@ -2,6 +2,7 @@ import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 
 import { LayoutRoutingModule } from './layout-routing.module';
+import { WalletModule } from './../wallet/wallet.module';
 
 import { MenuModule } from 'primeng/menu';
 import { ButtonModule } from 'primeng/button';
@@ -26,6 +27,7 @@ import { SidebarComponent } from './sidebar/sidebar.component';
   imports: [
     CommonModule,
     LayoutRoutingModule,
+    WalletModule,
     MenuModule,
     ButtonModule,
     BreadcrumbModule,

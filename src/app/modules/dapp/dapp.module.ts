@@ -3,7 +3,9 @@ import { CommonModule } from '@angular/common';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 
 import { DappRoutingModule } from './dapp-routing.module';
+import { WalletModule } from './../wallet/wallet.module';
 import { LayoutModule } from '../layout/layout.module';
+
 import { CardModule } from 'primeng/card';
 import { ButtonModule } from 'primeng/button';
 import { TableModule } from 'primeng/table';
@@ -39,6 +41,7 @@ import { WithdrawComponent } from './withdraw/withdraw.component';
     FormsModule,
     ReactiveFormsModule,
     DappRoutingModule,
+    WalletModule,
     LayoutModule,
     CardModule,
     ButtonModule,

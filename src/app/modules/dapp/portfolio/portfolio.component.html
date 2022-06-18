@@ -4,7 +4,7 @@
             <div class="card border-round-3xl" style="box-shadow: 3px 2px 5px 0px #999999 !important;">
                 <div class="flex-wrap card-container overflow-hidden w-full">
                     <div class="px-5 pt-6 pb-4 text-white border-round-3xl"
-                        style="min-height: 180px; background-color: #ef4943;">
+                        style="min-height: 220px; background-color: #ef4943;">
                         <div class="text-base font-medium text-white mb-2">
                             Total / Currency: PHP
                         </div>
@@ -18,19 +18,8 @@
         <div class="col-12 md:col-6 lg:col-8 px-2">
             <div class="card border-round-3xl" style="box-shadow: 3px 2px 5px 0px #dfdfdf !important;">
                 <div class="flex-wrap card-container overflow-hidden w-full">
-                    <div class="bg-white px-5 pt-6 pb-4 border-round-3xl" style="min-height: 180px;">
-                        <div class="text-xl font-medium" style="color: #ef4943">
-                            {{walletMetaName}}
-                        </div>
-                        <div class="text-base font-medium text-gray-700 white-space-normal">
-                            {{walletKeyPair}}
-                        </div>
-                        <div class="mt-3">
-                            <button pButton type="button" label="Change"
-                                class="p-button-text p-button-warning p-button-sm" icon="pi pi-pencil"></button>
-                            <button pButton type="button" label="Copy"
-                                class="p-button-text p-button-warning p-button-sm" icon="pi pi-copy"></button>
-                        </div>
+                    <div class="bg-white px-5 pt-6 pb-4 border-round-3xl" style="min-height: 220px;">
+                        <app-wallet-info (changeAccount)="changeAccount()"></app-wallet-info>
                     </div>
                 </div>
             </div>
@@ -118,3 +107,8 @@
         </div>
     </div>
 </div>
+
+<p-dialog [breakpoints]="{'960px': '75vw', '640px': '100vw'}" [style]="{width: '40vw'}"
+    [(visible)]="displayChangeAccountDialog" [modal]="true" [maximizable]="true">
+    <app-wallet [isLogin]="true"></app-wallet>
+</p-dialog>

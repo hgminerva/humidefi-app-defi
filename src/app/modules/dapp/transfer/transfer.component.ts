@@ -24,6 +24,8 @@ export class TransferComponent implements OnInit {
   isProcessing: boolean = false;
   showProcessDialog: boolean = false;
 
+  tokens: string[] = [];
+
   constructor(
     private polkadotService: PolkadotService
   ) {
@@ -35,6 +37,13 @@ export class TransferComponent implements OnInit {
   async getBalance(): Promise<void> {
     let balance: Promise<string> = this.polkadotService.getBalance(this.walletKeyPair);
     this.walletBalance = (await balance);
+
+    await this.getChainTokens();
+  }
+
+  async getChainTokens(): Promise<void> {
+    let tokens: Promise<string[]> = this.polkadotService.getChainTokens(this.walletKeyPair);
+    this.tokens = (await tokens);
   }
 
   async transfer(): Promise<void> {

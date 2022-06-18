@@ -12,21 +12,22 @@ export class PortfolioComponent implements OnInit {
     private polkadotService: PolkadotService
   ) { }
 
-  walletMetaName: string = "";
-  walletKeyPair: string = "";
   balance: string = "";
-
   holdings: any = [];
 
+  displayChangeAccountDialog: boolean = false;
+
   async getBalance(): Promise<void> {
-    let balance: Promise<string> = this.polkadotService.getBalance(this.walletKeyPair);
+    let keypair = localStorage.getItem("wallet-keypair") || "";
+    let balance: Promise<string> = this.polkadotService.getBalance(keypair);
     this.balance = (await balance);
   }
 
-  ngOnInit(): void {
-    this.walletMetaName = localStorage.getItem("wallet-meta-name") || "";
-    this.walletKeyPair = localStorage.getItem("wallet-keypair") || "";
+  changeAccount(): void {
+    this.displayChangeAccountDialog = true;
+  }
 
+  ngOnInit(): void {
     this.getBalance();
   }
 }
