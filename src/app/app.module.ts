@@ -3,15 +3,19 @@ import { BrowserModule } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { CommonModule } from '@angular/common';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { PolkadotIdentIconModule } from 'polkadot-angular-identicon';
+
+import { AppRoutingModule } from './app-routing.module';
 
 import { AppSettings } from './app-settings';
 
-import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
+import { PolkadotIdenticonComponent } from './shared/polkadot-identicon/polkadot-identicon.component';
 
 @NgModule({
   declarations: [
-    AppComponent
+    AppComponent,
+    PolkadotIdenticonComponent
   ],
   imports: [
     BrowserModule,
@@ -19,6 +23,7 @@ import { AppComponent } from './app.component';
     CommonModule,
     FormsModule,
     ReactiveFormsModule,
+    PolkadotIdentIconModule,
     AppRoutingModule
   ],
   providers: [

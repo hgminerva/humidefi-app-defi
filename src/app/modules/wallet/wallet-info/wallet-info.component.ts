@@ -15,6 +15,8 @@ export class WalletInfoComponent implements OnInit {
     private clipboard: Clipboard
   ) { }
 
+  iframeSrc = "";
+
   walletMetaName: string = "";
   walletKeyPair: string = "";
 
@@ -34,6 +36,9 @@ export class WalletInfoComponent implements OnInit {
   ngOnInit(): void {
     this.walletMetaName = localStorage.getItem("wallet-meta-name") || "";
     this.walletKeyPair = localStorage.getItem("wallet-keypair") || "";
+
+    let url = location.origin + "/polkadot-identicon";
+    this.iframeSrc = url;
   }
 
 }
