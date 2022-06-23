@@ -1,5 +1,5 @@
 import { NgModule } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { CommonModule, DecimalPipe } from '@angular/common';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 
 import { DappRoutingModule } from './dapp-routing.module';
@@ -13,28 +13,27 @@ import { DropdownModule } from 'primeng/dropdown';
 import { InputTextModule } from 'primeng/inputtext';
 import { DialogModule } from 'primeng/dialog';
 import { ProgressSpinnerModule } from 'primeng/progressspinner';
+import { TabViewModule } from 'primeng/tabview';
 
 import { DappComponent } from './dapp.component';
 import { DashboardComponent } from './dashboard/dashboard.component';
 import { PortfolioComponent } from './portfolio/portfolio.component';
-import { LoadBridgeComponent } from './load-bridge/load-bridge.component';
-import { LoadPurchaseComponent } from './load-purchase/load-purchase.component';
+import { LoadComponent } from './load/load.component';
+import { WithdrawComponent } from './withdraw/withdraw.component';
 import { SwapComponent } from './swap/swap.component';
 import { StakeComponent } from './stake/stake.component';
-import { TransferComponent } from './transfer/transfer.component';
-import { WithdrawComponent } from './withdraw/withdraw.component';
+import { PayComponent } from './pay/pay.component';
 
 @NgModule({
   declarations: [
     DappComponent,
     DashboardComponent,
     PortfolioComponent,
-    LoadBridgeComponent,
-    LoadPurchaseComponent,
+    LoadComponent,
+    WithdrawComponent,
     SwapComponent,
     StakeComponent,
-    TransferComponent,
-    WithdrawComponent
+    PayComponent
   ],
   imports: [
     CommonModule,
@@ -49,7 +48,11 @@ import { WithdrawComponent } from './withdraw/withdraw.component';
     DropdownModule,
     InputTextModule,
     DialogModule,
-    ProgressSpinnerModule
+    ProgressSpinnerModule,
+    TabViewModule
+  ],
+  providers: [
+    DecimalPipe
   ]
 })
 export class DappModule { }

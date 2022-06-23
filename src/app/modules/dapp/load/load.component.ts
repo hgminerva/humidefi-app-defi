@@ -5,11 +5,11 @@ interface SourceNetwork {
 }
 
 @Component({
-  selector: 'app-load-bridge',
-  templateUrl: './load-bridge.component.html',
-  styleUrls: ['./load-bridge.component.scss']
+  selector: 'app-load',
+  templateUrl: './load.component.html',
+  styleUrls: ['./load.component.scss']
 })
-export class LoadBridgeComponent implements OnInit {
+export class LoadComponent implements OnInit {
 
   sourceNetworks: SourceNetwork[];
 

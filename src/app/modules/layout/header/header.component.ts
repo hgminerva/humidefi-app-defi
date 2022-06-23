@@ -24,17 +24,24 @@ export class HeaderComponent implements OnInit {
       if (event instanceof NavigationStart) { }
       if (event instanceof NavigationEnd) {
         switch (event.url) {
-          case '/dapp':
-            this.iconName = "pi pi-home";
-            this.titleName = "Home";
-            this.menuItems = [
-              { label: 'Home' }
-            ];
-            break;
-          case '/dapp/dashboard':
-            this.iconName = "pi pi-home";
-            this.titleName = "Home";
+          // case '/dapp':
+          //   this.iconName = "pi pi-home";
+          //   this.titleName = "Home";
+          //   this.menuItems = [
+          //     { label: 'Home' }
+          //   ];
+          //   break;
+          // case '/dapp/dashboard':
+          //   this.iconName = "pi pi-home";
+          //   this.titleName = "Home";
 
+          //   this.menuItems = [
+          //     { label: 'Home' }
+          //   ];
+          //   break;
+          case '/dapp':
+            this.iconName = "pi pi-briefcase";
+            this.titleName = "Portfolio";
             this.menuItems = [
               { label: 'Home' }
             ];
@@ -43,24 +50,23 @@ export class HeaderComponent implements OnInit {
             this.iconName = "pi pi-briefcase";
             this.titleName = "Portfolio";
             this.menuItems = [
-              { label: 'Home' },
-              { label: 'Portfolio' }
+              { label: 'Home' }
             ];
             break;
-          case '/dapp/load-bridge':
-            this.iconName = "pi pi-dollar";
+          case '/dapp/load':
+            this.iconName = "pi pi-mobile";
             this.titleName = "Load";
             this.menuItems = [
               { label: 'Home' },
               { label: 'Load' }
             ];
             break;
-          case '/dapp/load-purchase':
-            this.iconName = "pi pi-shopping-bag";
-            this.titleName = "Purchase";
+          case '/dapp/withdraw':
+            this.iconName = "pi pi-credit-card";
+            this.titleName = "Withdraw";
             this.menuItems = [
               { label: 'Home' },
-              { label: 'Purchase' }
+              { label: 'Withdraw' }
             ];
             break;
           case '/dapp/swap':
@@ -79,20 +85,12 @@ export class HeaderComponent implements OnInit {
               { label: 'Stake' }
             ];
             break;
-          case '/dapp/transfer':
-            this.iconName = "pi pi-sort-alt";
-            this.titleName = "Transfer";
+          case '/dapp/pay':
+            this.iconName = "pi pi-wallet";
+            this.titleName = "Pay";
             this.menuItems = [
               { label: 'Home' },
-              { label: 'Transfer' }
-            ];
-            break;
-          case '/dapp/withdraw':
-            this.iconName = "pi pi-credit-card";
-            this.titleName = "Withdraw";
-            this.menuItems = [
-              { label: 'Home' },
-              { label: 'Withdraw' }
+              { label: 'Pay' }
             ];
             break;
           default:

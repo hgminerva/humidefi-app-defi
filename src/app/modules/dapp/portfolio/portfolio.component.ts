@@ -1,5 +1,10 @@
+import { DecimalPipe } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { PolkadotService } from 'src/app/services/polkadot/polkadot.service';
+
+interface SourceNetwork {
+  name: string,
+}
 
 @Component({
   selector: 'app-portfolio',
@@ -8,9 +13,16 @@ import { PolkadotService } from 'src/app/services/polkadot/polkadot.service';
 })
 export class PortfolioComponent implements OnInit {
 
+  sourceNetworks: SourceNetwork[];
+
   constructor(
+    public decimalPipe: DecimalPipe,
     private polkadotService: PolkadotService
-  ) { }
+  ) {
+    this.sourceNetworks = [
+      { name: 'UMI' }
+    ];
+  }
 
   balance: string = "";
   holdings: any = [];
@@ -20,7 +32,8 @@ export class PortfolioComponent implements OnInit {
   async getBalance(): Promise<void> {
     let keypair = localStorage.getItem("wallet-keypair") || "";
     let balance: Promise<string> = this.polkadotService.getBalance(keypair);
-    this.balance = (await balance);
+
+    this.balance = this.decimalPipe.transform((await balance), "1.2-2") || "0";
   }
 
   changeAccount(): void {

@@ -1,24 +1,46 @@
 <div class="dapp-container">
     <div class="grid">
-        <div class="col-12 md:col-6 lg:col-4 px-2">
-            <div class="card border-round-3xl" style="box-shadow: 3px 2px 5px 0px #999999 !important;">
+        <div class="col-12 md:col-6 lg:col-12 px-2 pb-4 pt-2">
+            <span class="text-gray-600">
+                Your entire <img src="./../../../../assets/img/home/humedifi_logo.png" width="80"
+                    style="margin: 2px 3px -4px 3px;" /> portfolio in one glance. The entire value of your portfolio can
+                be in Philippine
+                Pesos (PHP) or US Dollar (USD).
+            </span>
+        </div>
+    </div>
+    <div class="grid pt-2">
+        <div class="col-12 md:col-6 lg:col-9">
+        </div>
+        <div class="col-12 md:col-6 lg:col-3 text-right">
+            Currency: &nbsp;
+            <p-dropdown [options]="sourceNetworks" optionLabel="name">
+            </p-dropdown>
+        </div>
+    </div>
+    <div class="grid pt-2">
+        <div class="col-12 md:col-6 lg:col-5 px-2">
+            <div class="card border-round-2xl" style="box-shadow: 3px 2px 5px 0px #999999 !important;">
                 <div class="flex-wrap card-container overflow-hidden w-full">
-                    <div class="px-5 pt-6 pb-4 text-white border-round-3xl"
-                        style="min-height: 220px; background-color: #ef4943;">
-                        <div class="text-base font-medium text-white mb-2">
-                            Total / Currency: PHP
+                    <div class="px-5 pt-7 pb-4 text-white border-round-2xl"
+                        style="min-height: 230px; background: linear-gradient(90deg,rgba(244,60,113,1) 0%,rgba(240,73,65,1) 100%);">
+                        <div style="float: left;" class="circle mr-3">
+                            <i class="pi pi-briefcase m-2" style="font-size: 2rem"></i>
                         </div>
-                        <div class="text-xl font-medium text-white white-space-normal">
-                            <span class="font-bold">PHP</span> {{balance}}
+                        <div class="text-xl font-medium text-white mt-2">
+                            Total
+                        </div>
+                        <div class="text-3xl font-medium text-white white-space-normal">
+                            <span class="font-bold">PHP {{balance}}</span>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
-        <div class="col-12 md:col-6 lg:col-8 px-2">
-            <div class="card border-round-3xl" style="box-shadow: 3px 2px 5px 0px #dfdfdf !important;">
+        <div class="col-12 md:col-6 lg:col-7 px-2">
+            <div class="card border-round-2xl" style="box-shadow: 3px 2px 5px 0px #dfdfdf !important;">
                 <div class="flex-wrap card-container overflow-hidden w-full">
-                    <div class="bg-white px-5 pt-6 pb-4 border-round-3xl" style="min-height: 220px;">
+                    <div class="bg-white px-5 pt-7 pb-4 border-round-2xl" style="min-height: 230px;">
                         <app-wallet-info (changeAccount)="changeAccount()"></app-wallet-info>
                     </div>
                 </div>
@@ -27,11 +49,11 @@
     </div>
     <div class="grid pt-2">
         <div class="col-12 md:col-6 lg:col-12 px-2">
-            <div class="card border-round-3xl" style="box-shadow: 3px 2px 5px 0px #dfdfdf !important;">
+            <div class="card border-round-2xl" style="box-shadow: 3px 2px 5px 0px #dfdfdf !important;">
                 <div class="flex-wrap card-container overflow-hidden w-full">
-                    <div class="bg-white px-6 pt-4 pb-4 border-round-3xl" style="min-height: 180px;">
+                    <div class="bg-white px-6 pt-4 pb-4 border-round-2xl" style="min-height: 180px;">
                         <div class="text-xl font-medium mb-3" style="color: #ef4943">
-                            Holdings / Currency: PHP
+                            Holdings
                         </div>
                         <p-table responsiveLayout="scroll" [value]="holdings">
                             <ng-template pTemplate="header">
@@ -53,54 +75,6 @@
                                 </tr>
                             </ng-template>
                         </p-table>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-    <div class="grid pt-2">
-        <div class="col-12 md:col-6 lg:col-12 px-2">
-            <div class="card border-round-3xl" style="box-shadow: 3px 2px 5px 0px #dfdfdf !important;">
-                <div class="flex-wrap card-container overflow-hidden w-full">
-                    <div class="bg-white px-6 pt-4 pb-4 border-round-3xl" style="min-height: 180px;">
-                        <div class="text-xl font-medium mb-3" style="color: #ef4943">
-                            Stake your UMI for 12 Months
-                        </div>
-                        <div class="grid mt-2 px-4">
-                            <div class="col-12 md:col-6 lg:col-4 px-1">
-                                <div>
-                                    Next Reward
-                                </div>
-                                <br />
-                                <div class="text-2xl">
-                                    0.020947 <span class="font-bold">UMI</span>
-                                </div>
-                            </div>
-                            <div class="col-12 md:col-6 lg:col-4 px-1">
-                                <div>
-                                    Your Rewards
-                                </div>
-                                <br />
-                                <div class="text-2xl">
-                                    0 <span class="font-bold">UMI</span>
-                                </div>
-                            </div>
-                            <div class="col-12 md:col-6 lg:col-4 px-1">
-                                <div>
-                                    Total Balance
-                                </div>
-                                <br />
-                                <div class="text-2xl">
-                                    0 <span class="font-bold">UMI</span>
-                                </div>
-                            </div>
-                        </div>
-                        <br />
-                        <div class="mt-2 px-3">
-                            <button pButton type="button" label="Stake"
-                                class="p-button-warning p-button-sm mr-2"></button>
-                            <button pButton type="button" label="Claim" class="p-button-success p-button-sm"></button>
-                        </div>
                     </div>
                 </div>
             </div>

@@ -3,7 +3,7 @@
         <iframe width="90" height="90" [scrolling]="'no'" [frameBorder]="0" [src]="iframeSrc | safe" allowfullscreen
             style="float: left; margin-right: 15px;"></iframe>
         <div class="w-full mt-2">
-            <div class="text-xl font-bold" style="color: #ef4943">
+            <div class="text-2xl font-bold" style="color: #ef4943">
                 {{walletMetaName}}
             </div>
             <div class="text-xl font-medium text-gray-700 white-space-normal">
@@ -13,7 +13,7 @@
         </div>
     </div>
 </div>
-<div class="mt-3">
+<div>
     <button pButton type="button" label="Change" class="p-button-text p-button-warning p-button-sm" icon="pi pi-pencil"
         (click)="change()"></button>
     <button pButton type="button" label="Copy" class="p-button-text p-button-warning p-button-sm" icon="pi pi-copy"

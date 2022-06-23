@@ -8,11 +8,11 @@ interface SourceNetwork {
 }
 
 @Component({
-  selector: 'app-transfer',
-  templateUrl: './transfer.component.html',
-  styleUrls: ['./transfer.component.scss']
+  selector: 'app-pay',
+  templateUrl: './pay.component.html',
+  styleUrls: ['./pay.component.scss']
 })
-export class TransferComponent implements OnInit {
+export class PayComponent implements OnInit {
 
   sourceNetworks: SourceNetwork[];
 

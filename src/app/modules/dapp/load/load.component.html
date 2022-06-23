@@ -1,0 +1,89 @@
+<div class="dapp-container">
+    <div class="grid">
+        <div class="col-12 md:col-6 lg:col-12">
+            <div class="card border-round-2xl" style="box-shadow: 3px 2px 5px 0px #dfdfdf !important;">
+                <div class="flex-wrap card-container w-full">
+                    <div class="bg-white px-6 pt-4 pb-4 border-round-2xl" style="min-height: 180px;">
+                        <p-tabView>
+                            <p-tabPanel header="Purchase">
+                                <div class="grid">
+                                    <div class="col-12 md:col-6 lg:col-12 px-2 pb-4 pt-2">
+                                        <span class="text-gray-600">
+                                            Purchase UMI and PHPU using your credit card with fiat currencies through
+                                            the following on-ramp facility.
+                                        </span>
+                                    </div>
+                                </div>
+                                <div class="grid">
+                                    <div class="col-12 md:col-6 lg:col-6">
+                                        <div class="mb-2">
+                                            Source Chain
+                                        </div>
+                                        <div>
+                                            <p-dropdown [options]="sourceNetworks" [style]="{'width':'100%'}" optionLabel="name">
+                                            </p-dropdown>
+                                        </div>
+                                    </div>
+                                    <div class="col-12 md:col-6 lg:col-6">
+                                        <div class="mb-2">
+                                            Destination Chain
+                                        </div>
+                                        <div>
+                                            <p-dropdown [options]="sourceNetworks" [style]="{'width':'100%'}" optionLabel="name">
+                                            </p-dropdown>
+                                        </div>
+                                    </div>
+                                </div>
+                                <br />
+                                <div class="grid">
+                                    <div class="col-12 md:col-6 lg:col-12">
+                                        <div class="mb-2">
+                                            Destination Account
+                                        </div>
+                                        <div class="card border-round-2xl border-1 border-gray-400">
+                                            <div class="flex-wrap card-container overflow-hidden w-full">
+                                                <div class="px-3 pt-3 font-bold text-gray-700">
+                                                    {{walletMetaName}}
+                                                </div>
+                                                <div class="text-lg px-3 pt-2 pb-3 text-gray-500">
+                                                    {{walletKeyPair}}
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <br />
+                                <div class="grid">
+                                    <div class="col-12 md:col-6 lg:col-12">
+                                        <div class="mb-2">
+                                            Amount
+                                        </div>
+                                        <div class="p-inputgroup">
+                                            <input type="number" pInputText placeholder="0" value="0">
+                                            <span class="p-inputgroup-addon">aUSD</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <br />
+                                <div class="mt-2 px-3 text-center">
+                                    <button pButton type="button" label="Transfer" class="p-button-warning p-button-lg mr-2"></button>
+                                </div>
+                                <br />
+                            </p-tabPanel>
+                            <p-tabPanel header="Transfer">
+                                <div class="grid">
+                                    <div class="col-12 md:col-6 lg:col-12 px-2 pb-4 pt-2">
+                                        <span class="text-gray-600">
+                                            Purchase UMI and PHPU using your other polkadot eco-system blockchain
+                                            network, e.g., Acala Moonbeam, etc.
+                                        </span>
+                                    </div>
+                                </div>
+                            </p-tabPanel>
+                        </p-tabView>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
