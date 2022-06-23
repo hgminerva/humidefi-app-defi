@@ -73,3 +73,32 @@ body {
 
 .identicon-styles {
 }
+
+.footer-container {
+  padding-top: 5rem;
+  padding-bottom: 5rem;
+  background-color: #2d2d2d;
+  color: #fff;
+}
+
+.copyright-container {
+  padding-top: 2rem;
+  padding-bottom: 2rem;
+  background: linear-gradient(
+    90deg,
+    rgba(244, 60, 113, 1) 0%,
+    rgba(240, 73, 65, 1) 100%
+  );
+}
+
+.topbar-container {
+  text-align: center;
+  width: 100%;
+  padding: 5px;
+  background: linear-gradient(
+    90deg,
+    rgba(244, 60, 113, 1) 0%,
+    rgba(240, 73, 65, 1) 100%
+  );
+  box-shadow: 3px 2px 5px 0px #999999 !important;
+}
