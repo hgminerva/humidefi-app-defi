@@ -2,7 +2,7 @@ import { DecimalPipe } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { PolkadotService } from 'src/app/services/polkadot/polkadot.service';
 
-interface SourceNetwork {
+interface Currencies {
   name: string,
 }
 
@@ -13,15 +13,18 @@ interface SourceNetwork {
 })
 export class PortfolioComponent implements OnInit {
 
-  sourceNetworks: SourceNetwork[];
+  currencies: Currencies[];
+  selectedCurrency!: Currencies;
 
   constructor(
     public decimalPipe: DecimalPipe,
     private polkadotService: PolkadotService
   ) {
-    this.sourceNetworks = [
-      { name: 'UMI' }
+    this.currencies = [
+      { name: 'PHP' },
+      { name: 'USD' }
     ];
+    this.selectedCurrency = this.currencies[0];
   }
 
   balance: string = "";

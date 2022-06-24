@@ -3,10 +3,6 @@ import { Hash } from '@polkadot/types/interfaces';
 import { TransferModel } from 'src/app/models/polkadot.model';
 import { PolkadotService } from 'src/app/services/polkadot/polkadot.service';
 
-interface SourceNetwork {
-  name: string,
-}
-
 @Component({
   selector: 'app-pay',
   templateUrl: './pay.component.html',
@@ -14,11 +10,8 @@ interface SourceNetwork {
 })
 export class PayComponent implements OnInit {
 
-  sourceNetworks: SourceNetwork[];
-
   walletMetaName: string = "";
   walletKeyPair: string = "";
-  walletBalance: string = "";
 
   transferData: TransferModel = new TransferModel();
   isProcessing: boolean = false;
@@ -28,22 +21,29 @@ export class PayComponent implements OnInit {
 
   constructor(
     private polkadotService: PolkadotService
-  ) {
-    this.sourceNetworks = [
-      { name: 'UMI' }
-    ];
-  }
+  ) { }
+
+  sourceTokens: string[] = [];
+  selectedSourceToken: string = "";
+
+  destinationTokens: string[] = [];
+  selectedDestinationToken: string = "";
 
   async getBalance(): Promise<void> {
     let balance: Promise<string> = this.polkadotService.getBalance(this.walletKeyPair);
-    this.walletBalance = (await balance);
+    this.transferData.amount = parseFloat((await balance));
 
     await this.getChainTokens();
   }
 
   async getChainTokens(): Promise<void> {
     let tokens: Promise<string[]> = this.polkadotService.getChainTokens(this.walletKeyPair);
-    this.tokens = (await tokens);
+
+    this.sourceTokens = (await tokens);
+    this.selectedSourceToken = this.sourceTokens[0];
+
+    this.destinationTokens = (await tokens);
+    this.selectedDestinationToken = this.destinationTokens[0];
   }
 
   async transfer(): Promise<void> {

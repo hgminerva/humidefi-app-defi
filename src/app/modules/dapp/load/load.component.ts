@@ -1,8 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-
-interface SourceNetwork {
-  name: string,
-}
+import { PolkadotService } from 'src/app/services/polkadot/polkadot.service';
 
 @Component({
   selector: 'app-load',
@@ -11,20 +8,34 @@ interface SourceNetwork {
 })
 export class LoadComponent implements OnInit {
 
-  sourceNetworks: SourceNetwork[];
+  constructor(
+    private polkadotService: PolkadotService
+  ) { }
 
-  walletMetaName: string = "";
   walletKeyPair: string = "";
 
-  constructor() {
-    this.sourceNetworks = [
-      { name: 'UMI' }
-    ];
+  networkSource: string[] = ['Acala', 'Humidefi'];
+  selectedNetworkSource: string = "Acala";
+
+  sourceTokens: string[] = [];
+  selectedSourceToken: string = "";
+
+  destinationTokens: string[] = [];
+  selectedDestinationToken: string = "";
+
+  async getChainTokens(): Promise<void> {
+    let tokens: Promise<string[]> = this.polkadotService.getChainTokens(this.walletKeyPair);
+
+    this.sourceTokens = (await tokens);
+    this.selectedSourceToken = this.sourceTokens[0];
+
+    this.destinationTokens = (await tokens);
+    this.selectedDestinationToken = this.destinationTokens[0];
   }
 
   ngOnInit(): void {
-    this.walletMetaName = localStorage.getItem("wallet-meta-name") || "";
     this.walletKeyPair = localStorage.getItem("wallet-keypair") || "";
+    this.getChainTokens();
   }
 
 }

@@ -4,12 +4,26 @@
         <app-sidebar></app-sidebar>
     </div>
     <div class="flex-grow-1 bg-gray-100 overflow-y-scroll overflow-x-hidden">
-        <div class="md:hidden">
-            <app-topbar></app-topbar>
+        <div class="md:hidden w-full text-center px-5 py-3 bg-white">
+            <img src="./../../../../assets/img/home/humedifi_logo.png" width="150" />
+            <br />
+            <span class="text-gray-600 text-sm">
+                Decentralized Finance
+                Hub of UMI and PHPU
+            </span>
         </div>
         <app-header></app-header>
         <router-outlet></router-outlet>
         <br />
-        <app-footer></app-footer>
+
+        <div class="md:hidden h-5rem w-full"></div>
+        <div class="md:hidden absolute bottom-0 w-full">
+            <app-mobilebar></app-mobilebar>
+        </div>
+
+        <div class="hidden md:block h-5rem w-full"></div>
+        <div class="hidden md:block right-0 bottom-0 w-full fixed z-5">
+            <app-footer></app-footer>
+        </div>
     </div>
 </div>
