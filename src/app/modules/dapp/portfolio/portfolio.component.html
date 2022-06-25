@@ -10,12 +10,40 @@
         </div>
     </div>
     <div class="grid pt-2">
-        <div class="col-12 md:col-12 lg:col-9">
+        <div class="col-12 md:col-12 lg:col-5">
+            <div class="p-inputgroup">
+                <span class="p-inputgroup-addon">
+                    Currency:
+                </span>
+                <p-dropdown [options]="currencies" [(ngModel)]="selectedCurrency" placeholder="Select a Token"
+                    class="p-inputtext-lg" optionLabel="name" [style]="{'width':'100%'}"
+                    (onChange)="currencyOnChange($event)">
+                    <ng-template pTemplate="selectedItem">
+                        <div *ngIf="selectedCurrency">
+                            <img *ngIf="selectedCurrency.name == 'PHP'" src="./../../../../assets/img/currency/PHP.png"
+                                width="27" style="float: left; margin-top: 7px;" />
+                            <img *ngIf="selectedCurrency.name == 'USD'" src="./../../../../assets/img/currency/USD.png"
+                                width="27" style="float: left; margin-top: 7px;" />
+                            &nbsp;
+                            <span class="text-xl">
+                                {{selectedCurrency.name}}
+                            </span>
+                        </div>
+                    </ng-template>
+                    <ng-template let-currency pTemplate="item">
+                        <img *ngIf="currency.name == 'PHP'" src="./../../../../assets/img/currency/PHP.png" width="27"
+                            style="float: left; margin-top: 7px;" />
+                        <img *ngIf="currency.name == 'USD'" src="./../../../../assets/img/currency/USD.png" width="27"
+                            style="float: left; margin-top: 7px;" />
+                        &nbsp;
+                        <span class="text-xl">
+                            {{currency.name}}
+                        </span>
+                    </ng-template>
+                </p-dropdown>
+            </div>
         </div>
-        <div class="col-12 md:col-12 lg:col-3 text-right">
-            Currency: &nbsp;
-            <p-dropdown [options]="currencies" [(ngModel)]="selectedCurrency" optionLabel="name">
-            </p-dropdown>
+        <div class="col-12 md:col-12 lg:col-7">
         </div>
     </div>
     <div class="grid pt-2">
@@ -31,7 +59,7 @@
                             Total
                         </div>
                         <div class="text-3xl font-medium text-white white-space-normal">
-                            <span class="font-bold">{{selectedCurrency.name}} {{balance}}</span>
+                            <span class="font-bold">{{selectedCurrency.name}} {{total}}</span>
                         </div>
                     </div>
                 </div>
@@ -55,7 +83,7 @@
                         <div class="text-xl font-medium mb-3" style="color: #ef4943">
                             Holdings
                         </div>
-                        <p-table responsiveLayout="scroll" [value]="holdings">
+                        <p-table responsiveLayout="stack" [value]="holdings">
                             <ng-template pTemplate="header">
                                 <tr>
                                     <th>Ticker</th>
@@ -67,11 +95,40 @@
                             </ng-template>
                             <ng-template pTemplate="body" let-holding>
                                 <tr>
-                                    <td>{{holding.ticker}}</td>
-                                    <td>{{holding.name}}</td>
-                                    <td>{{holding.price}}</td>
-                                    <td>{{holding.balance}}</td>
-                                    <td>{{holding.value}}</td>
+                                    <td>
+                                        <div *ngIf="holding.ticker == 'UMI'">
+                                            <img src="./../../../../assets/img/tokens/UMI.png" width="27"
+                                                style="float: left;" />
+                                        </div>
+                                        <div *ngIf="holding.ticker == 'PHPU'">
+                                            <img src="./../../../../assets/img/tokens/PHPU.png" width="27"
+                                                style="float: left;" />
+                                        </div>
+                                        &nbsp;
+                                        <span class="text-xl font-bold">
+                                            {{holding.ticker}}
+                                        </span>
+                                    </td>
+                                    <td>
+                                        <span class="text-base">
+                                            {{holding.name}}
+                                        </span>
+                                    </td>
+                                    <td>
+                                        <span class="text-base font-bold">
+                                            {{holding.price}}
+                                        </span>
+                                    </td>
+                                    <td>
+                                        <span class="text-base font-bold">
+                                            {{decimalPipe.transform(holding.balance, "1.2-2") || "0"}}
+                                        </span>
+                                    </td>
+                                    <td>
+                                        <span class="text-base font-bold">
+                                            {{decimalPipe.transform(holding.value, "1.2-2") || "0"}}
+                                        </span>
+                                    </td>
                                 </tr>
                             </ng-template>
                         </p-table>

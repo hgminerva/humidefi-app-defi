@@ -49,8 +49,8 @@
             <span>No Accounts / No Web3 Extensions Installed</span>
         </div>
         <div *ngIf="web3Wallets.length > 0">
-            <p-table [value]="web3Wallets" selectionMode="single" [(selection)]="selectedWalletAccount"
-                (onRowSelect)="onWalletSelect($event)">
+            <p-table responsiveLayout="scroll" [value]="web3Wallets" selectionMode="single"
+                [(selection)]="selectedWalletAccount" (onRowSelect)="onWalletSelect($event)">
                 <ng-template pTemplate="body" let-web3Wallet>
                     <tr [pSelectableRow]="web3Wallet">
                         <td style="word-break: break-all; border-radius: 10px; border: none;">
