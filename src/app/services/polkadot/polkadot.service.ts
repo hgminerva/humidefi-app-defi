@@ -93,7 +93,8 @@ export class PolkadotService {
     const injector = await web3FromAddress(data.keypair);
     api.setSigner(injector.signer);
 
-    let amount: number = data.amount * 1000000000000;
+    // let amount: number = data.amount * 1000000000000;
+    let amount: number = data.amount;
 
     return await api.tx.balances.transfer(data.recipient, amount).signAndSend(data.keypair);
   }

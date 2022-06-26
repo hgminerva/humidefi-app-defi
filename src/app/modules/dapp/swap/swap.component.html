@@ -22,7 +22,8 @@
                                 <div class="">
                                     Ticker
                                     <p-dropdown [options]="sourceTokens" [(ngModel)]="selectedSourceToken"
-                                        placeholder="Select a Token" class="p-inputtext-lg" [style]="{'width':'100%'}">
+                                        placeholder="Select a Token" class="p-inputtext-lg" [style]="{'width':'100%'}"
+                                        (onChange)="sourceTickerOnChange($event)">
                                         <ng-template pTemplate="selectedItem">
                                             <div *ngIf="selectedSourceToken">
                                                 <img src="./../../../../assets/img/tokens/UMI.png" width="27"
@@ -49,7 +50,8 @@
                             <div class="col-12 md:col-12 lg:col-6">
                                 Quantity
                                 <input type="number" value="0" class="p-inputtext-lg" placeholder="" pInputText
-                                    [style]="{'width':'100%'}" />
+                                    [style]="{'width':'100%'}" [(ngModel)]="sourceQuantity"
+                                    (keyup)="sourceQuantityOnKeyup($event)" />
                             </div>
                         </div>
                     </div>
@@ -59,7 +61,8 @@
         <div class="col-12 md:col-12 lg:col-1 px-2"></div>
     </div>
     <div class="mt-4 mb-4 px-3 text-center">
-        <button pButton type="button" label="Swap" class="p-button-warning p-button-lg mr-2"></button>
+        <button pButton type="button" label="Swap" class="p-button-text p-button-danger p-button-lg mr-2 text-white"
+            style="background: linear-gradient(90deg,rgba(244,60,113,1) 0%,rgba(240,73,65,1) 100%);"></button>
     </div>
     <div class="grid pt-2">
         <div class="col-12 md:col-12 lg:col-1 px-2"></div>
@@ -75,7 +78,8 @@
                                 <div class="">
                                     Ticker
                                     <p-dropdown [options]="destinationTokens" [(ngModel)]="selectedDestinationToken"
-                                        placeholder="Select a Token" class="p-inputtext-lg" [style]="{'width':'100%'}">
+                                        placeholder="Select a Token" class="p-inputtext-lg" [style]="{'width':'100%'}"
+                                        (onChange)="destinationTickerOnChange($event)">
                                         <ng-template pTemplate="selectedItem">
                                             <div *ngIf="selectedDestinationToken">
                                                 <img src="./../../../../assets/img/tokens/UMI.png" width="27"
@@ -102,7 +106,7 @@
                             <div class="col-12 md:col-12 lg:col-6">
                                 Quantity
                                 <input type="number" value="0" class="p-inputtext-lg" placeholder="" pInputText
-                                    [style]="{'width':'100%'}" />
+                                    [style]="{'width':'100%'}" disabled [(ngModel)]="destinationQuantity" />
                             </div>
                         </div>
                     </div>

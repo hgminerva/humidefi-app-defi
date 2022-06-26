@@ -14,6 +14,22 @@ export class AppSettings {
                 { token: 'UMI', price: 1 },
                 { token: 'PHPU', price: 52 }
             ]
+        }
+    ];
+    public tokens = [
+        {
+            token: "UMI",
+            tokensPrices: [
+                { token: 'UMI', price: 1 },
+                { token: 'PHPU', price: 52 }
+            ]
         },
+        {
+            token: "PHPU",
+            tokensPrices: [
+                { token: 'PHPU', price: 1 },
+                { token: 'UMI', price: (1 / 52) }
+            ]
+        }
     ];
 }

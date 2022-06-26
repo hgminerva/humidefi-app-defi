@@ -21,7 +21,16 @@
                                             <img src="./../../../../assets/img/banks/transak.jpg"
                                                 style="height: 50px;" />
                                         </ng-template>
-
+                                        <br />
+                                        <div class="grid">
+                                            <div class="col-12 md:col-12 lg:col-12">
+                                                <iframe height="800" title="Transak On/Off Ramp Widget"
+                                                    src="https://staging-global.transak.com?apiKey=[YOUR_STAGING_API_KEY]&[QUERY_PARAMETERS]"
+                                                    frameborder="no" allowtransparency="true" allowfullscreen=""
+                                                    style="display: block; width: 100%; max-height: 800px;">
+                                                </iframe>
+                                            </div>
+                                        </div>
                                     </p-tabPanel>
                                     <p-tabPanel>
                                         <ng-template pTemplate="header">
@@ -146,7 +155,8 @@
                                 </div>
                                 <div class="mt-4 mb-4 px-3 text-center">
                                     <button pButton type="button" label="Transfer"
-                                        class="p-button-warning p-button-lg mr-2"></button>
+                                        class="p-button-text p-button-danger p-button-lg mr-2 text-white"
+                                        style="background: linear-gradient(90deg,rgba(244,60,113,1) 0%,rgba(240,73,65,1) 100%);"></button>
                                 </div>
                                 <div class="grid pt-2">
                                     <div class="col-12 md:col-12 lg:col-1 px-2"></div>

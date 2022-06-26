@@ -14,6 +14,9 @@ import { InputTextModule } from 'primeng/inputtext';
 import { DialogModule } from 'primeng/dialog';
 import { ProgressSpinnerModule } from 'primeng/progressspinner';
 import { TabViewModule } from 'primeng/tabview';
+import { ToastModule } from 'primeng/toast';
+import { MessagesModule } from 'primeng/messages';
+import { MessageModule } from 'primeng/message';
 
 import { DappComponent } from './dapp.component';
 import { DashboardComponent } from './dashboard/dashboard.component';
@@ -49,7 +52,10 @@ import { PayComponent } from './pay/pay.component';
     InputTextModule,
     DialogModule,
     ProgressSpinnerModule,
-    TabViewModule
+    TabViewModule,
+    ToastModule,
+    MessagesModule,
+    MessageModule
   ],
   providers: [
     DecimalPipe

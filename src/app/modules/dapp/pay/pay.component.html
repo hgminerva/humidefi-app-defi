@@ -22,7 +22,8 @@
                                 <div class="">
                                     Ticker
                                     <p-dropdown [options]="sourceTokens" [(ngModel)]="selectedSourceToken"
-                                        placeholder="Select a Token" class="p-inputtext-lg" [style]="{'width':'100%'}">
+                                        placeholder="Select a Token" class="p-inputtext-lg" [style]="{'width':'100%'}"
+                                        (onChange)="sourceTickerOnChange($event)">
                                         <ng-template pTemplate="selectedItem">
                                             <div *ngIf="selectedSourceToken">
                                                 <img src="./../../../../assets/img/tokens/UMI.png" width="27"
@@ -49,7 +50,8 @@
                             <div class="col-12 md:col-12 lg:col-6">
                                 Quantity
                                 <input type="number" value="0" class="p-inputtext-lg" placeholder="" pInputText
-                                    [style]="{'width':'100%'}" [(ngModel)]="transferData.amount" />
+                                    [style]="{'width':'100%'}" [(ngModel)]="sourceQuantity"
+                                    (keyup)="sourceQuantityOnKeyup($event)" />
                             </div>
                         </div>
                     </div>
@@ -59,8 +61,9 @@
         <div class="col-12 md:col-12 lg:col-1 px-2"></div>
     </div>
     <div class="mt-4 mb-4 px-3 text-center">
-        <button pButton type="button" label="Pay" class="p-button-warning p-button-lg mr-2" (click)="transfer()"
-            [disabled]="isProcessing"></button>
+        <button pButton type="button" label="Pay" class="p-button-text p-button-danger p-button-lg mr-2 text-white"
+            (click)="transfer()" [disabled]="isProcessing"
+            style="background: linear-gradient(90deg,rgba(244,60,113,1) 0%,rgba(240,73,65,1) 100%);"></button>
     </div>
     <div class="grid pt-2">
         <div class="col-12 md:col-12 lg:col-1 px-2"></div>
@@ -68,8 +71,8 @@
             <div class="mb-2">
                 Destination (Wallet Address)
             </div>
-            <input type="text" pInputText placeholder="" value="" class="p-inputtext-lg" [style]="{'width':'100%'}"
-                [(ngModel)]="transferData.recipient">
+            <input type="text" pInputText placeholder="Example: 18Fz5QHL1BcTP7xYj6TDpmtA2bstGbnLDQYQN69LU2iZMbDx"
+                value="" class="p-inputtext-lg" [style]="{'width':'100%'}" [(ngModel)]="transferData.recipient">
         </div>
         <div class="col-12 md:col-12 lg:col-1 px-2"></div>
     </div>
@@ -87,7 +90,8 @@
                                 <div class="">
                                     Ticker
                                     <p-dropdown [options]="destinationTokens" [(ngModel)]="selectedDestinationToken"
-                                        placeholder="Select a Token" class="p-inputtext-lg" [style]="{'width':'100%'}">
+                                        (onChange)="destinationTickerOnChange($event)" placeholder="Select a Token"
+                                        class="p-inputtext-lg" [style]="{'width':'100%'}">
                                         <ng-template pTemplate="selectedItem">
                                             <div *ngIf="selectedDestinationToken">
                                                 <img src="./../../../../assets/img/tokens/UMI.png" width="27"
@@ -114,7 +118,7 @@
                             <div class="col-12 md:col-12 lg:col-6">
                                 Quantity
                                 <input type="number" value="0" class="p-inputtext-lg" placeholder="" pInputText
-                                    [style]="{'width':'100%'}" disabled />
+                                    [style]="{'width':'100%'}" disabled [(ngModel)]="destinationQuantity" />
                             </div>
                         </div>
                     </div>
@@ -133,3 +137,5 @@
         <p-progressSpinner></p-progressSpinner>
     </div>
 </p-dialog>
+
+<p-toast position="top-right" key="error-payment"></p-toast>
