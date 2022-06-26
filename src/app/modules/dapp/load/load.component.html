@@ -36,7 +36,100 @@
                                         <ng-template pTemplate="header">
                                             <img src="./../../../../assets/img/banks/gcash.png" style="height: 50px;" />
                                         </ng-template>
-
+                                        <div class="grid">
+                                            <div class="col-12 md:col-12 lg:col-2"></div>
+                                            <div class="col-12 md:col-12 lg:col-8">
+                                                <div class="gcash-container">
+                                                    <div class="gcash-header">
+                                                        <div
+                                                            class="gcash-title text-center text-3xl text-white px-2 py-2">
+                                                            Express Send
+                                                        </div>
+                                                        <div class="gcash-humidefi-logo px-2 py-2">
+                                                            <br />
+                                                            <img src="./../../../../assets/img/home/humidefi_icon_logo.png"
+                                                                height="120" />
+                                                        </div>
+                                                        <div class="w-full text-white text-center text-2xl text-bold">
+                                                            Humidefi
+                                                        </div>
+                                                    </div>
+                                                    <div class="w-full gcash-contents">
+                                                        <div class="w-full bg-gray-50 text-lg px-2 py-2">
+                                                            Choose Ticker
+                                                        </div>
+                                                        <div class="w-full">
+                                                            <div class="grid px-5 py-5">
+                                                                <div class="col-12 md:col-12 lg:col-6">
+                                                                    <div class="">
+                                                                        Ticker
+                                                                        <p-dropdown [options]="gcashSourceTokens"
+                                                                            [(ngModel)]="gcashSelectedSourceToken"
+                                                                            placeholder="Select a Token"
+                                                                            class="p-inputtext-lg"
+                                                                            [style]="{'width':'100%'}"
+                                                                            (onChange)="gcashSourceTickerOnChange($event)">
+                                                                            <ng-template pTemplate="selectedItem">
+                                                                                <div *ngIf="gcashSelectedSourceToken">
+                                                                                    <img src="./../../../../assets/img/tokens/UMI.png"
+                                                                                        width="27"
+                                                                                        style="float: left;" />
+                                                                                    &nbsp;
+                                                                                    <span class="text-xl">
+                                                                                        {{gcashSelectedSourceToken}}
+                                                                                    </span>
+                                                                                </div>
+                                                                            </ng-template>
+                                                                            <ng-template let-token pTemplate="item">
+                                                                                <div>
+                                                                                    <img src="./../../../../assets/img/tokens/UMI.png"
+                                                                                        width="27"
+                                                                                        style="float: left;" />
+                                                                                    &nbsp;
+                                                                                    <span class="text-xl">
+                                                                                        {{token}}
+                                                                                    </span>
+                                                                                </div>
+                                                                            </ng-template>
+                                                                        </p-dropdown>
+                                                                    </div>
+                                                                </div>
+                                                                <div class="col-12 md:col-12 lg:col-6">
+                                                                    Quantity
+                                                                    <input type="number" value="0"
+                                                                        class="p-inputtext-lg" placeholder="" pInputText
+                                                                        [style]="{'width':'100%'}"
+                                                                        [(ngModel)]="gcashTokenQuantity"
+                                                                        (keyup)="gcashSourceQuantityOnKeyup($event)" />
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <div class="w-full bg-gray-50 text-lg px-2 py-2">
+                                                            You are about to send
+                                                        </div>
+                                                        <div class="w-full text-xl px-2 text-bold">
+                                                            <div class="grid px-5 py-5">
+                                                                <div class="col-12 md:col-12 lg:col-6">
+                                                                    Total Amount
+                                                                </div>
+                                                                <div class="col-12 md:col-12 lg:col-6 text-right">
+                                                                    PHP {{totalAmount}}
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <div class="w-full bg-gray-50 text-lg px-5 py-2 text-center">
+                                                            <br /><br /><br /><br /><br /><br /><br />
+                                                            <button pButton type="button"
+                                                                label="SEND PHP {{totalAmount}}"
+                                                                class="p-button-rounded p-button-primary text-white"
+                                                                style="width: 100%;"></button>
+                                                            <br /><br /><br />
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="col-12 md:col-12 lg:col-2"></div>
+                                        </div>
                                     </p-tabPanel>
                                 </p-tabView>
                             </p-tabPanel>
