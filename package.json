@@ -35,6 +35,7 @@
     "@polkadot/types-create": "^8.7.1",
     "@polkadot/types-known": "^8.7.1",
     "@polkadot/util": "^9.4.1",
+    "polkadot-angular-identicon": "^1.0.3-rc1",
     "primeflex": "^3.2.1",
     "primeicons": "^5.0.0",
     "primeng": "^13.4.1",

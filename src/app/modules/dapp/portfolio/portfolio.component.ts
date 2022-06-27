@@ -1,5 +1,9 @@
+import { DecimalPipe } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
+import { CurrenciesModel } from 'src/app/models/currencies.model';
+import { HoldingsModel } from 'src/app/models/holdings.model';
 import { PolkadotService } from 'src/app/services/polkadot/polkadot.service';
+import { AppSettings } from './../../../app-settings';
 
 @Component({
   selector: 'app-portfolio',
@@ -8,25 +12,79 @@ import { PolkadotService } from 'src/app/services/polkadot/polkadot.service';
 })
 export class PortfolioComponent implements OnInit {
 
+  currencies: CurrenciesModel[];
+  selectedCurrency!: CurrenciesModel;
+
   constructor(
-    private polkadotService: PolkadotService
-  ) { }
+    public decimalPipe: DecimalPipe,
+    private polkadotService: PolkadotService,
+    private appSettings: AppSettings
+  ) {
+    this.currencies = [
+      { name: 'PHP' },
+      { name: 'USD' }
+    ];
+    this.selectedCurrency = this.currencies[0];
+  }
 
-  walletMetaName: string = "";
-  walletKeyPair: string = "";
   balance: string = "";
+  holdings: HoldingsModel[] = [];
+  total: string = "";
 
-  holdings: any = [];
+  displayChangeAccountDialog: boolean = false;
 
   async getBalance(): Promise<void> {
-    let balance: Promise<string> = this.polkadotService.getBalance(this.walletKeyPair);
-    this.balance = (await balance);
+    let keypair = localStorage.getItem("wallet-keypair") || "";
+    let balance: Promise<string> = this.polkadotService.getBalance(keypair);
+
+    this.balance = this.decimalPipe.transform((await balance), "1.2-2") || "0";
+
+    this.getHoldings();
+  }
+
+  changeAccount(): void {
+    this.displayChangeAccountDialog = true;
+  }
+
+  getHoldings(): void {
+    this.holdings = [];
+    let total = 0;
+
+    let currencyPrices = this.appSettings.currencies.filter(d => d.currency == this.selectedCurrency.name)[0];
+    if (currencyPrices != null) {
+      let tokenPrices = currencyPrices.tokensPrices;
+      if (tokenPrices.length > 0) {
+        for (let i = 0; i < tokenPrices.length; i++) {
+          let name = "";
+          let balance = tokenPrices[i].token == 'UMI' ? parseFloat(this.balance.replace(/,/g, '')) : 0;
+
+          switch (tokenPrices[i].token) {
+            case 'UMI': name = "UMI Token"; break;
+            case 'PHPU': name = "Stable Coin"; break;
+            default: break;
+          }
+
+          this.holdings.push({
+            ticker: tokenPrices[i].token,
+            name: name,
+            price: tokenPrices[i].price,
+            balance: balance,
+            value: tokenPrices[i].price * balance
+          });
+
+          total += tokenPrices[i].price * balance;
+        }
+      };
+    }
+
+    this.total = this.decimalPipe.transform(total, "1.2-2") || "0";
+  }
+
+  currencyOnChange(event: any): void {
+    this.getHoldings();
   }
 
   ngOnInit(): void {
-    this.walletMetaName = localStorage.getItem("wallet-meta-name") || "";
-    this.walletKeyPair = localStorage.getItem("wallet-keypair") || "";
-
     this.getBalance();
   }
 }

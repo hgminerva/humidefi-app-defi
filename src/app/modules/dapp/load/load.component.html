@@ -1,0 +1,315 @@
+<div class="dapp-container">
+    <div class="grid">
+        <div class="col-12 md:col-12 lg:col-12">
+            <div class="card border-round-2xl" style="box-shadow: 3px 2px 5px 0px #dfdfdf !important;">
+                <div class="flex-wrap card-container w-full">
+                    <div class="bg-white px-6 pt-4 pb-4 border-round-2xl" style="min-height: 180px;">
+                        <p-tabView>
+                            <p-tabPanel header="Purchase">
+                                <div class="grid">
+                                    <div class="col-12 md:col-12 lg:col-12 px-2 pb-4 pt-2">
+                                        <span class="text-gray-600">
+                                            Purchase UMI and PHPU using your credit card with fiat currencies through
+                                            the following on-ramp facility.
+                                        </span>
+                                    </div>
+                                </div>
+                                <br />
+                                <p-tabView>
+                                    <p-tabPanel>
+                                        <ng-template pTemplate="header">
+                                            <img src="./../../../../assets/img/banks/transak.jpg"
+                                                style="height: 50px;" />
+                                        </ng-template>
+                                        <br />
+                                        <div class="grid">
+                                            <div class="col-12 md:col-12 lg:col-12">
+                                                <iframe height="800" title="Transak On/Off Ramp Widget"
+                                                    src="https://staging-global.transak.com?apiKey=[YOUR_STAGING_API_KEY]&[QUERY_PARAMETERS]"
+                                                    frameborder="no" allowtransparency="true" allowfullscreen=""
+                                                    style="display: block; width: 100%; max-height: 800px;">
+                                                </iframe>
+                                            </div>
+                                        </div>
+                                    </p-tabPanel>
+                                    <p-tabPanel>
+                                        <ng-template pTemplate="header">
+                                            <img src="./../../../../assets/img/banks/gcash.png" style="height: 50px;" />
+                                        </ng-template>
+                                        <div class="grid">
+                                            <div class="col-12 md:col-12 lg:col-2"></div>
+                                            <div class="col-12 md:col-12 lg:col-8">
+                                                <div class="gcash-container">
+                                                    <div class="gcash-header">
+                                                        <div
+                                                            class="gcash-title text-center text-3xl text-white px-2 py-2">
+                                                            Express Send
+                                                        </div>
+                                                        <div class="gcash-humidefi-logo px-2 py-2">
+                                                            <br />
+                                                            <img src="./../../../../assets/img/home/humidefi_icon_logo.png"
+                                                                height="120" />
+                                                        </div>
+                                                        <div class="w-full text-white text-center text-2xl text-bold">
+                                                            Humidefi
+                                                        </div>
+                                                    </div>
+                                                    <div class="w-full gcash-contents">
+                                                        <div class="w-full bg-gray-50 text-lg px-2 py-2">
+                                                            Choose Ticker
+                                                        </div>
+                                                        <div class="w-full">
+                                                            <div class="grid px-5 py-5">
+                                                                <div class="col-12 md:col-12 lg:col-6">
+                                                                    <div class="">
+                                                                        Ticker
+                                                                        <p-dropdown [options]="gcashSourceTokens"
+                                                                            [(ngModel)]="gcashSelectedSourceToken"
+                                                                            placeholder="Select a Token"
+                                                                            class="p-inputtext-lg"
+                                                                            [style]="{'width':'100%'}"
+                                                                            (onChange)="gcashSourceTickerOnChange($event)">
+                                                                            <ng-template pTemplate="selectedItem">
+                                                                                <div *ngIf="gcashSelectedSourceToken">
+                                                                                    <img src="./../../../../assets/img/tokens/UMI.png"
+                                                                                        width="27"
+                                                                                        style="float: left;" />
+                                                                                    &nbsp;
+                                                                                    <span class="text-xl">
+                                                                                        {{gcashSelectedSourceToken}}
+                                                                                    </span>
+                                                                                </div>
+                                                                            </ng-template>
+                                                                            <ng-template let-token pTemplate="item">
+                                                                                <div>
+                                                                                    <img src="./../../../../assets/img/tokens/UMI.png"
+                                                                                        width="27"
+                                                                                        style="float: left;" />
+                                                                                    &nbsp;
+                                                                                    <span class="text-xl">
+                                                                                        {{token}}
+                                                                                    </span>
+                                                                                </div>
+                                                                            </ng-template>
+                                                                        </p-dropdown>
+                                                                    </div>
+                                                                </div>
+                                                                <div class="col-12 md:col-12 lg:col-6">
+                                                                    Quantity
+                                                                    <input type="number" value="0"
+                                                                        class="p-inputtext-lg" placeholder="" pInputText
+                                                                        [style]="{'width':'100%'}"
+                                                                        [(ngModel)]="gcashTokenQuantity"
+                                                                        (keyup)="gcashSourceQuantityOnKeyup($event)" />
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <div class="w-full bg-gray-50 text-lg px-2 py-2">
+                                                            You are about to send
+                                                        </div>
+                                                        <div class="w-full text-xl px-2 text-bold">
+                                                            <div class="grid px-5 py-5">
+                                                                <div class="col-12 md:col-12 lg:col-6">
+                                                                    Total Amount
+                                                                </div>
+                                                                <div class="col-12 md:col-12 lg:col-6 text-right">
+                                                                    PHP {{totalAmount}}
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <div class="w-full bg-gray-50 text-lg px-5 py-2 text-center">
+                                                            <br /><br /><br /><br /><br /><br /><br />
+                                                            <button pButton type="button"
+                                                                label="SEND PHP {{totalAmount}}"
+                                                                class="p-button-rounded p-button-primary text-white"
+                                                                style="width: 100%;"></button>
+                                                            <br /><br /><br />
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="col-12 md:col-12 lg:col-2"></div>
+                                        </div>
+                                    </p-tabPanel>
+                                </p-tabView>
+                            </p-tabPanel>
+                            <p-tabPanel header="Transfer">
+                                <div class="grid">
+                                    <div class="col-12 md:col-12 lg:col-12 px-2 pb-4 pt-2">
+                                        <span class="text-gray-600">
+                                            Purchase UMI and PHPU using your other polkadot eco-system blockchain
+                                            network, e.g., Acala Moonbeam, etc.
+                                        </span>
+                                    </div>
+                                </div>
+                                <div class="grid pt-2">
+                                    <div class="col-12 md:col-12 lg:col-1 px-2"></div>
+                                    <div class="col-12 md:col-12 lg:col-10 px-2">
+                                        <div class="grid py-4">
+                                            <div class="col-12 md:col-12 lg:col-6">
+                                                <div class="">
+                                                    Network Source
+                                                    <p-dropdown [options]="networkSource"
+                                                        [(ngModel)]="selectedNetworkSource" placeholder="Select a Token"
+                                                        class="p-inputtext-lg" [style]="{'width':'100%'}">
+                                                        <ng-template pTemplate="selectedItem">
+                                                            <div *ngIf="selectedNetworkSource == 'Acala'">
+                                                                <img src="./../../../../assets/img/tokens/Acala.png"
+                                                                    width="27" style="float: left;" />
+                                                                &nbsp;
+                                                                <span class="text-xl">
+                                                                    {{selectedNetworkSource}}
+                                                                </span>
+                                                            </div>
+                                                            <div *ngIf="selectedNetworkSource == 'Humidefi'">
+                                                                <img src="./../../../../assets/img/tokens/UMI.png"
+                                                                    width="27" style="float: left;" />
+                                                                &nbsp;
+                                                                <span class="text-xl">
+                                                                    {{selectedNetworkSource}}
+                                                                </span>
+                                                            </div>
+                                                        </ng-template>
+                                                        <ng-template let-network pTemplate="item">
+                                                            <div *ngIf="network == 'Acala'">
+                                                                <img src="./../../../../assets/img/tokens/Acala.png"
+                                                                    width="27" style="float: left;" />
+                                                                &nbsp;
+                                                                <span class="text-xl">
+                                                                    {{network}}
+                                                                </span>
+                                                            </div>
+                                                            <div *ngIf="network == 'Humidefi'">
+                                                                <img src="./../../../../assets/img/tokens/UMI.png"
+                                                                    width="27" style="float: left;" />
+                                                                &nbsp;
+                                                                <span class="text-xl">
+                                                                    {{network}}
+                                                                </span>
+                                                            </div>
+                                                        </ng-template>
+                                                    </p-dropdown>
+                                                </div>
+                                            </div>
+                                            <div class="col-12 md:col-12 lg:col-6">
+
+                                            </div>
+                                        </div>
+                                        <div class="card border-round-2xl"
+                                            style="box-shadow: 3px 2px 5px 0px #dfdfdf !important;">
+                                            <div class="flex-wrap card-container  w-full">
+                                                <div class="bg-gray-50 px-4 pt-4 pb-4 border-round-2xl"
+                                                    style="min-height: 180px;">
+                                                    <div class="px-3 pt-3 text-xl font-medium text-gray-700">
+                                                        Portfolio Source
+                                                    </div>
+                                                    <div class="grid px-5 py-5">
+                                                        <div class="col-12 md:col-12 lg:col-6">
+                                                            <div class="">
+                                                                Ticker
+                                                                <p-dropdown [options]="sourceTokens"
+                                                                    [(ngModel)]="selectedSourceToken"
+                                                                    placeholder="Select a Token" class="p-inputtext-lg"
+                                                                    [style]="{'width':'100%'}">
+                                                                    <ng-template pTemplate="selectedItem">
+                                                                        <div *ngIf="selectedSourceToken">
+                                                                            <img src="./../../../../assets/img/tokens/UMI.png"
+                                                                                width="27" style="float: left;" />
+                                                                            &nbsp;
+                                                                            <span class="text-xl">
+                                                                                {{selectedSourceToken}}
+                                                                            </span>
+                                                                        </div>
+                                                                    </ng-template>
+                                                                    <ng-template let-token pTemplate="item">
+                                                                        <div>
+                                                                            <img src="./../../../../assets/img/tokens/UMI.png"
+                                                                                width="27" style="float: left;" />
+                                                                            &nbsp;
+                                                                            <span class="text-xl">
+                                                                                {{token}}
+                                                                            </span>
+                                                                        </div>
+                                                                    </ng-template>
+                                                                </p-dropdown>
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-12 md:col-12 lg:col-6">
+                                                            Quantity
+                                                            <input type="number" value="0" class="p-inputtext-lg"
+                                                                placeholder="" pInputText [style]="{'width':'100%'}" />
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-12 md:col-12 lg:col-1 px-2"></div>
+                                </div>
+                                <div class="mt-4 mb-4 px-3 text-center">
+                                    <button pButton type="button" label="Transfer"
+                                        class="p-button-text p-button-danger p-button-lg mr-2 text-white"
+                                        style="background: linear-gradient(90deg,rgba(244,60,113,1) 0%,rgba(240,73,65,1) 100%);"></button>
+                                </div>
+                                <div class="grid pt-2">
+                                    <div class="col-12 md:col-12 lg:col-1 px-2"></div>
+                                    <div class="col-12 md:col-12 lg:col-10 px-2">
+                                        <div class="card border-round-2xl"
+                                            style="box-shadow: 3px 2px 5px 0px #dfdfdf !important;">
+                                            <div class="flex-wrap card-container  w-full">
+                                                <div class="bg-gray-50 px-4 pt-4 pb-4 border-round-2xl"
+                                                    style="min-height: 180px;">
+                                                    <div class="px-3 pt-3 text-xl font-medium text-gray-700">
+                                                        Portfolio Destination
+                                                    </div>
+                                                    <div class="grid px-5 py-5">
+                                                        <div class="col-12 md:col-12 lg:col-6">
+                                                            <div class="">
+                                                                Ticker
+                                                                <p-dropdown [options]="destinationTokens"
+                                                                    [(ngModel)]="selectedDestinationToken"
+                                                                    placeholder="Select a Token" class="p-inputtext-lg"
+                                                                    [style]="{'width':'100%'}">
+                                                                    <ng-template pTemplate="selectedItem">
+                                                                        <div *ngIf="selectedDestinationToken">
+                                                                            <img src="./../../../../assets/img/tokens/UMI.png"
+                                                                                width="27" style="float: left;" />
+                                                                            &nbsp;
+                                                                            <span class="text-xl">
+                                                                                {{selectedDestinationToken}}
+                                                                            </span>
+                                                                        </div>
+                                                                    </ng-template>
+                                                                    <ng-template let-token pTemplate="item">
+                                                                        <div>
+                                                                            <img src="./../../../../assets/img/tokens/UMI.png"
+                                                                                width="27" style="float: left;" />
+                                                                            &nbsp;
+                                                                            <span class="text-xl">
+                                                                                {{token}}
+                                                                            </span>
+                                                                        </div>
+                                                                    </ng-template>
+                                                                </p-dropdown>
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-12 md:col-12 lg:col-6">
+                                                            Quantity
+                                                            <input type="number" value="0" class="p-inputtext-lg"
+                                                                placeholder="" pInputText [style]="{'width':'100%'}" />
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-12 md:col-12 lg:col-1 px-2"></div>
+                                </div>
+                            </p-tabPanel>
+                        </p-tabView>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

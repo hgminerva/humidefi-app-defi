@@ -6,6 +6,7 @@ import { cryptoWaitReady, decodeAddress, signatureVerify } from '@polkadot/util-
 import { TransferModel, WalletAccountsModel } from 'src/app/models/polkadot.model';
 import { ApiPromise, WsProvider } from '@polkadot/api';
 import { AppSettings } from 'src/app/app-settings';
+import { Hash } from '@polkadot/types/interfaces';
 
 @Injectable({
   providedIn: 'root'
@@ -17,13 +18,16 @@ export class PolkadotService {
   ) { }
 
   wsProvider = new WsProvider(this.appSettings.wsProviderEndpoint);
+  api = ApiPromise.create({ provider: this.wsProvider });
+  extensions = web3Enable('humidefi');
+  accounts = web3Accounts();
 
+  // Get all accounts from Polkadot Extensions
   async getWeb3Accounts(): Promise<WalletAccountsModel[]> {
     let walletAccounts: WalletAccountsModel[] = [];
-    const extensions = await web3Enable('humidefi');
 
-    if (extensions.length > 0) {
-      const accounts = await web3Accounts();
+    if ((await this.extensions).length > 0) {
+      const accounts = await this.accounts;
       if (accounts.length > 0) {
         for (let i = 0; i < accounts.length; i++) {
           walletAccounts.push({
@@ -40,6 +44,7 @@ export class PolkadotService {
     return walletAccounts;
   }
 
+  // Sign and verify transactions from Polkadot Extensions
   async signAndVerify(walletAccount: WalletAccountsModel): Promise<boolean> {
     const injector = await web3FromSource(String(walletAccount.metaSource));
     const signRaw = injector?.signer?.signRaw;
@@ -65,6 +70,7 @@ export class PolkadotService {
     return false;
   }
 
+  // Generate key pairs for public key from Polkadot Keyrings
   async generateKeypair(address: string): Promise<string> {
     const keyring = new Keyring({ type: 'sr25519', ss58Format: 0 });
     const hexPair = keyring.addFromAddress(address);
@@ -72,36 +78,32 @@ export class PolkadotService {
     return hexPair.address;
   }
 
+  // Get Balances from Polkadot Query System Accounts
   async getBalance(keypair: string): Promise<string> {
-    const api = await ApiPromise.create({ provider: this.wsProvider });
+    const api = await this.api;
     const { nonce, data: balance } = await api.query.system.account(keypair);
 
     return (parseFloat(balance.free.toString()) / 1000000000000).toString();
   }
 
-  async transfer(data: TransferModel): Promise<void> {
-    const api = await ApiPromise.create({ provider: this.wsProvider });
+  // Transfer Balances from Polkadot Transactions
+  async transfer(data: TransferModel): Promise<Hash> {
+    const api = await this.api;
 
-    const extensions = await web3Enable('humidefi');
-    const accounts = await web3Accounts();
     const injector = await web3FromAddress(data.keypair);
-
-    let amount: number = data.amount * 1000000000000;
-
     api.setSigner(injector.signer);
-    api.tx.balances.transfer(data.recipient, amount).signAndSend(data.keypair, ({ events = [], status }) => {
-      console.log('Transaction status:', status.type);
 
-      if (status.isInBlock) {
-        console.log('Included at block hash', status.asInBlock.toHex());
-        console.log('Events:');
+    // let amount: number = data.amount * 1000000000000;
+    let amount: number = data.amount;
 
-        events.forEach(({ event: { data, method, section }, phase }) => {
-          console.log('\t', phase.toString(), `: ${section}.${method}`, data.toString());
-        });
-      } else if (status.isFinalized) {
-        console.log('Finalized block hash', status.asFinalized.toHex());
-      }
-    });
+    return await api.tx.balances.transfer(data.recipient, amount).signAndSend(data.keypair);
+  }
+
+  // Retrieve chain tokens from Polkadot Registry (Chain Information)
+  async getChainTokens(keypair: string): Promise<string[]> {
+    const api = await this.api;
+    const tokens = api.registry.chainTokens;
+
+    return tokens;
   }
 }

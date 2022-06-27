@@ -1,49 +1,89 @@
 <div class="dapp-container">
     <div class="grid">
-        <div class="col-12 md:col-6 lg:col-4 px-2">
-            <div class="card border-round-3xl" style="box-shadow: 3px 2px 5px 0px #999999 !important;">
+        <div class="col-12 md:col-12 lg:col-12 px-2 pb-4 pt-2">
+            <span class="text-gray-600">
+                Your entire <img src="./../../../../assets/img/home/humedifi_logo.png" width="80"
+                    style="margin: 2px 3px -4px 3px;" /> portfolio in one glance. The entire value of your portfolio can
+                be in Philippine
+                Pesos (PHP) or US Dollar (USD).
+            </span>
+        </div>
+    </div>
+    <div class="grid pt-2">
+        <div class="col-12 md:col-12 lg:col-5">
+            <div class="p-inputgroup">
+                <span class="p-inputgroup-addon">
+                    Currency:
+                </span>
+                <p-dropdown [options]="currencies" [(ngModel)]="selectedCurrency" placeholder="Select a Token"
+                    class="p-inputtext-lg" optionLabel="name" [style]="{'width':'100%'}"
+                    (onChange)="currencyOnChange($event)">
+                    <ng-template pTemplate="selectedItem">
+                        <div *ngIf="selectedCurrency">
+                            <img *ngIf="selectedCurrency.name == 'PHP'" src="./../../../../assets/img/currency/PHP.png"
+                                width="27" style="float: left; margin-top: 7px;" />
+                            <img *ngIf="selectedCurrency.name == 'USD'" src="./../../../../assets/img/currency/USD.png"
+                                width="27" style="float: left; margin-top: 7px;" />
+                            &nbsp;
+                            <span class="text-xl">
+                                {{selectedCurrency.name}}
+                            </span>
+                        </div>
+                    </ng-template>
+                    <ng-template let-currency pTemplate="item">
+                        <img *ngIf="currency.name == 'PHP'" src="./../../../../assets/img/currency/PHP.png" width="27"
+                            style="float: left; margin-top: 7px;" />
+                        <img *ngIf="currency.name == 'USD'" src="./../../../../assets/img/currency/USD.png" width="27"
+                            style="float: left; margin-top: 7px;" />
+                        &nbsp;
+                        <span class="text-xl">
+                            {{currency.name}}
+                        </span>
+                    </ng-template>
+                </p-dropdown>
+            </div>
+        </div>
+        <div class="col-12 md:col-12 lg:col-7">
+        </div>
+    </div>
+    <div class="grid pt-2">
+        <div class="col-12 md:col-12 lg:col-5 px-2">
+            <div class="card border-round-2xl" style="box-shadow: 3px 2px 5px 0px #999999 !important;">
                 <div class="flex-wrap card-container overflow-hidden w-full">
-                    <div class="bg-pink-900  px-6 pt-6 pb-4 text-white border-round-3xl" style="min-height: 180px;">
-                        <div class="text-base font-medium text-white mb-2">
-                            Total / Currency: PHP
+                    <div class="px-5 pt-7 pb-4 text-white border-round-2xl"
+                        style="min-height: 230px; background: linear-gradient(90deg,rgba(244,60,113,1) 0%,rgba(240,73,65,1) 100%);">
+                        <div style="float: left;" class="circle mr-3">
+                            <i class="pi pi-briefcase m-2" style="font-size: 2rem"></i>
+                        </div>
+                        <div class="text-xl font-medium text-white mt-2">
+                            Total
                         </div>
                         <div class="text-3xl font-medium text-white white-space-normal">
-                            <span class="font-bold">PHP</span> {{balance}}
+                            <span class="font-bold">{{selectedCurrency.name}} {{total}}</span>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
-        <div class="col-12 md:col-6 lg:col-8 px-2">
-            <div class="card border-round-3xl" style="box-shadow: 3px 2px 5px 0px #dfdfdf !important;">
+        <div class="col-12 md:col-12 lg:col-7 px-2">
+            <div class="card border-round-2xl" style="box-shadow: 3px 2px 5px 0px #dfdfdf !important;">
                 <div class="flex-wrap card-container overflow-hidden w-full">
-                    <div class="bg-white px-6 pt-6 pb-4 border-round-3xl" style="min-height: 180px;">
-                        <div class="text-xl font-medium text-pink-700">
-                            {{walletMetaName}}
-                        </div>
-                        <div class="text-base font-medium text-gray-700 white-space-normal">
-                            {{walletKeyPair}}
-                        </div>
-                        <div class="mt-3">
-                            <button pButton type="button" label="Change"
-                                class="p-button-text p-button-warning p-button-sm" icon="pi pi-pencil"></button>
-                            <button pButton type="button" label="Copy"
-                                class="p-button-text p-button-warning p-button-sm" icon="pi pi-copy"></button>
-                        </div>
+                    <div class="bg-white px-5 pt-7 pb-4 border-round-2xl" style="min-height: 230px;">
+                        <app-wallet-info (changeAccount)="changeAccount()"></app-wallet-info>
                     </div>
                 </div>
             </div>
         </div>
     </div>
     <div class="grid pt-2">
-        <div class="col-12 md:col-6 lg:col-12 px-2">
-            <div class="card border-round-3xl" style="box-shadow: 3px 2px 5px 0px #dfdfdf !important;">
+        <div class="col-12 md:col-12 lg:col-12 px-2">
+            <div class="card border-round-2xl" style="box-shadow: 3px 2px 5px 0px #dfdfdf !important;">
                 <div class="flex-wrap card-container overflow-hidden w-full">
-                    <div class="bg-white px-6 pt-4 pb-4 border-round-3xl" style="min-height: 180px;">
-                        <div class="text-xl font-medium text-pink-700 mb-3">
-                            Holdings / Currency: <span class="font-bold">PHP</span>
+                    <div class="bg-white px-6 pt-4 pb-4 border-round-2xl" style="min-height: 180px;">
+                        <div class="text-xl font-medium mb-3" style="color: #ef4943">
+                            Holdings
                         </div>
-                        <p-table responsiveLayout="scroll" [value]="holdings">
+                        <p-table responsiveLayout="stack" [value]="holdings">
                             <ng-template pTemplate="header">
                                 <tr>
                                     <th>Ticker</th>
@@ -55,11 +95,40 @@
                             </ng-template>
                             <ng-template pTemplate="body" let-holding>
                                 <tr>
-                                    <td>{{holding.ticker}}</td>
-                                    <td>{{holding.name}}</td>
-                                    <td>{{holding.price}}</td>
-                                    <td>{{holding.balance}}</td>
-                                    <td>{{holding.value}}</td>
+                                    <td>
+                                        <div *ngIf="holding.ticker == 'UMI'">
+                                            <img src="./../../../../assets/img/tokens/UMI.png" width="27"
+                                                style="float: left;" />
+                                        </div>
+                                        <div *ngIf="holding.ticker == 'PHPU'">
+                                            <img src="./../../../../assets/img/tokens/PHPU.png" width="27"
+                                                style="float: left;" />
+                                        </div>
+                                        &nbsp;
+                                        <span class="text-xl font-bold text-pink-700">
+                                            {{holding.ticker}}
+                                        </span>
+                                    </td>
+                                    <td>
+                                        <span class="text-base">
+                                            {{holding.name}}
+                                        </span>
+                                    </td>
+                                    <td>
+                                        <span class="text-base font-bold text-pink-700">
+                                            {{holding.price}}
+                                        </span>
+                                    </td>
+                                    <td>
+                                        <span class="text-base font-bold text-pink-700">
+                                            {{decimalPipe.transform(holding.balance, "1.2-2") || "0"}}
+                                        </span>
+                                    </td>
+                                    <td>
+                                        <span class="text-base font-bold text-pink-700">
+                                            {{decimalPipe.transform(holding.value, "1.2-2") || "0"}}
+                                        </span>
+                                    </td>
                                 </tr>
                             </ng-template>
                         </p-table>
@@ -68,52 +137,9 @@
             </div>
         </div>
     </div>
-    <div class="grid pt-2">
-        <div class="col-12 md:col-6 lg:col-12 px-2">
-            <div class="card border-round-3xl" style="box-shadow: 3px 2px 5px 0px #dfdfdf !important;">
-                <div class="flex-wrap card-container overflow-hidden w-full">
-                    <div class="bg-white px-6 pt-4 pb-4 border-round-3xl" style="min-height: 180px;">
-                        <div class="text-xl font-medium text-pink-700 mb-3 font-bold">
-                            Stake your UMI for 12 Months
-                        </div>
-                        <div class="grid mt-2 px-4">
-                            <div class="col-12 md:col-6 lg:col-4 px-1">
-                                <div>
-                                    Next Reward
-                                </div>
-                                <br />
-                                <div class="text-2xl">
-                                    0.020947 <span class="font-bold">UMI</span>
-                                </div>
-                            </div>
-                            <div class="col-12 md:col-6 lg:col-4 px-1">
-                                <div>
-                                    Your Rewards
-                                </div>
-                                <br />
-                                <div class="text-2xl">
-                                    0 <span class="font-bold">UMI</span>
-                                </div>
-                            </div>
-                            <div class="col-12 md:col-6 lg:col-4 px-1">
-                                <div>
-                                    Total Balance
-                                </div>
-                                <br />
-                                <div class="text-2xl">
-                                    0 <span class="font-bold">UMI</span>
-                                </div>
-                            </div>
-                        </div>
-                        <br />
-                        <div class="mt-2 px-3">
-                            <button pButton type="button" label="Stake"
-                                class="p-button-warning p-button-sm mr-2"></button>
-                            <button pButton type="button" label="Claim" class="p-button-success p-button-sm"></button>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
 </div>
+
+<p-dialog [breakpoints]="{'960px': '75vw', '640px': '100vw'}" [style]="{width: '40vw'}"
+    [(visible)]="displayChangeAccountDialog" [modal]="true" [maximizable]="true">
+    <app-wallet [isLogin]="true"></app-wallet>
+</p-dialog>

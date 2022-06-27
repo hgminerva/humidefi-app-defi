@@ -1,0 +1,23 @@
+<div class="grid">
+    <div class="col-12 md:col-10 lg:col-12 px-2">
+        <iframe width="90" height="90" [scrolling]="'no'" [frameBorder]="0" [src]="iframeSrc | safe" allowfullscreen
+            style="float: left; margin-right: 15px;"></iframe>
+        <div class="w-full mt-2">
+            <div class="text-2xl font-bold" style="color: #ef4943">
+                {{walletMetaName}}
+            </div>
+            <div class="text-xl font-medium text-gray-700 white-space-normal">
+                {{walletKeyPair.substring(0, 5)}}...{{walletKeyPair.substring(walletKeyPair.length, walletKeyPair.length
+                - 5)}}
+            </div>
+        </div>
+    </div>
+</div>
+<div>
+    <button pButton type="button" label="Change" class="p-button-text p-button-secondary p-button-sm"
+        icon="pi pi-pencil" (click)="change()"></button>
+    <button pButton type="button" label="Copy" class="p-button-text p-button-secondary p-button-sm" icon="pi pi-copy"
+        (click)="copy()"></button>
+    <button pButton type="button" label="Disconnect" class="p-button-text p-button-danger p-button-sm"
+        icon="pi pi-sign-out" style="float: right;" (click)="disconnect()"></button>
+</div>

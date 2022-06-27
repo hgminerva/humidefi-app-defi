@@ -2,6 +2,7 @@ import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 
 import { LayoutRoutingModule } from './layout-routing.module';
+import { WalletModule } from './../wallet/wallet.module';
 
 import { MenuModule } from 'primeng/menu';
 import { ButtonModule } from 'primeng/button';
@@ -15,17 +16,22 @@ import { LayoutComponent } from './layout.component';
 import { HeaderComponent } from './header/header.component';
 import { FooterComponent } from './footer/footer.component';
 import { SidebarComponent } from './sidebar/sidebar.component';
+import { TopbarComponent } from './topbar/topbar.component';
+import { MobilebarComponent } from './mobilebar/mobilebar.component';
 
 @NgModule({
   declarations: [
     LayoutComponent,
     HeaderComponent,
     FooterComponent,
-    SidebarComponent
+    SidebarComponent,
+    TopbarComponent,
+    MobilebarComponent
   ],
   imports: [
     CommonModule,
     LayoutRoutingModule,
+    WalletModule,
     MenuModule,
     ButtonModule,
     BreadcrumbModule,
@@ -37,7 +43,9 @@ import { SidebarComponent } from './sidebar/sidebar.component';
   exports: [
     HeaderComponent,
     FooterComponent,
-    SidebarComponent
+    SidebarComponent,
+    TopbarComponent,
+    MobilebarComponent
   ]
 })
 export class LayoutModule { }

@@ -14,14 +14,13 @@ export class SidebarComponent implements OnInit {
 
   ngOnInit(): void {
     this.menuItems = [
-      { label: 'Dashboard', routerLink: '/dapp/dashboard' },
-      { label: 'Portfolio', routerLink: '/dapp/portfolio' },
-      { label: 'Load', routerLink: '/dapp/load-bridge' },
-      { label: 'Purchase', routerLink: '/dapp/load-purchase' },
-      { label: 'Swap', routerLink: '/dapp/swap' },
-      { label: 'Stake', routerLink: '/dapp/stake' },
-      { label: 'Transfer', routerLink: '/dapp/transfer' },
-      { label: 'Withdraw', routerLink: '/dapp/withdraw' }
+      // { label: 'Home', routerLink: '/dapp/dashboard', icon: 'pi pi-home' },
+      { label: 'Portfolio', routerLink: '/dapp/portfolio', icon: 'pi pi-briefcase' },
+      { label: 'Load', routerLink: '/dapp/load', icon: 'pi pi-mobile' },
+      { label: 'Withdraw', routerLink: '/dapp/withdraw', icon: 'pi pi-credit-card' },
+      { label: 'Swap', routerLink: '/dapp/swap', icon: 'pi pi-arrows-h' },
+      { label: 'Stake', routerLink: '/dapp/stake', icon: 'pi pi-box' },
+      { label: 'Pay', routerLink: '/dapp/pay', icon: 'pi pi-wallet' }
     ];
   }
 }

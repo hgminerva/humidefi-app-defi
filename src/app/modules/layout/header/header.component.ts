@@ -11,57 +11,66 @@ import { PolkadotService } from 'src/app/services/polkadot/polkadot.service';
 })
 export class HeaderComponent implements OnInit {
 
+  iconName: string = "";
   titleName: string = "";
+  home!: MenuItem;
   menuItems: MenuItem[] = [];
-  loadingRoute: boolean = true;
 
   constructor(
     private router: Router,
     private polkadotService: PolkadotService,
   ) {
     this.router.events.subscribe((event: any) => {
-      if (event instanceof NavigationStart) {
-        this.loadingRoute = true;
-      }
-
+      if (event instanceof NavigationStart) { }
       if (event instanceof NavigationEnd) {
         switch (event.url) {
+          // case '/dapp':
+          //   this.iconName = "pi pi-home";
+          //   this.titleName = "Home";
+          //   this.menuItems = [
+          //     { label: 'Home' }
+          //   ];
+          //   break;
+          // case '/dapp/dashboard':
+          //   this.iconName = "pi pi-home";
+          //   this.titleName = "Home";
+
+          //   this.menuItems = [
+          //     { label: 'Home' }
+          //   ];
+          //   break;
           case '/dapp':
-            this.titleName = "Home";
-
-            this.menuItems = [
-              { label: 'Home' }
-            ];
-            break;
-          case '/dapp/dashboard':
-            this.titleName = "Home";
-
+            this.iconName = "pi pi-briefcase";
+            this.titleName = "Portfolio";
             this.menuItems = [
               { label: 'Home' }
             ];
             break;
           case '/dapp/portfolio':
+            this.iconName = "pi pi-briefcase";
             this.titleName = "Portfolio";
             this.menuItems = [
-              { label: 'Home' },
-              { label: 'Portfolio' }
+              { label: 'Home' }
             ];
             break;
-          case '/dapp/load-bridge':
-            this.titleName = "Bridge";
+          case '/dapp/load':
+            this.iconName = "pi pi-mobile";
+            this.titleName = "Load";
             this.menuItems = [
               { label: 'Home' },
-              { label: 'Bridge' }
+              { label: 'Load' }
             ];
             break;
-          case '/dapp/load-purchase':
-            this.titleName = "Purchase";
+          case '/dapp/withdraw':
+            this.iconName = "pi pi-credit-card";
+            this.titleName = "Withdraw";
             this.menuItems = [
               { label: 'Home' },
-              { label: 'Purchase' }
+              { label: 'Withdraw' }
             ];
             break;
           case '/dapp/swap':
+            this.iconName = "pi pi-arrows-h";
             this.titleName = "Swap";
             this.menuItems = [
               { label: 'Home' },
@@ -69,40 +78,29 @@ export class HeaderComponent implements OnInit {
             ];
             break;
           case '/dapp/stake':
+            this.iconName = "pi pi-box";
             this.titleName = "Stake";
             this.menuItems = [
               { label: 'Home' },
               { label: 'Stake' }
             ];
             break;
-          case '/dapp/transfer':
-            this.titleName = "Transfer";
+          case '/dapp/pay':
+            this.iconName = "pi pi-wallet";
+            this.titleName = "Pay";
             this.menuItems = [
               { label: 'Home' },
-              { label: 'Transfer' }
-            ];
-            break;
-          case '/dapp/withdraw':
-            this.titleName = "Withdraw";
-            this.menuItems = [
-              { label: 'Home' },
-              { label: 'Withdraw' }
+              { label: 'Pay' }
             ];
             break;
           default:
             break;
         }
 
-        setTimeout(() => {
-          this.loadingRoute = false;
-        }, 500);
+        this.home = { icon: 'pi pi-home', routerLink: '/dapp' };
       }
 
-      if (event instanceof NavigationError) {
-        setTimeout(() => {
-          this.loadingRoute = false;
-        }, 500);
-      }
+      if (event instanceof NavigationError) { }
     });
   }
 
