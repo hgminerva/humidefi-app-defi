@@ -4,6 +4,7 @@ import { MessageService } from 'primeng/api';
 import { AppSettings } from 'src/app/app-settings';
 import { TransferModel } from 'src/app/models/polkadot.model';
 import { PolkadotService } from 'src/app/services/polkadot/polkadot.service';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-pay',
@@ -21,6 +22,12 @@ export class PayComponent implements OnInit {
   showProcessDialog: boolean = false;
 
   tokens: string[] = [];
+  isLoading: boolean = true;
+
+  transferProcessMessage: string = "";
+  isTransferProcessed: boolean = false;
+  isTransferError: boolean = false;
+  subscription: Subscription = new Subscription;
 
   constructor(
     private polkadotService: PolkadotService,
@@ -51,6 +58,8 @@ export class PayComponent implements OnInit {
 
     this.destinationTokens = (await tokens);
     this.selectedDestinationToken = this.destinationTokens[0];
+
+    this.isLoading = false;
   }
 
   async transfer(): Promise<void> {
@@ -61,22 +70,56 @@ export class PayComponent implements OnInit {
     } else if (this.transferData.recipient == '' || null) {
       this.messageService.add({ key: 'error-payment', severity: 'error', summary: 'Error', detail: 'Please enter a valid address' });
     } else {
-      this.isProcessing = true;
       this.showProcessDialog = true;
 
+      this.isProcessing = true;
+      this.transferProcessMessage = "Processing..."
+      this.isTransferProcessed = false;
+      this.isTransferError = false;
+
       this.transferData.keypair = this.walletKeyPair;
-      let isTransferProcessing: Promise<Hash> = this.polkadotService.transfer(this.transferData);
+      this.polkadotService.transfer(this.transferData);
 
-      if ((await isTransferProcessing).toString() != "") {
-        this.isProcessing = false;
-        this.showProcessDialog = false;
+      let transferEventMessages = this.polkadotService.transferEventMessages.asObservable();
+      this.subscription = transferEventMessages.subscribe(
+        message => {
+          if (message != null) {
+            if (message.hasError == true) {
+              this.isProcessing = false;
+              this.transferProcessMessage = message.message;
+              this.isTransferProcessed = false;
+              this.isTransferError = true;
 
-        this.transferData.keypair = "";
-        this.transferData.recipient = "";
-        this.transferData.amount = 0;
+              this.subscription.unsubscribe();
+            } else {
+              if (message.isFinalized != true) {
+                this.transferProcessMessage = message.message;
+              } else {
+                this.isProcessing = false;
+                this.transferProcessMessage = "Transfer Complete!"
+                this.isTransferProcessed = true;
+                this.isTransferError = false;
 
-        this.getBalance();
-      }
+                this.transferData.keypair = "";
+                this.transferData.recipient = "";
+                this.transferData.amount = 0;
+                this.sourceQuantity = 0;
+                this.destinationQuantity = 0;
+
+                this.subscription.unsubscribe();
+                this.getBalance();
+              }
+            }
+          } else {
+            this.isProcessing = false;
+            this.transferProcessMessage = "Somethings went wrong";
+            this.isTransferProcessed = false;
+            this.isTransferError = true;
+
+            this.subscription.unsubscribe();
+          }
+        }
+      );
     }
   }
 

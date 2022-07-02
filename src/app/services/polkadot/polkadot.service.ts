@@ -8,6 +8,7 @@ import { ApiPromise, WsProvider } from '@polkadot/api';
 import { AppSettings } from 'src/app/app-settings';
 import { Hash } from '@polkadot/types/interfaces';
 import { BN, formatBalance } from '@polkadot/util';
+import { Observable, Subject } from 'rxjs';
 
 @Injectable({
   providedIn: 'root'
@@ -29,6 +30,8 @@ export class PolkadotService {
   );
   extensions = web3Enable('humidefi');
   accounts = web3Accounts();
+
+  transferEventMessages = new Subject<any>();
 
   // Get all accounts from Polkadot Extensions
   async getWeb3Accounts(): Promise<WalletAccountsModel[]> {
@@ -100,15 +103,46 @@ export class PolkadotService {
   }
 
   // Transfer Balances from Polkadot Transactions
-  async transfer(data: TransferModel): Promise<Hash> {
+  async transfer(data: TransferModel): Promise<void> {
     const api = await this.api;
     const chainDecimals = api.registry.chainDecimals[0];
+    const { nonce } = await api.query.system.account(data.keypair);
     const injector = await web3FromAddress(data.keypair);
     api.setSigner(injector.signer);
 
     let amount: bigint = BigInt(data.amount * (10 ** chainDecimals));
+    let message = "";
 
-    return await api.tx.balances.transfer(data.recipient, amount).signAndSend(data.keypair);
+    api.tx.balances.transfer(data.recipient, amount).signAndSend(
+      data.keypair, { nonce }, ({ events = [], status }) => {
+        message = 'Transaction status: ' + status.type;
+        this.transferEventMessages.next({ message: message, isFinalized: false, hasError: false });
+
+        if (status.isInBlock) {
+          message = 'Included at block hash ' + status.asInBlock.toHex();
+          this.transferEventMessages.next({ message: message, isFinalized: false, hasError: false });
+
+          message = 'Finalizing...';
+          this.transferEventMessages.next({ message: message, isFinalized: false, hasError: false });
+
+          // console.log('Events:');
+
+          // events.forEach(({ event: { data, method, section }, phase }) => {
+          //   console.log('\t', phase.toString(), `: ${section}.${method}`, data.toString());
+          // });
+        }
+
+        if (status.isFinalized) {
+          message = 'Finalized block hash ' + status.asFinalized.toHex();
+          this.transferEventMessages.next({ message: message, isFinalized: true, hasError: false });
+        }
+      }
+    ).catch(error => {
+      console.log(error);
+
+      message = 'Somethings went wrong';
+      this.transferEventMessages.next({ message: message, isFinalized: false, hasError: true });
+    });
   }
 
   // Retrieve chain tokens from Polkadot Registry (Chain Information)
