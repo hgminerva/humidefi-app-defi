@@ -7,6 +7,7 @@ import { TransferModel, WalletAccountsModel } from 'src/app/models/polkadot.mode
 import { ApiPromise, WsProvider } from '@polkadot/api';
 import { AppSettings } from 'src/app/app-settings';
 import { Hash } from '@polkadot/types/interfaces';
+import { BN, formatBalance } from '@polkadot/util';
 
 @Injectable({
   providedIn: 'root'
@@ -18,7 +19,14 @@ export class PolkadotService {
   ) { }
 
   wsProvider = new WsProvider(this.appSettings.wsProviderEndpoint);
-  api = ApiPromise.create({ provider: this.wsProvider });
+  api = ApiPromise.create(
+    {
+      provider: this.wsProvider,
+      types: {
+        Balance: 'u128',
+      },
+    }
+  );
   extensions = web3Enable('humidefi');
   accounts = web3Accounts();
 
@@ -82,19 +90,23 @@ export class PolkadotService {
   async getBalance(keypair: string): Promise<string> {
     const api = await this.api;
     const { nonce, data: balance } = await api.query.system.account(keypair);
+    const chainDecimals = api.registry.chainDecimals[0];
+    formatBalance.setDefaults({ decimals: chainDecimals, unit: 'UMI' });
+    formatBalance.getDefaults();
 
-    return (parseFloat(balance.free.toString()) / 1000000000000).toString();
+    const free = formatBalance(balance.free, { forceUnit: "UMI", withUnit: false }, chainDecimals);
+
+    return parseFloat(free.replace(',', '')).toString();
   }
 
   // Transfer Balances from Polkadot Transactions
   async transfer(data: TransferModel): Promise<Hash> {
     const api = await this.api;
-
+    const chainDecimals = api.registry.chainDecimals[0];
     const injector = await web3FromAddress(data.keypair);
     api.setSigner(injector.signer);
 
-    // let amount: number = data.amount * 1000000000000;
-    let amount: number = data.amount;
+    let amount: bigint = (BigInt(data.amount * (10 ** chainDecimals)));
 
     return await api.tx.balances.transfer(data.recipient, amount).signAndSend(data.keypair);
   }
