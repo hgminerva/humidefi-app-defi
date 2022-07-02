@@ -17,6 +17,7 @@ import { TabViewModule } from 'primeng/tabview';
 import { ToastModule } from 'primeng/toast';
 import { MessagesModule } from 'primeng/messages';
 import { MessageModule } from 'primeng/message';
+import { InputNumberModule } from 'primeng/inputnumber';
 
 import { DappComponent } from './dapp.component';
 import { DashboardComponent } from './dashboard/dashboard.component';
@@ -55,7 +56,8 @@ import { PayComponent } from './pay/pay.component';
     TabViewModule,
     ToastModule,
     MessagesModule,
-    MessageModule
+    MessageModule,
+    InputNumberModule
   ],
   providers: [
     DecimalPipe

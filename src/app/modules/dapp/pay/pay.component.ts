@@ -84,7 +84,7 @@ export class PayComponent implements OnInit {
     this.selectedDestinationToken = this.selectedSourceToken;
   }
 
-  sourceQuantityOnKeyup(event: any): void {
+  sourceQuantityOnBlur(event: any): void {
     this.transferData.amount = this.sourceQuantity;
     this.computeDestinationQuantity();
   }

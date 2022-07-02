@@ -96,7 +96,7 @@ export class PolkadotService {
 
     const free = formatBalance(balance.free, { forceUnit: "UMI", withUnit: false }, chainDecimals);
 
-    return parseFloat(free.replace(',', '')).toString();
+    return free.split(',').join('');
   }
 
   // Transfer Balances from Polkadot Transactions
@@ -106,7 +106,7 @@ export class PolkadotService {
     const injector = await web3FromAddress(data.keypair);
     api.setSigner(injector.signer);
 
-    let amount: bigint = (BigInt(data.amount * (10 ** chainDecimals)));
+    let amount: bigint = BigInt(data.amount * (10 ** chainDecimals));
 
     return await api.tx.balances.transfer(data.recipient, amount).signAndSend(data.keypair);
   }

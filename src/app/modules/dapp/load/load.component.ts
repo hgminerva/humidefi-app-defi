@@ -59,7 +59,7 @@ export class LoadComponent implements OnInit {
       let selectedToken = phpCurrency.tokensPrices.filter(d => d.token == this.gcashSelectedSourceToken)[0];
       if (selectedToken != null) {
         let phpValue = this.gcashTokenQuantity * selectedToken.price;
-        this.totalAmount = this.decimalPipe.transform(phpValue, "1.2-2") || "0";
+        this.totalAmount = this.decimalPipe.transform(phpValue, "1.5-5") || "0";
       }
     }
   }

@@ -37,7 +37,7 @@ export class PortfolioComponent implements OnInit {
     let keypair = localStorage.getItem("wallet-keypair") || "";
     let balance: Promise<string> = this.polkadotService.getBalance(keypair);
 
-    this.balance = this.decimalPipe.transform((await balance), "1.2-2") || "0";
+    this.balance = this.decimalPipe.transform((await balance), "1.5-5") || "0";
 
     this.getHoldings();
   }
@@ -77,7 +77,7 @@ export class PortfolioComponent implements OnInit {
       };
     }
 
-    this.total = this.decimalPipe.transform(total, "1.2-2") || "0";
+    this.total = this.decimalPipe.transform(total, "1.5-5") || "0";
   }
 
   currencyOnChange(event: any): void {

@@ -49,9 +49,12 @@
                             </div>
                             <div class="col-12 md:col-12 lg:col-6">
                                 Quantity
-                                <input type="number" value="0" class="p-inputtext-lg" placeholder="" pInputText
-                                    [style]="{'width':'100%'}" [(ngModel)]="sourceQuantity"
-                                    (keyup)="sourceQuantityOnKeyup($event)" />
+                                <div class="p-inputgroup">
+                                    <p-inputNumber [(ngModel)]="sourceQuantity" class="p-inputtext-lg text-right"
+                                        [style]="{'width':'100%'}" [minFractionDigits]="5"
+                                        (onBlur)="sourceQuantityOnBlur($event)">
+                                    </p-inputNumber>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -117,8 +120,11 @@
                             </div>
                             <div class="col-12 md:col-12 lg:col-6">
                                 Quantity
-                                <input type="number" value="0" class="p-inputtext-lg" placeholder="" pInputText
-                                    [style]="{'width':'100%'}" disabled [(ngModel)]="destinationQuantity" />
+                                <div class="p-inputgroup">
+                                    <p-inputNumber [(ngModel)]="destinationQuantity" class="p-inputtext-lg text-right"
+                                        [style]="{'width':'100%'}" [minFractionDigits]="5">
+                                    </p-inputNumber>
+                                </div>
                             </div>
                         </div>
                     </div>
