@@ -15,6 +15,8 @@ export class PortfolioComponent implements OnInit {
   currencies: CurrenciesModel[];
   selectedCurrency!: CurrenciesModel;
 
+  isLoading: boolean = true;
+
   constructor(
     public decimalPipe: DecimalPipe,
     private polkadotService: PolkadotService,
@@ -78,6 +80,8 @@ export class PortfolioComponent implements OnInit {
     }
 
     this.total = this.decimalPipe.transform(total, "1.5-5") || "0";
+
+    this.isLoading = false;
   }
 
   currencyOnChange(event: any): void {
