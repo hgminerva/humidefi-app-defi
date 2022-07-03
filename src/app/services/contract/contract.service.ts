@@ -1,9 +1,7 @@
 import { Injectable } from '@angular/core';
 import { AppSettings } from 'src/app/app-settings';
 import { ApiPromise, WsProvider } from '@polkadot/api';
-import { BlueprintPromise, CodePromise, ContractPromise, Abi } from '@polkadot/api-contract';
-import { assert } from '@polkadot/util';
-import { web3FromAddress } from '@polkadot/extension-dapp';
+import { ContractPromise } from '@polkadot/api-contract';
 
 @Injectable({
   providedIn: 'root'
@@ -14,6 +12,7 @@ export class ContractService {
   api = ApiPromise.create({ provider: this.wsProvider });
   metadata: any = require("./../../../assets/contracts/metadata.json");
   contractAddress: string = "5GKDEef2erKw74MWzyniHeLWaQREjnDrpANA9f1ZkurAN5gf";
+  options = { storageDepositLimit: null, gasLimit: -1 };
 
   constructor(
     private appSettings: AppSettings
@@ -45,53 +44,42 @@ export class ContractService {
 
   async approve(spenderAccountId: string, value: number): Promise<string> {
     const contract = await this.initContract();
-    const options = { storageDepositLimit: null, gasLimit: -1 };
-    const approve = await contract.query["approve"](this.contractAddress, options, spenderAccountId, value);
+    const approve = await contract.query["approve"](this.contractAddress, this.options, spenderAccountId, value);
 
     return String(approve.output);
   }
 
   async mint(mintValue: number): Promise<string> {
     const contract = await this.initContract();
-    const options = { storageDepositLimit: null, gasLimit: -1 };
-
-    const mint = await contract.query["mint"](this.contractAddress, options, mintValue);
+    const mint = await contract.query["mint"](this.contractAddress, this.options, mintValue);
 
     return String(mint.output);
   }
 
   async transfer(toAccountId: string, value: number): Promise<string> {
     const contract = await this.initContract();
-    const options = { storageDepositLimit: null, gasLimit: -1 };
-
-    const transfer = await contract.query["transfer"](this.contractAddress, options, toAccountId, value);
+    const transfer = await contract.query["transfer"](this.contractAddress, this.options, toAccountId, value);
 
     return String(transfer.output);
   }
 
   async transferFrom(fromAccountId: string, toAccountId: string, value: number): Promise<string> {
     const contract = await this.initContract();
-    const options = { storageDepositLimit: null, gasLimit: -1 };
-
-    const transferFrom = await contract.query["transferFrom"](this.contractAddress, options, fromAccountId, toAccountId, value);
+    const transferFrom = await contract.query["transferFrom"](this.contractAddress, this.options, fromAccountId, toAccountId, value);
 
     return String(transferFrom.output);
   }
 
   async allowance(ownerAccountId: string, spenderAccountId: string, value: number): Promise<string> {
     const contract = await this.initContract();
-    const options = { storageDepositLimit: null, gasLimit: -1 };
-
-    const allowance = await contract.query["allowance"](this.contractAddress, options, ownerAccountId, spenderAccountId, value);
+    const allowance = await contract.query["allowance"](this.contractAddress, this.options, ownerAccountId, spenderAccountId, value);
 
     return String(allowance.output);
   }
 
   async balanceOf(ownerAccountId: string): Promise<string> {
     const contract = await this.initContract();
-    const options = { storageDepositLimit: null, gasLimit: -1 };
-
-    const balanceOf = await contract.query["balanceOf"](this.contractAddress, options, ownerAccountId);
+    const balanceOf = await contract.query["balanceOf"](this.contractAddress, this.options, ownerAccountId);
 
     return String(balanceOf.output);
   }
