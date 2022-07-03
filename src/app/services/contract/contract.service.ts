@@ -19,9 +19,15 @@ export class ContractService {
     private appSettings: AppSettings
   ) { }
 
-  async getProperties(): Promise<{ decimals: number, name: string | undefined, symbol: string | undefined, totalSupply: number }> {
+  async initContract(): Promise<ContractPromise> {
     const api = await this.api;
     const contract = new ContractPromise(api, this.metadata, this.contractAddress);
+
+    return contract;
+  }
+
+  async getProperties(): Promise<{ decimals: number, name: string | undefined, symbol: string | undefined, totalSupply: number }> {
+    const contract = await this.initContract();
     const options = { storageDepositLimit: null, gasLimit: -1 };
 
     const propDecimals = await contract.query["decimals"](this.contractAddress, options);
@@ -38,8 +44,7 @@ export class ContractService {
   }
 
   async approve(spenderAccountId: string, value: number): Promise<string> {
-    const api = await this.api;
-    const contract = new ContractPromise(api, this.metadata, this.contractAddress);
+    const contract = await this.initContract();
     const options = { storageDepositLimit: null, gasLimit: -1 };
     const approve = await contract.query["approve"](this.contractAddress, options, spenderAccountId, value);
 
@@ -47,45 +52,45 @@ export class ContractService {
   }
 
   async mint(mintValue: number): Promise<string> {
-    const api = await this.api;
-    const contract = new ContractPromise(api, this.metadata, this.contractAddress);
+    const contract = await this.initContract();
     const options = { storageDepositLimit: null, gasLimit: -1 };
+
     const mint = await contract.query["mint"](this.contractAddress, options, mintValue);
 
     return String(mint.output);
   }
 
   async transfer(toAccountId: string, value: number): Promise<string> {
-    const api = await this.api;
-    const contract = new ContractPromise(api, this.metadata, this.contractAddress);
+    const contract = await this.initContract();
     const options = { storageDepositLimit: null, gasLimit: -1 };
+
     const transfer = await contract.query["transfer"](this.contractAddress, options, toAccountId, value);
 
     return String(transfer.output);
   }
 
   async transferFrom(fromAccountId: string, toAccountId: string, value: number): Promise<string> {
-    const api = await this.api;
-    const contract = new ContractPromise(api, this.metadata, this.contractAddress);
+    const contract = await this.initContract();
     const options = { storageDepositLimit: null, gasLimit: -1 };
+
     const transferFrom = await contract.query["transferFrom"](this.contractAddress, options, fromAccountId, toAccountId, value);
 
     return String(transferFrom.output);
   }
 
   async allowance(ownerAccountId: string, spenderAccountId: string, value: number): Promise<string> {
-    const api = await this.api;
-    const contract = new ContractPromise(api, this.metadata, this.contractAddress);
+    const contract = await this.initContract();
     const options = { storageDepositLimit: null, gasLimit: -1 };
+
     const allowance = await contract.query["allowance"](this.contractAddress, options, ownerAccountId, spenderAccountId, value);
 
     return String(allowance.output);
   }
 
   async balanceOf(ownerAccountId: string): Promise<string> {
-    const api = await this.api;
-    const contract = new ContractPromise(api, this.metadata, this.contractAddress);
+    const contract = await this.initContract();
     const options = { storageDepositLimit: null, gasLimit: -1 };
+
     const balanceOf = await contract.query["balanceOf"](this.contractAddress, options, ownerAccountId);
 
     return String(balanceOf.output);
