@@ -2,6 +2,7 @@ import { DecimalPipe } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { CurrenciesModel } from 'src/app/models/currencies.model';
 import { HoldingsModel } from 'src/app/models/holdings.model';
+import { ContractService } from 'src/app/services/contract/contract.service';
 import { PolkadotService } from 'src/app/services/polkadot/polkadot.service';
 import { AppSettings } from './../../../app-settings';
 
@@ -20,6 +21,7 @@ export class PortfolioComponent implements OnInit {
   constructor(
     public decimalPipe: DecimalPipe,
     private polkadotService: PolkadotService,
+    private contractService: ContractService,
     private appSettings: AppSettings
   ) {
     this.currencies = [
@@ -88,7 +90,16 @@ export class PortfolioComponent implements OnInit {
     this.getHoldings();
   }
 
+  async getProperties(): Promise<void> {
+    let keypair = localStorage.getItem("wallet-keypair") || "";
+    let object = this.contractService.getProperties();
+    console.log((await object).name);
+
+    this.getHoldings();
+  }
+
   ngOnInit(): void {
     this.getBalance();
+    this.getProperties();
   }
 }

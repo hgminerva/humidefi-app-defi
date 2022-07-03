@@ -20,20 +20,12 @@ export class PolkadotService {
   ) { }
 
   wsProvider = new WsProvider(this.appSettings.wsProviderEndpoint);
-  api = ApiPromise.create(
-    {
-      provider: this.wsProvider,
-      types: {
-        Balance: 'u128',
-      },
-    }
-  );
+  api = ApiPromise.create({ provider: this.wsProvider });
   extensions = web3Enable('humidefi');
   accounts = web3Accounts();
 
   transferEventMessages = new Subject<any>();
 
-  // Get all accounts from Polkadot Extensions
   async getWeb3Accounts(): Promise<WalletAccountsModel[]> {
     let walletAccounts: WalletAccountsModel[] = [];
 
@@ -55,7 +47,6 @@ export class PolkadotService {
     return walletAccounts;
   }
 
-  // Sign and verify transactions from Polkadot Extensions
   async signAndVerify(walletAccount: WalletAccountsModel): Promise<boolean> {
     const injector = await web3FromSource(String(walletAccount.metaSource));
     const signRaw = injector?.signer?.signRaw;
@@ -81,7 +72,6 @@ export class PolkadotService {
     return false;
   }
 
-  // Generate key pairs for public key from Polkadot Keyrings
   async generateKeypair(address: string): Promise<string> {
     const keyring = new Keyring({ type: 'sr25519', ss58Format: 0 });
     const hexPair = keyring.addFromAddress(address);
@@ -89,7 +79,6 @@ export class PolkadotService {
     return hexPair.address;
   }
 
-  // Get Balances from Polkadot Query System Accounts
   async getBalance(keypair: string): Promise<string> {
     const api = await this.api;
     const { nonce, data: balance } = await api.query.system.account(keypair);
@@ -102,7 +91,6 @@ export class PolkadotService {
     return free.split(',').join('');
   }
 
-  // Transfer Balances from Polkadot Transactions
   async transfer(data: TransferModel): Promise<void> {
     const api = await this.api;
     const chainDecimals = api.registry.chainDecimals[0];
@@ -145,7 +133,6 @@ export class PolkadotService {
     });
   }
 
-  // Retrieve chain tokens from Polkadot Registry (Chain Information)
   async getChainTokens(keypair: string): Promise<string[]> {
     const api = await this.api;
     const tokens = api.registry.chainTokens;
