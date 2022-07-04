@@ -5,6 +5,7 @@ import { AppSettings } from 'src/app/app-settings';
 import { TransferModel } from 'src/app/models/polkadot.model';
 import { PolkadotService } from 'src/app/services/polkadot/polkadot.service';
 import { Subscription } from 'rxjs';
+import { PhpuContractService } from 'src/app/services/phpu-contract/phpu-contract.service';
 
 @Component({
   selector: 'app-pay',
@@ -31,6 +32,7 @@ export class PayComponent implements OnInit {
 
   constructor(
     private polkadotService: PolkadotService,
+    private phpuContractService: PhpuContractService,
     private appSettings: AppSettings,
     private messageService: MessageService
   ) { }
@@ -43,21 +45,26 @@ export class PayComponent implements OnInit {
   selectedDestinationToken: string = "";
   destinationQuantity: number = 0;
 
-  async getBalance(): Promise<void> {
-    let balance: Promise<string> = this.polkadotService.getBalance(this.walletKeyPair);
-    // this.transferData.amount = parseFloat((await balance));
+  async getChainTokens(): Promise<void> {
+    let chainTokens: Promise<string[]> = this.polkadotService.getChainTokens(this.walletKeyPair);
 
-    await this.getChainTokens();
+    if ((await chainTokens).length > 0) {
+      this.sourceTokens = (await chainTokens);
+      this.selectedSourceToken = this.sourceTokens[0];
+
+      this.destinationTokens = (await chainTokens);
+      this.selectedDestinationToken = this.destinationTokens[0];
+    }
+
+    this.getPHPUContractSymbol();
   }
 
-  async getChainTokens(): Promise<void> {
-    let tokens: Promise<string[]> = this.polkadotService.getChainTokens(this.walletKeyPair);
-
-    this.sourceTokens = (await tokens);
-    this.selectedSourceToken = this.sourceTokens[0];
-
-    this.destinationTokens = (await tokens);
-    this.selectedDestinationToken = this.destinationTokens[0];
+  async getPHPUContractSymbol(): Promise<void> {
+    let prop = await this.phpuContractService.getProperties();
+    if (prop != null) {
+      let ticker = String(prop.symbol);
+      this.sourceTokens.push(ticker);
+    }
 
     this.isLoading = false;
   }
@@ -78,9 +85,18 @@ export class PayComponent implements OnInit {
       this.isTransferError = false;
 
       this.transferData.keypair = this.walletKeyPair;
-      this.polkadotService.transfer(this.transferData);
-
       let transferEventMessages = this.polkadotService.transferEventMessages.asObservable();
+
+      if (this.selectedSourceToken == 'UMI') {
+        this.polkadotService.transfer(this.transferData);
+        transferEventMessages = this.polkadotService.transferEventMessages.asObservable();
+      }
+
+      if (this.selectedSourceToken == 'PHPU') {
+        this.phpuContractService.transfer(this.transferData.keypair, this.transferData.recipient, this.transferData.amount);
+        transferEventMessages = this.phpuContractService.transferEventMessages.asObservable();
+      }
+
       this.subscription = transferEventMessages.subscribe(
         message => {
           if (message != null) {
@@ -107,7 +123,6 @@ export class PayComponent implements OnInit {
                 this.destinationQuantity = 0;
 
                 this.subscription.unsubscribe();
-                this.getBalance();
               }
             }
           } else {
@@ -125,6 +140,7 @@ export class PayComponent implements OnInit {
 
   sourceTickerOnChange(event: any): void {
     this.selectedDestinationToken = this.selectedSourceToken;
+    this.computeDestinationQuantity();
   }
 
   sourceQuantityOnBlur(event: any): void {
@@ -150,6 +166,6 @@ export class PayComponent implements OnInit {
     this.walletMetaName = localStorage.getItem("wallet-meta-name") || "";
     this.walletKeyPair = localStorage.getItem("wallet-keypair") || "";
 
-    this.getBalance();
+    this.getChainTokens();
   }
 }

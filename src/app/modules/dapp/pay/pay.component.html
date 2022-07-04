@@ -35,7 +35,11 @@
                                             [style]="{'width':'100%'}" (onChange)="sourceTickerOnChange($event)">
                                             <ng-template pTemplate="selectedItem">
                                                 <div *ngIf="selectedSourceToken">
-                                                    <img src="./../../../../assets/img/tokens/UMI.png" width="27"
+                                                    <img *ngIf="selectedSourceToken == 'UMI'"
+                                                        src="./../../../../assets/img/tokens/UMI.png" width="27"
+                                                        style="float: left;" />
+                                                    <img *ngIf="selectedSourceToken == 'PHPU'"
+                                                        src="./../../../../assets/img/tokens/PHPU.png" width="27"
                                                         style="float: left;" />
                                                     &nbsp;
                                                     <span class="text-xl">
@@ -45,7 +49,11 @@
                                             </ng-template>
                                             <ng-template let-token pTemplate="item">
                                                 <div>
-                                                    <img src="./../../../../assets/img/tokens/UMI.png" width="27"
+                                                    <img *ngIf="token == 'UMI'"
+                                                        src="./../../../../assets/img/tokens/UMI.png" width="27"
+                                                        style="float: left;" />
+                                                    <img *ngIf="token == 'PHPU'"
+                                                        src="./../../../../assets/img/tokens/PHPU.png" width="27"
                                                         style="float: left;" />
                                                     &nbsp;
                                                     <span class="text-xl">
@@ -106,7 +114,11 @@
                                             class="p-inputtext-lg" [style]="{'width':'100%'}">
                                             <ng-template pTemplate="selectedItem">
                                                 <div *ngIf="selectedDestinationToken">
-                                                    <img src="./../../../../assets/img/tokens/UMI.png" width="27"
+                                                    <img *ngIf="selectedDestinationToken == 'UMI'"
+                                                        src="./../../../../assets/img/tokens/UMI.png" width="27"
+                                                        style="float: left;" />
+                                                    <img *ngIf="selectedDestinationToken == 'PHPU'"
+                                                        src="./../../../../assets/img/tokens/PHPU.png" width="27"
                                                         style="float: left;" />
                                                     &nbsp;
                                                     <span class="text-xl">
@@ -116,7 +128,11 @@
                                             </ng-template>
                                             <ng-template let-token pTemplate="item">
                                                 <div>
-                                                    <img src="./../../../../assets/img/tokens/UMI.png" width="27"
+                                                    <img *ngIf="token == 'UMI'"
+                                                        src="./../../../../assets/img/tokens/UMI.png" width="27"
+                                                        style="float: left;" />
+                                                    <img *ngIf="token == 'PHPU'"
+                                                        src="./../../../../assets/img/tokens/PHPU.png" width="27"
                                                         style="float: left;" />
                                                     &nbsp;
                                                     <span class="text-xl">
@@ -132,7 +148,7 @@
                                     <div class="p-inputgroup">
                                         <p-inputNumber [(ngModel)]="destinationQuantity"
                                             class="p-inputtext-lg text-right" [style]="{'width':'100%'}"
-                                            [minFractionDigits]="5">
+                                            [minFractionDigits]="5" [disabled]="true">
                                         </p-inputNumber>
                                     </div>
                                 </div>
