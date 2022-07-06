@@ -115,7 +115,7 @@ export class PhpuContractService {
     const decimals = (await this.getProperties()).decimals;
     const balanceOf = await contract.query.balanceOf(keypair, options, ownerAccountId);
     const balance = parseFloat(String(balanceOf.output).split(',').join(''));
-    const amount: bigint = BigInt(balance / (10 ** decimals));
+    const amount = balance / (10 ** decimals);
 
     return String(amount).split(',').join('');
   }

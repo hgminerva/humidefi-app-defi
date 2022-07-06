@@ -55,7 +55,7 @@ export class SwapComponent implements OnInit {
   treasuryAddress: string = "5Cd3jxxrjCLfecepuxmjQ1efttT3RWx3BWp5x8gHECfoNVmo";
 
   getForex(): void {
-    this.forexService.getRates().subscribe(
+    this.forexService.getRates("USD").subscribe(
       data => {
         if (data != new ForexModel()) {
           this.forex = {

@@ -48,7 +48,7 @@ export class PayComponent implements OnInit {
   destinationQuantity: number = 0;
 
   getForex(): void {
-    this.forexService.getRates().subscribe(
+    this.forexService.getRates("USD").subscribe(
       data => {
         if (data != new ForexModel()) {
           this.forex = {

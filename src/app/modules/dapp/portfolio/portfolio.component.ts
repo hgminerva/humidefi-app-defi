@@ -45,7 +45,7 @@ export class PortfolioComponent implements OnInit {
   }
 
   getForex(): void {
-    this.forexService.getRates().subscribe(
+    this.forexService.getRates(this.selectedCurrency.name).subscribe(
       data => {
         if (data != new ForexModel()) {
           this.forex = {
@@ -81,7 +81,7 @@ export class PortfolioComponent implements OnInit {
 
       let price = 1;
       if (this.selectedCurrency.name == 'PHP') {
-        price = parseFloat((this.decimalPipe.transform(this.forex.rates.PHP, "1.5-5") || "0").replace(/,/g, ''));
+        price = parseFloat((this.decimalPipe.transform(1 / this.forex.rates.USD, "1.5-5") || "0").replace(/,/g, ''));
       }
 
       let balance = parseFloat((this.decimalPipe.transform((await chainBalance), "1.5-5") || "0").replace(/,/g, ''));
@@ -110,7 +110,7 @@ export class PortfolioComponent implements OnInit {
 
       let price = 1;
       if (this.selectedCurrency.name == 'USD') {
-        price = parseFloat((this.decimalPipe.transform(this.forex.rates.PHP, "1.5-5") || "0").replace(/,/g, ''));
+        price = parseFloat((this.decimalPipe.transform(1 / this.forex.rates.PHP, "1.5-5") || "0").replace(/,/g, ''));
       }
 
       let balance = parseFloat((this.decimalPipe.transform((await phpuContractBalance), "1.5-5") || "0").replace(/,/g, ''));

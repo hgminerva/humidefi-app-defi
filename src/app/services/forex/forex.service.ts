@@ -20,11 +20,11 @@ export class ForexService {
     })
   };
 
-  public getRates(): Observable<ForexModel> {
+  public getRates(base: string): Observable<ForexModel> {
     return new Observable<ForexModel>((observer) => {
       let forex: ForexModel = new ForexModel();
       let symbols: string = "PHP,USD";
-      let url: string = "https://api.apilayer.com/exchangerates_data/latest?symbols=" + symbols + "&base=USD&apikey=ZJreYDBdVjj4At2CL2i6svqWYsDipzna";
+      let url: string = "https://api.apilayer.com/exchangerates_data/latest?symbols=" + symbols + "&base=" + base + "&apikey=ZJreYDBdVjj4At2CL2i6svqWYsDipzna";
 
       this.httpClient.get(url, this.options).subscribe(
         response => {
