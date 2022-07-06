@@ -1,10 +1,11 @@
 import { DecimalPipe } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { CurrenciesModel } from 'src/app/models/currencies.model';
+import { ForexModel } from 'src/app/models/forex.model';
 import { HoldingsModel } from 'src/app/models/holdings.model';
+import { ForexService } from 'src/app/services/forex/forex.service';
 import { PhpuContractService } from 'src/app/services/phpu-contract/phpu-contract.service';
 import { PolkadotService } from 'src/app/services/polkadot/polkadot.service';
-import { AppSettings } from './../../../app-settings';
 
 @Component({
   selector: 'app-portfolio',
@@ -23,7 +24,7 @@ export class PortfolioComponent implements OnInit {
     public decimalPipe: DecimalPipe,
     private polkadotService: PolkadotService,
     private phpuContractService: PhpuContractService,
-    private appSettings: AppSettings
+    private forexService: ForexService
   ) {
     this.currencies = [
       { name: 'PHP' },
@@ -32,6 +33,8 @@ export class PortfolioComponent implements OnInit {
     this.selectedCurrency = this.currencies[0];
   }
 
+  forex: ForexModel = new ForexModel();
+
   holdings: HoldingsModel[] = [];
   total: string = "";
 
@@ -39,6 +42,27 @@ export class PortfolioComponent implements OnInit {
 
   changeAccount(): void {
     this.displayChangeAccountDialog = true;
+  }
+
+  getForex(): void {
+    this.forexService.getRates().subscribe(
+      data => {
+        if (data != new ForexModel()) {
+          this.forex = {
+            success: data.success,
+            timestamp: data.timestamp,
+            base: data.base,
+            date: data.date,
+            rates: {
+              PHP: data.rates.PHP,
+              USD: data.rates.USD
+            }
+          };
+        }
+
+        this.getChainTokens();
+      }
+    );
   }
 
   async getChainTokens(): Promise<void> {
@@ -55,13 +79,9 @@ export class PortfolioComponent implements OnInit {
         name = "UMI Token";
       }
 
-      let price = 0;
-      let selectedCurrency = this.appSettings.currencies.filter(d => d.currency == this.selectedCurrency.name)[0];
-      if (selectedCurrency != null) {
-        let tokenPrice = selectedCurrency.tokensPrices.filter(d => d.token == ticker)[0];
-        if (tokenPrice != null) {
-          price = tokenPrice.price;
-        }
+      let price = 1;
+      if (this.selectedCurrency.name == 'PHP') {
+        price = parseFloat((this.decimalPipe.transform(this.forex.rates.PHP, "1.5-5") || "0").replace(/,/g, ''));
       }
 
       let balance = parseFloat((this.decimalPipe.transform((await chainBalance), "1.5-5") || "0").replace(/,/g, ''));
@@ -82,19 +102,15 @@ export class PortfolioComponent implements OnInit {
     let keypair = localStorage.getItem("wallet-keypair") || "";
 
     let prop = await this.phpuContractService.getProperties();
-    let phpuContractBalance = await this.phpuContractService.balanceOf(keypair, keypair);
+    let phpuContractBalance = await this.phpuContractService.balanceOf(keypair);
 
     if (prop != null) {
       let ticker = String(prop.symbol);
       let name = String(prop.name);
 
-      let price = 0;
-      let selectedCurrency = this.appSettings.currencies.filter(d => d.currency == this.selectedCurrency.name)[0];
-      if (selectedCurrency != null) {
-        let tokenPrice = selectedCurrency.tokensPrices.filter(d => d.token == ticker)[0];
-        if (tokenPrice != null) {
-          price = tokenPrice.price;
-        }
+      let price = 1;
+      if (this.selectedCurrency.name == 'USD') {
+        price = parseFloat((this.decimalPipe.transform(this.forex.rates.PHP, "1.5-5") || "0").replace(/,/g, ''));
       }
 
       let balance = parseFloat((this.decimalPipe.transform((await phpuContractBalance), "1.5-5") || "0").replace(/,/g, ''));
@@ -130,10 +146,10 @@ export class PortfolioComponent implements OnInit {
     this.isHoldingsLoading = true;
     this.holdings = [];
 
-    this.getChainTokens();
+    this.getForex();
   }
 
   ngOnInit(): void {
-    this.getChainTokens();
+    this.getForex();
   }
 }

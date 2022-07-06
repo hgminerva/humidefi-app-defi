@@ -3,7 +3,8 @@ import { web3Accounts, web3Enable, web3FromAddress, web3FromSource } from '@polk
 import { Keyring } from '@polkadot/keyring';
 import { stringToHex, stringToU8a, u8aToHex } from '@polkadot/util';
 import { cryptoWaitReady, decodeAddress, signatureVerify } from '@polkadot/util-crypto';
-import { TransferModel, WalletAccountsModel } from 'src/app/models/polkadot.model';
+import { WalletAccountsModel } from 'src/app/models/polkadot.model';
+import { TransferModel } from 'src/app/models/transfer.model';
 import { ApiPromise, WsProvider } from '@polkadot/api';
 import { AppSettings } from 'src/app/app-settings';
 import { Hash } from '@polkadot/types/interfaces';
@@ -92,36 +93,29 @@ export class PolkadotService {
   }
 
   async transfer(data: TransferModel): Promise<void> {
+    let keypair = localStorage.getItem("wallet-keypair") || "";
+
     const api = await this.api;
     const chainDecimals = api.registry.chainDecimals[0];
-    const { nonce } = await api.query.system.account(data.keypair);
-    const injector = await web3FromAddress(data.keypair);
+
+    const injector = await web3FromAddress(keypair);
     api.setSigner(injector.signer);
 
     let amount: bigint = BigInt(data.amount * (10 ** chainDecimals));
     let message = "";
 
     api.tx.balances.transfer(data.recipient, amount).signAndSend(
-      data.keypair, { nonce }, ({ events = [], status }) => {
-        message = 'Transaction status: ' + status.type;
+      data.keypair, (result: any) => {
+        message = 'Transaction status: ' + result.status.type;
         this.transferEventMessages.next({ message: message, isFinalized: false, hasError: false });
 
-        if (status.isInBlock) {
-          message = 'Included at block hash ' + status.asInBlock.toHex();
+        if (result.status.isInBlock) {
+          message = 'Included at block hash\r\n' + result.status.asInBlock.toHex() + "\r\n\nFinalizing...";
           this.transferEventMessages.next({ message: message, isFinalized: false, hasError: false });
-
-          message = 'Finalizing...';
-          this.transferEventMessages.next({ message: message, isFinalized: false, hasError: false });
-
-          // console.log('Events:');
-
-          // events.forEach(({ event: { data, method, section }, phase }) => {
-          //   console.log('\t', phase.toString(), `: ${section}.${method}`, data.toString());
-          // });
         }
 
-        if (status.isFinalized) {
-          message = 'Finalized block hash ' + status.asFinalized.toHex();
+        if (result.status.isFinalized) {
+          message = 'Finalized block hash ' + result.status.asFinalized.toHex();
           this.transferEventMessages.next({ message: message, isFinalized: true, hasError: false });
         }
       }

@@ -111,7 +111,7 @@
                                         Ticker
                                         <p-dropdown [options]="destinationTokens" [(ngModel)]="selectedDestinationToken"
                                             (onChange)="destinationTickerOnChange($event)" placeholder="Select a Token"
-                                            class="p-inputtext-lg" [style]="{'width':'100%'}">
+                                            class="p-inputtext-lg" [style]="{'width':'100%'}" [disabled]="true">
                                             <ng-template pTemplate="selectedItem">
                                                 <div *ngIf="selectedDestinationToken">
                                                     <img *ngIf="selectedDestinationToken == 'UMI'"
@@ -162,7 +162,7 @@
     </div>
 </div>
 
-<p-dialog [(visible)]="showProcessDialog" [style]="{width: '25vw'}" [modal]="true" [closable]="false">
+<p-dialog [(visible)]="showProcessDialog" [style]="{width: '50vw'}" [modal]="true" [closable]="false">
     <div class="w-full text-center">
         <div class="w-full" *ngIf="!isTransferProcessed && !isTransferError">
             <p-progressSpinner></p-progressSpinner>
@@ -176,9 +176,12 @@
             <i class="pi pi-times" style="font-size: 5rem; font-weight: bold; color: rgb(202, 74, 74);"></i>
             <br />
         </div>
-        {{transferProcessMessage}}
-        <br /><br />
+        <div style="width: 100%; white-space: pre-wrap;">
+            {{transferProcessMessage}}
+        </div>
+        <br />
         <div class="w-full" *ngIf="isTransferProcessed || isTransferError">
+            <br />
             <button pButton type="button" label="OK" class="p-button-text p-button-danger text-white"
                 (click)="showProcessDialog = false"
                 style="background: linear-gradient(90deg,rgba(244,60,113,1) 0%,rgba(240,73,65,1) 100%);"></button>

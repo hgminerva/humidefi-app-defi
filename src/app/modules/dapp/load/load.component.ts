@@ -54,14 +54,7 @@ export class LoadComponent implements OnInit {
   }
 
   getPhpValue(): void {
-    let phpCurrency = this.appSettings.currencies.filter(d => d.currency == "PHP")[0];
-    if (phpCurrency != null) {
-      let selectedToken = phpCurrency.tokensPrices.filter(d => d.token == this.gcashSelectedSourceToken)[0];
-      if (selectedToken != null) {
-        let phpValue = this.gcashTokenQuantity * selectedToken.price;
-        this.totalAmount = this.decimalPipe.transform(phpValue, "1.5-5") || "0";
-      }
-    }
+    
   }
 
   ngOnInit(): void {

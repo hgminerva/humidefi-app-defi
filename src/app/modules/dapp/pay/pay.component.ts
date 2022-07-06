@@ -1,11 +1,13 @@
 import { Component, OnInit } from '@angular/core';
 import { Hash } from '@polkadot/types/interfaces';
 import { MessageService } from 'primeng/api';
-import { AppSettings } from 'src/app/app-settings';
-import { TransferModel } from 'src/app/models/polkadot.model';
+import { TransferModel } from 'src/app/models/transfer.model';
 import { PolkadotService } from 'src/app/services/polkadot/polkadot.service';
 import { Subscription } from 'rxjs';
 import { PhpuContractService } from 'src/app/services/phpu-contract/phpu-contract.service';
+import { ForexService } from 'src/app/services/forex/forex.service';
+import { ForexModel } from 'src/app/models/forex.model';
+import { DecimalPipe } from '@angular/common';
 
 @Component({
   selector: 'app-pay',
@@ -14,9 +16,6 @@ import { PhpuContractService } from 'src/app/services/phpu-contract/phpu-contrac
   providers: [MessageService]
 })
 export class PayComponent implements OnInit {
-
-  walletMetaName: string = "";
-  walletKeyPair: string = "";
 
   transferData: TransferModel = new TransferModel();
   isProcessing: boolean = false;
@@ -31,11 +30,14 @@ export class PayComponent implements OnInit {
   subscription: Subscription = new Subscription;
 
   constructor(
+    public decimalPipe: DecimalPipe,
     private polkadotService: PolkadotService,
     private phpuContractService: PhpuContractService,
-    private appSettings: AppSettings,
+    private forexService: ForexService,
     private messageService: MessageService
   ) { }
+
+  forex: ForexModel = new ForexModel();
 
   sourceTokens: string[] = [];
   selectedSourceToken: string = "";
@@ -45,8 +47,30 @@ export class PayComponent implements OnInit {
   selectedDestinationToken: string = "";
   destinationQuantity: number = 0;
 
+  getForex(): void {
+    this.forexService.getRates().subscribe(
+      data => {
+        if (data != new ForexModel()) {
+          this.forex = {
+            success: data.success,
+            timestamp: data.timestamp,
+            base: data.base,
+            date: data.date,
+            rates: {
+              PHP: data.rates.PHP,
+              USD: data.rates.USD
+            }
+          };
+        }
+
+        this.getChainTokens();
+      }
+    );
+  }
+
   async getChainTokens(): Promise<void> {
-    let chainTokens: Promise<string[]> = this.polkadotService.getChainTokens(this.walletKeyPair);
+    let keypair = localStorage.getItem("wallet-keypair") || "";
+    let chainTokens: Promise<string[]> = this.polkadotService.getChainTokens(keypair);
 
     if ((await chainTokens).length > 0) {
       this.sourceTokens = (await chainTokens);
@@ -84,7 +108,8 @@ export class PayComponent implements OnInit {
       this.isTransferProcessed = false;
       this.isTransferError = false;
 
-      this.transferData.keypair = this.walletKeyPair;
+      let keypair = localStorage.getItem("wallet-keypair") || "";
+      this.transferData.keypair = keypair;
       let transferEventMessages = this.polkadotService.transferEventMessages.asObservable();
 
       if (this.selectedSourceToken == 'UMI') {
@@ -93,7 +118,7 @@ export class PayComponent implements OnInit {
       }
 
       if (this.selectedSourceToken == 'PHPU') {
-        this.phpuContractService.transfer(this.transferData.keypair, this.transferData.recipient, this.transferData.amount);
+        this.phpuContractService.transfer(this.transferData);
         transferEventMessages = this.phpuContractService.transferEventMessages.asObservable();
       }
 
@@ -153,19 +178,10 @@ export class PayComponent implements OnInit {
   }
 
   computeDestinationQuantity(): void {
-    let selectedSourceToken = this.appSettings.tokens.filter(d => d.token == this.selectedSourceToken)[0];
-    if (selectedSourceToken != null) {
-      let selectedDestinationToken = selectedSourceToken.tokensPrices.filter(d => d.token == this.selectedDestinationToken)[0];
-      if (selectedDestinationToken != null) {
-        this.destinationQuantity = this.sourceQuantity * selectedDestinationToken.price;
-      }
-    }
+    this.destinationQuantity = this.sourceQuantity;
   }
 
   ngOnInit(): void {
-    this.walletMetaName = localStorage.getItem("wallet-meta-name") || "";
-    this.walletKeyPair = localStorage.getItem("wallet-keypair") || "";
-
-    this.getChainTokens();
+    this.getForex();
   }
 }
