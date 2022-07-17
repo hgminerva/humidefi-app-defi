@@ -3,10 +3,13 @@ import { web3Accounts, web3Enable, web3FromAddress, web3FromSource } from '@polk
 import { Keyring } from '@polkadot/keyring';
 import { stringToHex, stringToU8a, u8aToHex } from '@polkadot/util';
 import { cryptoWaitReady, decodeAddress, signatureVerify } from '@polkadot/util-crypto';
-import { TransferModel, WalletAccountsModel } from 'src/app/models/polkadot.model';
+import { WalletAccountsModel } from 'src/app/models/polkadot.model';
+import { TransferModel } from 'src/app/models/transfer.model';
 import { ApiPromise, WsProvider } from '@polkadot/api';
 import { AppSettings } from 'src/app/app-settings';
 import { Hash } from '@polkadot/types/interfaces';
+import { BN, formatBalance } from '@polkadot/util';
+import { Observable, Subject } from 'rxjs';
 
 @Injectable({
   providedIn: 'root'
@@ -22,7 +25,8 @@ export class PolkadotService {
   extensions = web3Enable('humidefi');
   accounts = web3Accounts();
 
-  // Get all accounts from Polkadot Extensions
+  transferEventMessages = new Subject<any>();
+
   async getWeb3Accounts(): Promise<WalletAccountsModel[]> {
     let walletAccounts: WalletAccountsModel[] = [];
 
@@ -44,7 +48,6 @@ export class PolkadotService {
     return walletAccounts;
   }
 
-  // Sign and verify transactions from Polkadot Extensions
   async signAndVerify(walletAccount: WalletAccountsModel): Promise<boolean> {
     const injector = await web3FromSource(String(walletAccount.metaSource));
     const signRaw = injector?.signer?.signRaw;
@@ -70,7 +73,6 @@ export class PolkadotService {
     return false;
   }
 
-  // Generate key pairs for public key from Polkadot Keyrings
   async generateKeypair(address: string): Promise<string> {
     const keyring = new Keyring({ type: 'sr25519', ss58Format: 0 });
     const hexPair = keyring.addFromAddress(address);
@@ -78,28 +80,53 @@ export class PolkadotService {
     return hexPair.address;
   }
 
-  // Get Balances from Polkadot Query System Accounts
   async getBalance(keypair: string): Promise<string> {
     const api = await this.api;
     const { nonce, data: balance } = await api.query.system.account(keypair);
+    const chainDecimals = api.registry.chainDecimals[0];
+    formatBalance.setDefaults({ decimals: chainDecimals, unit: 'UMI' });
+    formatBalance.getDefaults();
 
-    return (parseFloat(balance.free.toString()) / 1000000000000).toString();
+    const free = formatBalance(balance.free, { forceUnit: "UMI", withUnit: false }, chainDecimals);
+
+    return free.split(',').join('');
   }
 
-  // Transfer Balances from Polkadot Transactions
-  async transfer(data: TransferModel): Promise<Hash> {
-    const api = await this.api;
+  async transfer(data: TransferModel): Promise<void> {
+    let keypair = localStorage.getItem("wallet-keypair") || "";
 
-    const injector = await web3FromAddress(data.keypair);
+    const api = await this.api;
+    const chainDecimals = api.registry.chainDecimals[0];
+
+    const injector = await web3FromAddress(keypair);
     api.setSigner(injector.signer);
 
-    // let amount: number = data.amount * 1000000000000;
-    let amount: number = data.amount;
+    let amount: bigint = BigInt(data.amount * (10 ** chainDecimals));
+    let message = "";
 
-    return await api.tx.balances.transfer(data.recipient, amount).signAndSend(data.keypair);
+    api.tx.balances.transfer(data.recipient, amount).signAndSend(
+      data.keypair, (result: any) => {
+        message = 'Transaction status: ' + result.status.type;
+        this.transferEventMessages.next({ message: message, isFinalized: false, hasError: false });
+
+        if (result.status.isInBlock) {
+          message = 'Included at block hash\r\n' + result.status.asInBlock.toHex() + "\r\n\nFinalizing...";
+          this.transferEventMessages.next({ message: message, isFinalized: false, hasError: false });
+        }
+
+        if (result.status.isFinalized) {
+          message = 'Finalized block hash ' + result.status.asFinalized.toHex();
+          this.transferEventMessages.next({ message: message, isFinalized: true, hasError: false });
+        }
+      }
+    ).catch(error => {
+      console.log(error);
+
+      message = 'Somethings went wrong';
+      this.transferEventMessages.next({ message: message, isFinalized: false, hasError: true });
+    });
   }
 
-  // Retrieve chain tokens from Polkadot Registry (Chain Information)
   async getChainTokens(keypair: string): Promise<string[]> {
     const api = await this.api;
     const tokens = api.registry.chainTokens;
