@@ -162,62 +162,74 @@
                 <div class="card border-round-2xl" style="box-shadow: 3px 2px 5px 0px #dfdfdf !important;">
                     <div class="flex-wrap card-container overflow-hidden w-full">
                         <div class="bg-white px-6 pt-4 pb-4 border-round-2xl" style="min-height: 180px;">
-                            <div class="w-full text-center" *ngIf="isHoldingsLoading">
+                            <div class="w-full text-center" *ngIf="isInvestmentsLoading">
                                 <br /><br /><br />
                                 <p-progressSpinner></p-progressSpinner>
                                 <br /><br />
                                 Please wait...
                                 <br /><br /><br />
                             </div>
-                            <div class="w-full" *ngIf="!isHoldingsLoading">
+                            <div class="w-full" *ngIf="!isInvestmentsLoading">
                                 <div class="text-xl font-medium mb-3" style="color: #ef4943">
                                     Investments
                                 </div>
-                                <p-table responsiveLayout="stack" [value]="holdings">
+                                <p-table responsiveLayout="stack" [value]="investments">
                                     <ng-template pTemplate="header">
                                         <tr>
                                             <th>Ticker</th>
                                             <th>Name</th>
                                             <th>Price</th>
                                             <th>Balance</th>
+                                            <th>Interests</th>
                                             <th>Value</th>
+                                            <th></th>
                                         </tr>
                                     </ng-template>
-                                    <ng-template pTemplate="body" let-holding>
+                                    <ng-template pTemplate="body" let-investment>
                                         <tr>
                                             <td>
-                                                <div *ngIf="holding.ticker == 'UMI'">
+                                                <div *ngIf="investment.ticker == 'LUMI'">
                                                     <img src="./../../../../assets/img/tokens/UMI.png" width="27"
                                                         style="float: left;" />
                                                 </div>
-                                                <div *ngIf="holding.ticker == 'PHPU'">
+                                                <div *ngIf="investment.ticker == 'LPHPU'">
                                                     <img src="./../../../../assets/img/tokens/PHPU.png" width="27"
                                                         style="float: left;" />
                                                 </div>
                                                 &nbsp;
                                                 <span class="text-xl font-bold text-pink-700">
-                                                    {{holding.ticker}}
+                                                    {{investment.ticker}}
                                                 </span>
                                             </td>
                                             <td>
                                                 <span class="text-base">
-                                                    {{holding.name}}
+                                                    {{investment.name}}
                                                 </span>
                                             </td>
                                             <td>
                                                 <span class="text-base font-bold text-pink-700">
-                                                    {{holding.price}}
+                                                    {{investment.price}}
                                                 </span>
                                             </td>
                                             <td>
                                                 <span class="text-base font-bold text-pink-700">
-                                                    {{decimalPipe.transform(holding.balance, "1.5-5") || "0"}}
+                                                    {{decimalPipe.transform(investment.balance, "1.5-5") || "0"}}
                                                 </span>
                                             </td>
                                             <td>
                                                 <span class="text-base font-bold text-pink-700">
-                                                    {{decimalPipe.transform(holding.value, "1.5-5") || "0"}}
+                                                    {{decimalPipe.transform(investment.interest, "1.5-5") || "0"}}
                                                 </span>
+                                            </td>
+                                            <td>
+                                                <span class="text-base font-bold text-pink-700">
+                                                    {{decimalPipe.transform(investment.value, "1.5-5") || "0"}}
+                                                </span>
+                                            </td>
+                                            <td>
+                                                <button pButton type="button" label="Redeem"
+                                                    class="p-button-text p-button-danger p-button-sm text-white"
+                                                    style="background: linear-gradient(90deg,rgba(244,60,113,1) 0%,rgba(240,73,65,1) 100%);"></button>
                                             </td>
                                         </tr>
                                     </ng-template>

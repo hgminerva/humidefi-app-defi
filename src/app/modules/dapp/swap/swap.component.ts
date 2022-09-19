@@ -1,14 +1,13 @@
 import { Component, OnInit } from '@angular/core';
-import { Hash } from '@polkadot/types/interfaces';
 import { MessageService } from 'primeng/api';
-import { AppSettings } from 'src/app/app-settings';
-import { TransferModel } from 'src/app/models/transfer.model';
 import { PolkadotService } from 'src/app/services/polkadot/polkadot.service';
 import { Subscription } from 'rxjs';
 import { PhpuContractService } from 'src/app/services/phpu-contract/phpu-contract.service';
 import { ForexService } from 'src/app/services/forex/forex.service';
 import { DecimalPipe } from '@angular/common';
 import { ForexModel } from 'src/app/models/forex.model';
+import { DexService } from 'src/app/services/dex/dex.service';
+import { SwapModel } from 'src/app/models/swap.model';
 
 @Component({
   selector: 'app-swap',
@@ -18,8 +17,7 @@ import { ForexModel } from 'src/app/models/forex.model';
 })
 export class SwapComponent implements OnInit {
 
-  sourceTransferData: TransferModel = new TransferModel();
-  destinationTransferData: TransferModel = new TransferModel();
+  swapData: SwapModel = new SwapModel();
 
   isProcessing: boolean = false;
   showProcessDialog: boolean = false;
@@ -30,16 +28,15 @@ export class SwapComponent implements OnInit {
   swapProcessMessage: string = "";
   isSwapProcessed: boolean = false;
   isSwapError: boolean = false;
-
-  sourceTransferMessageSubscription: Subscription = new Subscription;
-  destinationTransferMessageSubscription: Subscription = new Subscription;
+  subscription: Subscription = new Subscription;
 
   constructor(
     public decimalPipe: DecimalPipe,
     private polkadotService: PolkadotService,
     private phpuContractService: PhpuContractService,
     private forexService: ForexService,
-    private messageService: MessageService
+    private messageService: MessageService,
+    private dexService: DexService
   ) { }
 
   forex: ForexModel = new ForexModel();
@@ -51,8 +48,6 @@ export class SwapComponent implements OnInit {
   destinationTokens: string[] = [];
   selectedDestinationToken: string = "";
   destinationQuantity: number = 0;
-
-  treasuryAddress: string = "5Cd3jxxrjCLfecepuxmjQ1efttT3RWx3BWp5x8gHECfoNVmo";
 
   getForex(): void {
     this.forexService.getRates("USD").subscribe(
@@ -103,130 +98,52 @@ export class SwapComponent implements OnInit {
       this.messageService.add({ key: 'error-swap', severity: 'error', summary: 'Error', detail: 'Source token and destination token must not be the same' });
     } else {
       this.showProcessDialog = true;
-      this.transferFromSource();
-    }
-  }
 
-  async transferFromSource(): Promise<void> {
-    this.isProcessing = true;
-    this.swapProcessMessage = "Processing transfer from the selected source token..."
-    this.isSwapProcessed = false;
-    this.isSwapError = false;
+      this.isProcessing = true;
+      this.swapProcessMessage = "Processing..."
+      this.isSwapProcessed = false;
+      this.isSwapError = false;
 
-    let keypair = localStorage.getItem("wallet-keypair") || "";
-    this.sourceTransferData.keypair = keypair;
-    this.sourceTransferData.recipient = this.treasuryAddress;
-    this.sourceTransferData.amount = this.sourceQuantity;
-    let transferEventMessages = this.polkadotService.transferEventMessages.asObservable();
+      let keypair = localStorage.getItem("wallet-keypair") || "";
+      this.dexService.doSwap(keypair, this.sourceQuantity, this.selectedSourceToken, this.selectedDestinationToken);
+      let swapEventMessages = this.dexService.swapEventMessages.asObservable();
 
-    if (this.selectedSourceToken == 'UMI') {
-      this.polkadotService.transfer(this.sourceTransferData);
-      transferEventMessages = this.polkadotService.transferEventMessages.asObservable();
-    }
-
-    if (this.selectedSourceToken == 'PHPU') {
-      this.phpuContractService.psp22Transfer(this.sourceTransferData.recipient, this.sourceTransferData.amount, "");
-      transferEventMessages = this.phpuContractService.transferEventMessages.asObservable();
-    }
-
-    this.sourceTransferMessageSubscription = transferEventMessages.subscribe(
-      message => {
-        if (message != null) {
-          if (message.hasError == true) {
-            this.isProcessing = false;
-            this.swapProcessMessage = message.message;
-            this.isSwapProcessed = false;
-            this.isSwapError = true;
-
-            this.sourceTransferMessageSubscription.unsubscribe();
-          } else {
-            if (message.isFinalized != true) {
+      this.subscription = swapEventMessages.subscribe(
+        message => {
+          if (message != null) {
+            if (message.hasError == true) {
+              this.isProcessing = false;
               this.swapProcessMessage = message.message;
+              this.isSwapProcessed = false;
+              this.isSwapError = true;
+
+              this.subscription.unsubscribe();
             } else {
-              this.swapProcessMessage = "Source token transfer processed!"
-              this.sourceTransferMessageSubscription.unsubscribe();
-
-              setTimeout(() => {
-                this.swapProcessMessage = "Processing transfer from the selected destination token..."
-                this.transferFromDestination();
-              }, 1000);
-            }
-          }
-        } else {
-          this.isProcessing = false;
-          this.swapProcessMessage = "Somethings went wrong";
-          this.isSwapProcessed = false;
-          this.isSwapError = true;
-
-          this.sourceTransferMessageSubscription.unsubscribe();
-        }
-      }
-    );
-  }
-
-  async transferFromDestination(): Promise<void> {
-    let keypair = localStorage.getItem("wallet-keypair") || "";
-    this.destinationTransferData.keypair = this.treasuryAddress;
-    this.destinationTransferData.recipient = keypair;
-    this.destinationTransferData.amount = this.destinationQuantity;
-    let transferEventMessages = this.polkadotService.transferEventMessages.asObservable();
-
-    if (this.selectedDestinationToken == 'UMI') {
-      this.polkadotService.transfer(this.destinationTransferData);
-      transferEventMessages = this.polkadotService.transferEventMessages.asObservable();
-    }
-
-    if (this.selectedDestinationToken == 'PHPU') {
-      this.phpuContractService.psp22Transfer(this.destinationTransferData.recipient, this.destinationTransferData.amount, "");
-      transferEventMessages = this.phpuContractService.transferEventMessages.asObservable();
-    }
-
-    this.destinationTransferMessageSubscription = transferEventMessages.subscribe(
-      message => {
-        if (message != null) {
-          if (message.hasError == true) {
-            this.isProcessing = false;
-            this.swapProcessMessage = message.message;
-            this.isSwapProcessed = false;
-            this.isSwapError = true;
-
-            this.destinationTransferMessageSubscription.unsubscribe();
-          } else {
-            if (message.isFinalized != true) {
-              this.swapProcessMessage = message.message;
-            } else {
-              this.swapProcessMessage = "Destination token transfer processed!"
-
-              setTimeout(() => {
+              if (message.isFinalized != true) {
+                this.swapProcessMessage = message.message;
+              } else {
                 this.isProcessing = false;
                 this.swapProcessMessage = "Swap Complete!"
                 this.isSwapProcessed = true;
                 this.isSwapError = false;
 
-                this.sourceTransferData.keypair = "";
-                this.sourceTransferData.recipient = "";
-                this.sourceTransferData.amount = 0;
                 this.sourceQuantity = 0;
-
-                this.destinationTransferData.keypair = "";
-                this.destinationTransferData.recipient = "";
-                this.destinationTransferData.amount = 0;
                 this.destinationQuantity = 0;
 
-                this.destinationTransferMessageSubscription.unsubscribe();
-              }, 1000);
+                this.subscription.unsubscribe();
+              }
             }
-          }
-        } else {
-          this.isProcessing = false;
-          this.swapProcessMessage = "Somethings went wrong";
-          this.isSwapProcessed = false;
-          this.isSwapError = true;
+          } else {
+            this.isProcessing = false;
+            this.swapProcessMessage = "Somethings went wrong";
+            this.isSwapProcessed = false;
+            this.isSwapError = true;
 
-          this.destinationTransferMessageSubscription.unsubscribe();
+            this.subscription.unsubscribe();
+          }
         }
-      }
-    );
+      );
+    }
   }
 
   sourceTickerOnChange(event: any): void {
@@ -235,7 +152,7 @@ export class SwapComponent implements OnInit {
   }
 
   sourceQuantityOnBlur(event: any): void {
-    this.sourceTransferData.amount = this.sourceQuantity;
+    this.swapData.quantity = this.sourceQuantity;
     this.computeDestinationQuantity();
   }
 

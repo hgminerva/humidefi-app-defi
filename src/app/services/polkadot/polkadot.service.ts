@@ -100,11 +100,11 @@ export class PolkadotService {
     const injector = await web3FromAddress(this.keypair);
     api.setSigner(injector.signer);
 
-    let amount: bigint = BigInt(data.amount * (10 ** chainDecimals));
+    let amount: bigint = BigInt(data.value * (10 ** chainDecimals));
     let message = "";
 
-    api.tx.balances.transfer(data.recipient, amount).signAndSend(
-      data.keypair, (result: any) => {
+    api.tx.balances.transfer(data.to, amount).signAndSend(
+      this.keypair, (result: any) => {
         message = 'Transaction status: ' + result.status.type;
         this.transferEventMessages.next({ message: message, isFinalized: false, hasError: false });
 

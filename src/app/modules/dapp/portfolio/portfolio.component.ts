@@ -3,7 +3,10 @@ import { Component, OnInit } from '@angular/core';
 import { CurrenciesModel } from 'src/app/models/currencies.model';
 import { ForexModel } from 'src/app/models/forex.model';
 import { HoldingsModel } from 'src/app/models/holdings.model';
+import { InvestmentsModel } from 'src/app/models/investments.model';
 import { ForexService } from 'src/app/services/forex/forex.service';
+import { LphpuContractService } from 'src/app/services/lphpu-contract/lphpu-contract.service';
+import { LumiContractService } from 'src/app/services/lumi-contract/lumi-contract.service';
 import { PhpuContractService } from 'src/app/services/phpu-contract/phpu-contract.service';
 import { PolkadotService } from 'src/app/services/polkadot/polkadot.service';
 
@@ -19,11 +22,14 @@ export class PortfolioComponent implements OnInit {
 
   isLoading: boolean = true;
   isHoldingsLoading: boolean = true;
+  isInvestmentsLoading: boolean = true;
 
   constructor(
     public decimalPipe: DecimalPipe,
     private polkadotService: PolkadotService,
     private phpuContractService: PhpuContractService,
+    private lumiContractService: LumiContractService,
+    private lphpuContractService: LphpuContractService,
     private forexService: ForexService
   ) {
     this.currencies = [
@@ -37,6 +43,7 @@ export class PortfolioComponent implements OnInit {
 
   holdings: HoldingsModel[] = [];
   total: string = "";
+  investments: InvestmentsModel[] = [];
 
   displayChangeAccountDialog: boolean = false;
 
@@ -60,7 +67,10 @@ export class PortfolioComponent implements OnInit {
           };
         }
 
+        this.isLoading = false;
+
         this.getChainTokens();
+        this.getLUMIContractSymbol();
       }
     );
   }
@@ -136,14 +146,73 @@ export class PortfolioComponent implements OnInit {
     }
 
     this.total = this.decimalPipe.transform(total, "1.5-5") || "0";
-
-    this.isLoading = false;
     this.isHoldingsLoading = false;
+  }
+
+  async getLUMIContractSymbol(): Promise<void> {
+    let keypair = localStorage.getItem("wallet-keypair") || "";
+
+    let propSymbol = await this.lumiContractService.symbol();
+    let propName = await this.lumiContractService.name();
+    let lumiContractBalance = await this.lumiContractService.psp22BalanceOf(keypair);
+
+    let ticker = String(propSymbol);
+    let name = String(propName);
+
+    let price = 1;
+    if (this.selectedCurrency.name == 'PHP') {
+      price = parseFloat((this.decimalPipe.transform(1 / this.forex.rates.USD, "1.5-5") || "0").replace(/,/g, ''));
+    }
+
+    let balance = parseFloat((this.decimalPipe.transform(lumiContractBalance, "1.5-5") || "0").replace(/,/g, ''));
+
+    this.investments.push({
+      ticker: ticker,
+      name: name,
+      price: price,
+      balance: balance,
+      interest: 0,
+      value: price * balance
+    });
+
+    this.getLPHPUContractSymbol();
+  }
+
+  async getLPHPUContractSymbol(): Promise<void> {
+    let keypair = localStorage.getItem("wallet-keypair") || "";
+
+    let propSymbol = await this.lphpuContractService.symbol();
+    let propName = await this.lphpuContractService.name();
+    let lphpuContractBalance = await this.lphpuContractService.psp22BalanceOf(keypair);
+
+    let ticker = String(propSymbol);
+    let name = String(propName);
+
+    let price = 1;
+    if (this.selectedCurrency.name == 'USD') {
+      price = parseFloat((this.decimalPipe.transform(1 / this.forex.rates.PHP, "1.5-5") || "0").replace(/,/g, ''));
+    }
+
+    let balance = parseFloat((this.decimalPipe.transform(lphpuContractBalance, "1.5-5") || "0").replace(/,/g, ''));
+
+    this.investments.push({
+      ticker: ticker,
+      name: name,
+      price: price,
+      balance: balance,
+      interest: 0,
+      value: price * balance
+    });
+
+    this.isInvestmentsLoading = false;
   }
 
   currencyOnChange(event: any): void {
     this.isHoldingsLoading = true;
+    this.isInvestmentsLoading = true;
+
     this.holdings = [];
+    this.investments = [];
 
     this.getForex();
   }

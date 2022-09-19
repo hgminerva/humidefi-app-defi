@@ -26,6 +26,8 @@ export class DexService {
   extensions = web3Enable('humidefi');
   accounts = web3Accounts();
 
+  swapEventMessages = new Subject<any>();
+
   async loadDexConfigs(): Promise<void> {
     const api = await this.api;
 
@@ -67,11 +69,27 @@ export class DexService {
   }
 
   async doSwap(source: string, quantity: number, sourceTicker: string, destinationTicker: string): Promise<void> {
-    const api: any = await this.api;
+    const api = await this.api;
 
-    await api.query.dexModule.doSwap(source, quantity, sourceTicker, destinationTicker).signAndSend(
+    const injector = await web3FromAddress(this.keypair);
+    api.setSigner(injector.signer);
+
+    let message = "";
+
+    await api.tx['dexModule']['doSwap'](source, quantity, sourceTicker, destinationTicker).signAndSend(
       this.keypair, (result: any) => {
-        console.log(result);
+        message = 'Transaction status: ' + result.status.type;
+        this.swapEventMessages.next({ message: message, isFinalized: false, hasError: false });
+
+        if (result.status.isInBlock) {
+          message = 'Included at block hash\r\n' + result.status.asInBlock.toHex() + "\r\n\nFinalizing...";
+          this.swapEventMessages.next({ message: message, isFinalized: false, hasError: false });
+        }
+
+        if (result.status.isFinalized) {
+          message = 'Finalized block hash ' + result.status.asFinalized.toHex();
+          this.swapEventMessages.next({ message: message, isFinalized: true, hasError: false });
+        }
       }
     );
   }

@@ -75,11 +75,11 @@ export class WalletComponent implements OnInit {
 
       if (this.isLogin == false) {
         await this.dexService.loadDexConfigs();
+        this.appSettings.lumiAccountAddress = localStorage.getItem("lumi-account-address") || "";
+        this.appSettings.lumiContractAddress = localStorage.getItem("lumi-contract-address") || "";
         this.appSettings.phpuContractAddress = localStorage.getItem("phpu-contract-address") || "";
         this.appSettings.lphpuAccountAddress = localStorage.getItem("lphpu-account-address") || "";
         this.appSettings.lphpuContractAddress = localStorage.getItem("lphpu-contract-address") || "";
-        this.appSettings.lumiAccountAddress = localStorage.getItem("lumi-account-address") || "";
-        this.appSettings.lumiContractAddress = localStorage.getItem("lumi-contract-address") || "";
         this.appSettings.swapFees = localStorage.getItem("swap-fees") || "";
         this.appSettings.forexUpdates = localStorage.getItem("forex-updates") || "";
         this.router.navigate(['/dapp']);
