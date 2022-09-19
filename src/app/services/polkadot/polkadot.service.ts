@@ -22,6 +22,7 @@ export class PolkadotService {
 
   wsProvider = new WsProvider(this.appSettings.wsProviderEndpoint);
   api = ApiPromise.create({ provider: this.wsProvider });
+  keypair = this.appSettings.keypair;
   extensions = web3Enable('humidefi');
   accounts = web3Accounts();
 
@@ -93,12 +94,10 @@ export class PolkadotService {
   }
 
   async transfer(data: TransferModel): Promise<void> {
-    let keypair = localStorage.getItem("wallet-keypair") || "";
-
     const api = await this.api;
     const chainDecimals = api.registry.chainDecimals[0];
 
-    const injector = await web3FromAddress(keypair);
+    const injector = await web3FromAddress(this.keypair);
     api.setSigner(injector.signer);
 
     let amount: bigint = BigInt(data.amount * (10 ** chainDecimals));

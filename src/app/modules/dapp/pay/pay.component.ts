@@ -84,11 +84,9 @@ export class PayComponent implements OnInit {
   }
 
   async getPHPUContractSymbol(): Promise<void> {
-    let prop = await this.phpuContractService.getProperties();
-    if (prop != null) {
-      let ticker = String(prop.symbol);
-      this.sourceTokens.push(ticker);
-    }
+    let propSymbol = await this.phpuContractService.symbol();
+    let ticker = String(propSymbol);
+    this.sourceTokens.push(ticker);
 
     this.isLoading = false;
   }
@@ -118,7 +116,7 @@ export class PayComponent implements OnInit {
       }
 
       if (this.selectedSourceToken == 'PHPU') {
-        this.phpuContractService.transfer(this.transferData);
+        this.phpuContractService.psp22Transfer(this.transferData.recipient, this.transferData.amount, "Sample Transfer");
         transferEventMessages = this.phpuContractService.transferEventMessages.asObservable();
       }
 

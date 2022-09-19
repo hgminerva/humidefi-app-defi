@@ -101,28 +101,27 @@ export class PortfolioComponent implements OnInit {
   async getPHPUContractSymbol(): Promise<void> {
     let keypair = localStorage.getItem("wallet-keypair") || "";
 
-    let prop = await this.phpuContractService.getProperties();
-    let phpuContractBalance = await this.phpuContractService.balanceOf(keypair);
+    let propSymbol = await this.phpuContractService.symbol();
+    let propName = await this.phpuContractService.name();
+    let phpuContractBalance = await this.phpuContractService.psp22BalanceOf(keypair);
 
-    if (prop != null) {
-      let ticker = String(prop.symbol);
-      let name = String(prop.name);
+    let ticker = String(propSymbol);
+    let name = String(propName);
 
-      let price = 1;
-      if (this.selectedCurrency.name == 'USD') {
-        price = parseFloat((this.decimalPipe.transform(1 / this.forex.rates.PHP, "1.5-5") || "0").replace(/,/g, ''));
-      }
-
-      let balance = parseFloat((this.decimalPipe.transform((await phpuContractBalance), "1.5-5") || "0").replace(/,/g, ''));
-
-      this.holdings.push({
-        ticker: ticker,
-        name: name,
-        price: price,
-        balance: balance,
-        value: price * balance
-      });
+    let price = 1;
+    if (this.selectedCurrency.name == 'USD') {
+      price = parseFloat((this.decimalPipe.transform(1 / this.forex.rates.PHP, "1.5-5") || "0").replace(/,/g, ''));
     }
+
+    let balance = parseFloat((this.decimalPipe.transform(phpuContractBalance, "1.5-5") || "0").replace(/,/g, ''));
+
+    this.holdings.push({
+      ticker: ticker,
+      name: name,
+      price: price,
+      balance: balance,
+      value: price * balance
+    });
 
     this.getTotal();
   }

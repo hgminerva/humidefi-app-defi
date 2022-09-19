@@ -91,11 +91,9 @@ export class SwapComponent implements OnInit {
   }
 
   async getPHPUContractSymbol(): Promise<void> {
-    let prop = await this.phpuContractService.getProperties();
-    if (prop != null) {
-      let ticker = String(prop.symbol);
-      this.sourceTokens.push(ticker);
-    }
+    let propSymbol = await this.phpuContractService.symbol();
+    let ticker = String(propSymbol);
+    this.sourceTokens.push(ticker);
 
     this.isLoading = false;
   }
@@ -127,7 +125,7 @@ export class SwapComponent implements OnInit {
     }
 
     if (this.selectedSourceToken == 'PHPU') {
-      this.phpuContractService.transfer(this.sourceTransferData);
+      this.phpuContractService.psp22Transfer(this.sourceTransferData.recipient, this.sourceTransferData.amount, "");
       transferEventMessages = this.phpuContractService.transferEventMessages.asObservable();
     }
 
@@ -179,7 +177,7 @@ export class SwapComponent implements OnInit {
     }
 
     if (this.selectedDestinationToken == 'PHPU') {
-      this.phpuContractService.transfer(this.destinationTransferData);
+      this.phpuContractService.psp22Transfer(this.destinationTransferData.recipient, this.destinationTransferData.amount, "");
       transferEventMessages = this.phpuContractService.transferEventMessages.asObservable();
     }
 
