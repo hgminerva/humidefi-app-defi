@@ -1,9 +1,13 @@
 import { DecimalPipe } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
+import { MessageService } from 'primeng/api';
+import { Subscription } from 'rxjs';
 import { CurrenciesModel } from 'src/app/models/currencies.model';
 import { ForexModel } from 'src/app/models/forex.model';
 import { HoldingsModel } from 'src/app/models/holdings.model';
 import { InvestmentsModel } from 'src/app/models/investments.model';
+import { RedeemModel } from 'src/app/models/redeem.model';
+import { DexService } from 'src/app/services/dex/dex.service';
 import { ForexService } from 'src/app/services/forex/forex.service';
 import { LphpuContractService } from 'src/app/services/lphpu-contract/lphpu-contract.service';
 import { LumiContractService } from 'src/app/services/lumi-contract/lumi-contract.service';
@@ -13,7 +17,8 @@ import { PolkadotService } from 'src/app/services/polkadot/polkadot.service';
 @Component({
   selector: 'app-portfolio',
   templateUrl: './portfolio.component.html',
-  styleUrls: ['./portfolio.component.scss']
+  styleUrls: ['./portfolio.component.scss'],
+  providers: [MessageService]
 })
 export class PortfolioComponent implements OnInit {
 
@@ -24,13 +29,22 @@ export class PortfolioComponent implements OnInit {
   isHoldingsLoading: boolean = true;
   isInvestmentsLoading: boolean = true;
 
+  isProcessing: boolean = false;
+  showProcessDialog: boolean = false;
+
+  redeemProcessMessage: string = "";
+  isRedeemProcessed: boolean = false;
+  isRedeemError: boolean = false;
+  subscription: Subscription = new Subscription;
+
   constructor(
     public decimalPipe: DecimalPipe,
     private polkadotService: PolkadotService,
     private phpuContractService: PhpuContractService,
     private lumiContractService: LumiContractService,
     private lphpuContractService: LphpuContractService,
-    private forexService: ForexService
+    private forexService: ForexService,
+    private dexService: DexService
   ) {
     this.currencies = [
       { name: 'PHP' },
@@ -215,6 +229,58 @@ export class PortfolioComponent implements OnInit {
     this.investments = [];
 
     this.getForex();
+  }
+
+  redeem(quantity: number, token: string): void {
+    this.showProcessDialog = true;
+
+    this.isProcessing = true;
+    this.redeemProcessMessage = "Processing..."
+    this.isRedeemProcessed = false;
+    this.isRedeemError = false;
+
+    let keypair = localStorage.getItem("wallet-keypair") || "";
+    let redeem: RedeemModel = {
+      source: keypair,
+      quantity: quantity,
+      sourceTicker: token
+    };
+
+    this.dexService.doLiquidityRedeem(redeem);
+    let redeemEventMessages = this.dexService.redeemEventMessages.asObservable();
+
+    this.subscription = redeemEventMessages.subscribe(
+      message => {
+        if (message != null) {
+          if (message.hasError == true) {
+            this.isProcessing = false;
+            this.redeemProcessMessage = message.message;
+            this.isRedeemProcessed = false;
+            this.isRedeemError = true;
+
+            this.subscription.unsubscribe();
+          } else {
+            if (message.isFinalized != true) {
+              this.redeemProcessMessage = message.message;
+            } else {
+              this.isProcessing = false;
+              this.redeemProcessMessage = "Redeem Complete!"
+              this.isRedeemProcessed = true;
+              this.isRedeemError = false;
+
+              this.subscription.unsubscribe();
+            }
+          }
+        } else {
+          this.isProcessing = false;
+          this.redeemProcessMessage = "Somethings went wrong";
+          this.isRedeemProcessed = false;
+          this.isRedeemError = true;
+
+          this.subscription.unsubscribe();
+        }
+      }
+    );
   }
 
   ngOnInit(): void {

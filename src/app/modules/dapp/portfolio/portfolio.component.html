@@ -229,6 +229,7 @@
                                             <td>
                                                 <button pButton type="button" label="Redeem"
                                                     class="p-button-text p-button-danger p-button-sm text-white"
+                                                    (click)="redeem(investment.balance, investment.ticker)"
                                                     style="background: linear-gradient(90deg,rgba(244,60,113,1) 0%,rgba(240,73,65,1) 100%);"></button>
                                             </td>
                                         </tr>
@@ -247,3 +248,32 @@
     [(visible)]="displayChangeAccountDialog" [modal]="true" [maximizable]="true">
     <app-wallet [isLogin]="true"></app-wallet>
 </p-dialog>
+
+<p-dialog [(visible)]="showProcessDialog" [style]="{width: '50vw'}" [modal]="true" [closable]="false">
+    <div class="w-full text-center">
+        <div class="w-full" *ngIf="!isRedeemProcessed && !isRedeemError">
+            <p-progressSpinner></p-progressSpinner>
+            <br /><br />
+        </div>
+        <div class="w-full" *ngIf="isRedeemProcessed">
+            <i class="pi pi-check" style="font-size: 5rem; font-weight: bold; color: rgb(119, 255, 119);"></i>
+            <br />
+        </div>
+        <div class="w-full" *ngIf="isRedeemError">
+            <i class="pi pi-times" style="font-size: 5rem; font-weight: bold; color: rgb(202, 74, 74);"></i>
+            <br />
+        </div>
+        <div style="width: 100%; white-space: pre-wrap;">
+            {{redeemProcessMessage}}
+        </div>
+        <br />
+        <div class="w-full" *ngIf="isRedeemProcessed || isRedeemError">
+            <br />
+            <button pButton type="button" label="OK" class="p-button-text p-button-danger text-white"
+                (click)="showProcessDialog = false"
+                style="background: linear-gradient(90deg,rgba(244,60,113,1) 0%,rgba(240,73,65,1) 100%);"></button>
+        </div>
+    </div>
+</p-dialog>
+
+<p-toast position="top-right" key="error-redeem"></p-toast>

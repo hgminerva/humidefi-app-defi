@@ -86,7 +86,7 @@ export class StakeComponent implements OnInit {
                 this.isStakeError = false;
 
                 this.sourceQuantity = 0;
-                // close modal
+                this.showStakeDialog = false;
 
                 this.subscription.unsubscribe();
               }
