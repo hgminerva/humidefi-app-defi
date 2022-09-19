@@ -157,6 +157,77 @@
                 </div>
             </div>
         </div>
+        <div class="grid pt-2">
+            <div class="col-12 md:col-12 lg:col-12 px-2">
+                <div class="card border-round-2xl" style="box-shadow: 3px 2px 5px 0px #dfdfdf !important;">
+                    <div class="flex-wrap card-container overflow-hidden w-full">
+                        <div class="bg-white px-6 pt-4 pb-4 border-round-2xl" style="min-height: 180px;">
+                            <div class="w-full text-center" *ngIf="isHoldingsLoading">
+                                <br /><br /><br />
+                                <p-progressSpinner></p-progressSpinner>
+                                <br /><br />
+                                Please wait...
+                                <br /><br /><br />
+                            </div>
+                            <div class="w-full" *ngIf="!isHoldingsLoading">
+                                <div class="text-xl font-medium mb-3" style="color: #ef4943">
+                                    Investments
+                                </div>
+                                <p-table responsiveLayout="stack" [value]="holdings">
+                                    <ng-template pTemplate="header">
+                                        <tr>
+                                            <th>Ticker</th>
+                                            <th>Name</th>
+                                            <th>Price</th>
+                                            <th>Balance</th>
+                                            <th>Value</th>
+                                        </tr>
+                                    </ng-template>
+                                    <ng-template pTemplate="body" let-holding>
+                                        <tr>
+                                            <td>
+                                                <div *ngIf="holding.ticker == 'UMI'">
+                                                    <img src="./../../../../assets/img/tokens/UMI.png" width="27"
+                                                        style="float: left;" />
+                                                </div>
+                                                <div *ngIf="holding.ticker == 'PHPU'">
+                                                    <img src="./../../../../assets/img/tokens/PHPU.png" width="27"
+                                                        style="float: left;" />
+                                                </div>
+                                                &nbsp;
+                                                <span class="text-xl font-bold text-pink-700">
+                                                    {{holding.ticker}}
+                                                </span>
+                                            </td>
+                                            <td>
+                                                <span class="text-base">
+                                                    {{holding.name}}
+                                                </span>
+                                            </td>
+                                            <td>
+                                                <span class="text-base font-bold text-pink-700">
+                                                    {{holding.price}}
+                                                </span>
+                                            </td>
+                                            <td>
+                                                <span class="text-base font-bold text-pink-700">
+                                                    {{decimalPipe.transform(holding.balance, "1.5-5") || "0"}}
+                                                </span>
+                                            </td>
+                                            <td>
+                                                <span class="text-base font-bold text-pink-700">
+                                                    {{decimalPipe.transform(holding.value, "1.5-5") || "0"}}
+                                                </span>
+                                            </td>
+                                        </tr>
+                                    </ng-template>
+                                </p-table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
 </div>
 

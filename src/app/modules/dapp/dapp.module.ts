@@ -26,6 +26,7 @@ import { LoadComponent } from './load/load.component';
 import { WithdrawComponent } from './withdraw/withdraw.component';
 import { SwapComponent } from './swap/swap.component';
 import { StakeComponent } from './stake/stake.component';
+import { RedeemComponent } from './redeem/redeem.component';
 import { PayComponent } from './pay/pay.component';
 
 @NgModule({
@@ -37,6 +38,7 @@ import { PayComponent } from './pay/pay.component';
     WithdrawComponent,
     SwapComponent,
     StakeComponent,
+    RedeemComponent,
     PayComponent
   ],
   imports: [
