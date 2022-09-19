@@ -10,6 +10,9 @@ import { AppSettings } from 'src/app/app-settings';
 import { Hash } from '@polkadot/types/interfaces';
 import { BN, formatBalance } from '@polkadot/util';
 import { Observable, Subject } from 'rxjs';
+import { SwapModel } from 'src/app/models/swap.model';
+import { StakeModel } from 'src/app/models/stake.model';
+import { RedeemModel } from 'src/app/models/redeem.model';
 
 @Injectable({
   providedIn: 'root'
@@ -26,6 +29,8 @@ export class DexService {
   extensions = web3Enable('humidefi');
   accounts = web3Accounts();
 
+  redeemEventMessages = new Subject<any>();
+  stakeEventMessages = new Subject<any>();
   swapEventMessages = new Subject<any>();
 
   async loadDexConfigs(): Promise<void> {
@@ -48,27 +53,7 @@ export class DexService {
     localStorage.setItem('forex-updates', String(tickerDataStore));
   }
 
-  async doLiquidityRedeem(source: string, quantity: number, sourceTicker: string): Promise<void> {
-    const api: any = await this.api;
-
-    await api.query.dexModule.doLiquidityRedeem(source, quantity, sourceTicker).signAndSend(
-      this.keypair, (result: any) => {
-        console.log(result);
-      }
-    );
-  }
-
-  async doLiquidityStake(source: string, quantity: number, sourceTicker: string): Promise<void> {
-    const api: any = await this.api;
-
-    await api.query.dexModule.doLiquidityStake(source, quantity, sourceTicker).signAndSend(
-      this.keypair, (result: any) => {
-        console.log(result);
-      }
-    );
-  }
-
-  async doSwap(source: string, quantity: number, sourceTicker: string, destinationTicker: string): Promise<void> {
+  async doLiquidityRedeem(redeem: RedeemModel): Promise<void> {
     const api = await this.api;
 
     const injector = await web3FromAddress(this.keypair);
@@ -76,7 +61,59 @@ export class DexService {
 
     let message = "";
 
-    await api.tx['dexModule']['doSwap'](source, quantity, sourceTicker, destinationTicker).signAndSend(
+    await api.tx['dexModule']['doLiquidityRedeem'](redeem.source, redeem.quantity, redeem.sourceTicker).signAndSend(
+      this.keypair, (result: any) => {
+        message = 'Transaction status: ' + result.status.type;
+        this.redeemEventMessages.next({ message: message, isFinalized: false, hasError: false });
+
+        if (result.status.isInBlock) {
+          message = 'Included at block hash\r\n' + result.status.asInBlock.toHex() + "\r\n\nFinalizing...";
+          this.redeemEventMessages.next({ message: message, isFinalized: false, hasError: false });
+        }
+
+        if (result.status.isFinalized) {
+          message = 'Finalized block hash ' + result.status.asFinalized.toHex();
+          this.redeemEventMessages.next({ message: message, isFinalized: true, hasError: false });
+        }
+      }
+    );
+  }
+
+  async doLiquidityStake(stake: StakeModel): Promise<void> {
+    const api = await this.api;
+
+    const injector = await web3FromAddress(this.keypair);
+    api.setSigner(injector.signer);
+
+    let message = "";
+
+    await api.tx['dexModule']['doLiquidityStake'](stake.source, stake.quantity, stake.sourceTicker).signAndSend(
+      this.keypair, (result: any) => {
+        message = 'Transaction status: ' + result.status.type;
+        this.stakeEventMessages.next({ message: message, isFinalized: false, hasError: false });
+
+        if (result.status.isInBlock) {
+          message = 'Included at block hash\r\n' + result.status.asInBlock.toHex() + "\r\n\nFinalizing...";
+          this.stakeEventMessages.next({ message: message, isFinalized: false, hasError: false });
+        }
+
+        if (result.status.isFinalized) {
+          message = 'Finalized block hash ' + result.status.asFinalized.toHex();
+          this.stakeEventMessages.next({ message: message, isFinalized: true, hasError: false });
+        }
+      }
+    );
+  }
+
+  async doSwap(swap: SwapModel): Promise<void> {
+    const api = await this.api;
+
+    const injector = await web3FromAddress(this.keypair);
+    api.setSigner(injector.signer);
+
+    let message = "";
+
+    await api.tx['dexModule']['doSwap'](swap.source, swap.quantity, swap.sourceTicker, swap.destinationTicker).signAndSend(
       this.keypair, (result: any) => {
         message = 'Transaction status: ' + result.status.type;
         this.swapEventMessages.next({ message: message, isFinalized: false, hasError: false });

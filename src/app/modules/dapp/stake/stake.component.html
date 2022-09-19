@@ -16,7 +16,7 @@
                 <div class="flex-wrap card-container overflow-hidden w-full">
                     <div class="bg-white px-6 pt-4 pb-4 border-round-2xl" style="min-height: 180px;">
                         <div class="text-xl font-medium mb-3" style="color: #ef4943">
-                            Stake your UMI for 3 Months
+                            Stake your UMI for 30 Days
                             <span style="float: right; color: rgb(77, 77, 77);">
                                 <b style="color: rgb(102, 228, 102)">33.00% </b>
                                 <b style="color: #ef4943">APR</b>
@@ -27,7 +27,7 @@
                         </div>
                         <div class="grid mt-2 px-4">
                             <div class="col-12 md:col-12 lg:col-2 px-1 text-center">
-                                <i class="pi pi-box mt-3 text-gray-600" style="font-size: 4rem"></i>
+                                <img src="./../../../../assets/img/tokens/UMI.png" width="90" />
                             </div>
                             <div class="col-12 md:col-12 lg:col-4 px-1">
                                 <div>
@@ -59,8 +59,8 @@
                         </div>
                         <br />
                         <div class="mt-2 px-3">
-                            <button pButton type="button" label="Stake"
-                                class="p-button-warning p-button-sm mr-2"></button>
+                            <button pButton type="button" label="Stake" class="p-button-warning p-button-sm mr-2"
+                                (click)="openStakeDialog('UMI')"></button>
                             <button pButton type="button" label="Claim" class="p-button-success p-button-sm"></button>
                         </div>
                     </div>
@@ -74,7 +74,7 @@
                 <div class="flex-wrap card-container overflow-hidden w-full">
                     <div class="bg-white px-6 pt-4 pb-4 border-round-2xl" style="min-height: 180px;">
                         <div class="text-xl font-medium mb-3" style="color: #ef4943">
-                            Stake your UMI for 12 Months
+                            Stake your PHPU for 30 Days
                             <span style="float: right; color: rgb(77, 77, 77);">
                                 <b style="color: rgb(102, 228, 102)">59.25% </b>
                                 <b style="color: #ef4943">APR</b>
@@ -85,7 +85,7 @@
                         </div>
                         <div class="grid mt-2 px-4">
                             <div class="col-12 md:col-12 lg:col-2 px-1 text-center">
-                                <i class="pi pi-box mt-3 text-gray-600" style="font-size: 4rem"></i>
+                                <img src="./../../../../assets/img/tokens/PHPU.png" width="90" />
                             </div>
                             <div class="col-12 md:col-12 lg:col-4 px-1">
                                 <div>
@@ -117,66 +117,8 @@
                         </div>
                         <br />
                         <div class="mt-2 px-3">
-                            <button pButton type="button" label="Stake"
-                                class="p-button-warning p-button-sm mr-2"></button>
-                            <button pButton type="button" label="Claim" class="p-button-success p-button-sm"></button>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-    <div class="grid pt-2">
-        <div class="col-12 md:col-12 lg:col-12 px-2">
-            <div class="card border-round-2xl" style="box-shadow: 3px 2px 5px 0px #dfdfdf !important;">
-                <div class="flex-wrap card-container overflow-hidden w-full">
-                    <div class="bg-white px-6 pt-4 pb-4 border-round-2xl" style="min-height: 180px;">
-                        <div class="text-xl font-medium mb-3" style="color: #ef4943">
-                            Stake your UMI for 18 Months
-                            <span style="float: right; color: rgb(77, 77, 77);">
-                                <b style="color: rgb(102, 228, 102)">81.72% </b>
-                                <b style="color: #ef4943">APR</b>
-                                /
-                                <b style="color: rgb(0, 162, 255);">9.98M UMI </b>
-                                <b style="color: #ef4943">TVL</b>
-                            </span>
-                        </div>
-                        <div class="grid mt-2 px-4">
-                            <div class="col-12 md:col-12 lg:col-2 px-1 text-center">
-                                <i class="pi pi-box mt-3 text-gray-600" style="font-size: 4rem"></i>
-                            </div>
-                            <div class="col-12 md:col-12 lg:col-4 px-1">
-                                <div>
-                                    Next Reward
-                                </div>
-                                <br />
-                                <div class="text-2xl">
-                                    0.020947 <span class="font-bold">UMI</span>
-                                </div>
-                            </div>
-                            <div class="col-12 md:col-12 lg:col-3 px-1">
-                                <div>
-                                    Your Rewards
-                                </div>
-                                <br />
-                                <div class="text-2xl">
-                                    0 <span class="font-bold">UMI</span>
-                                </div>
-                            </div>
-                            <div class="col-12 md:col-12 lg:col-3 px-1">
-                                <div>
-                                    Total Balance
-                                </div>
-                                <br />
-                                <div class="text-2xl">
-                                    0 <span class="font-bold">UMI</span>
-                                </div>
-                            </div>
-                        </div>
-                        <br />
-                        <div class="mt-2 px-3">
-                            <button pButton type="button" label="Stake"
-                                class="p-button-warning p-button-sm mr-2"></button>
+                            <button pButton type="button" label="Stake" class="p-button-warning p-button-sm mr-2"
+                                (click)="openStakeDialog('PHPU')"></button>
                             <button pButton type="button" label="Claim" class="p-button-success p-button-sm"></button>
                         </div>
                     </div>
@@ -185,3 +127,89 @@
         </div>
     </div>
 </div>
+
+<p-dialog [(visible)]="showProcessDialog" [style]="{width: '50vw'}" [modal]="true" [closable]="false">
+    <div class="w-full text-center">
+        <div class="w-full" *ngIf="!isStakeProcessed && !isStakeError">
+            <p-progressSpinner></p-progressSpinner>
+            <br /><br />
+        </div>
+        <div class="w-full" *ngIf="isStakeProcessed">
+            <i class="pi pi-check" style="font-size: 5rem; font-weight: bold; color: rgb(119, 255, 119);"></i>
+            <br />
+        </div>
+        <div class="w-full" *ngIf="isStakeError">
+            <i class="pi pi-times" style="font-size: 5rem; font-weight: bold; color: rgb(202, 74, 74);"></i>
+            <br />
+        </div>
+        <div style="width: 100%; white-space: pre-wrap;">
+            {{stakeProcessMessage}}
+        </div>
+        <br />
+        <div class="w-full" *ngIf="isStakeProcessed || isStakeError">
+            <br />
+            <button pButton type="button" label="OK" class="p-button-text p-button-danger text-white"
+                (click)="showProcessDialog = false"
+                style="background: linear-gradient(90deg,rgba(244,60,113,1) 0%,rgba(240,73,65,1) 100%);"></button>
+        </div>
+    </div>
+</p-dialog>
+
+<p-toast position="top-right" key="error-stake"></p-toast>
+
+<p-dialog [(visible)]="showStakeDialog" [style]="{width: '40vw'}" [modal]="true">
+    <div class="w-full" *ngIf="isStakeDialogLoading == true">
+        <p-progressSpinner></p-progressSpinner>
+        <br /><br />
+    </div>
+    <div class="w-full" style="border: 1px solid #ced4da; border-radius: 7px; " *ngIf="isStakeDialogLoading == false">
+        <div class="grid p-3" *ngIf="selectedSourceToken == 'UMI'">
+            <div class="col-12 md:col-12 lg:col-4 px-2 text-center">
+                <img *ngIf="selectedSourceToken == 'UMI'" src="./../../../../assets/img/tokens/UMI.png" width="115" />
+            </div>
+            <div class="col-12 md:col-12 lg:col-8 px-2">
+                <div class="text-xl font-medium" style="color: #ef4943">
+                    Stake your {{selectedSourceToken}} for 30 Days
+                    <br /><br />
+                    <b style="color: rgb(102, 228, 102)">33.00% </b>
+                    <b style="color: #ef4943">APR</b>
+                    <br />
+                    <b style="color: rgb(0, 162, 255);">9.98M UMI </b>
+                    <b style="color: #ef4943">TVL</b>
+                </div>
+            </div>
+        </div>
+        <div class="grid p-3" *ngIf="selectedSourceToken == 'PHPU'">
+            <div class="col-12 md:col-12 lg:col-4 px-2 text-center">
+                <img *ngIf="selectedSourceToken == 'PHPU'" src="./../../../../assets/img/tokens/PHPU.png" width="115" />
+            </div>
+            <div class="col-12 md:col-12 lg:col-8 px-2">
+                <div class="text-xl font-medium" style="color: #ef4943">
+                    Stake your {{selectedSourceToken}} for 30 Days
+                    <br /><br />
+                    <b style="color: rgb(102, 228, 102)">59.25% </b>
+                    <b style="color: #ef4943">APR</b>
+                    <br />
+                    <b style="color: rgb(0, 162, 255);">15.44M UMI </b>
+                    <b style="color: #ef4943">TVL</b>
+                </div>
+            </div>
+        </div>
+    </div>
+    <br />
+    <div class="w-full" *ngIf="isStakeDialogLoading == false">
+        <div class="p-inputgroup mt-2">
+            <span class="p-inputgroup-addon">Qty:</span>
+            <p-inputNumber [(ngModel)]="sourceQuantity" class="p-inputtext-lg text-right" [style]="{'width':'100%'}"
+                [minFractionDigits]="5" (onBlur)="sourceQuantityOnBlur($event)">
+            </p-inputNumber>
+        </div>
+    </div>
+    <br />
+    <div class="w-full text-center" *ngIf="isStakeDialogLoading == false">
+        <br />
+        <button pButton type="button" label="Stake" class="p-button-text p-button-danger p-button-lg mr-2 text-white"
+            (click)="stake()" [disabled]="isProcessing"
+            style="background: linear-gradient(90deg,rgba(244,60,113,1) 0%,rgba(240,73,65,1) 100%);"></button>
+    </div>
+</p-dialog>

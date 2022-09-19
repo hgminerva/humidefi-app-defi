@@ -105,7 +105,14 @@ export class SwapComponent implements OnInit {
       this.isSwapError = false;
 
       let keypair = localStorage.getItem("wallet-keypair") || "";
-      this.dexService.doSwap(keypair, this.sourceQuantity, this.selectedSourceToken, this.selectedDestinationToken);
+      let swap: SwapModel = {
+        source: keypair,
+        quantity: this.sourceQuantity,
+        sourceTicker: this.selectedSourceToken,
+        destinationTicker: this.selectedDestinationToken
+      };
+
+      this.dexService.doSwap(swap);
       let swapEventMessages = this.dexService.swapEventMessages.asObservable();
 
       this.subscription = swapEventMessages.subscribe(
