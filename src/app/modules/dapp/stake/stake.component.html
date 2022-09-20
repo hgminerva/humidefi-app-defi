@@ -392,10 +392,14 @@
                 <div class="text-xl font-medium" style="color: #ef4943">
                     Stake your {{selectedSourceToken}} for 30 Days
                     <br /><br />
-                    <b style="color: rgb(102, 228, 102)">33.00% </b>
+                    <b style="color: rgb(102, 228, 102)">
+                        {{decimalPipe.transform(lumiAPR, "1.5-5") || "0"}}%
+                    </b>
                     <b style="color: #ef4943">APR</b>
                     <br />
-                    <b style="color: rgb(0, 162, 255);">9.98M UMI </b>
+                    <b style="color: rgb(0, 162, 255);">
+                        {{decimalPipe.transform(lumiTVL, "1.5-5") || "0"}} UMI
+                    </b>
                     <b style="color: #ef4943">TVL</b>
                 </div>
             </div>
@@ -409,10 +413,14 @@
                 <div class="text-xl font-medium" style="color: #ef4943">
                     Stake your {{selectedSourceToken}} for 30 Days
                     <br /><br />
-                    <b style="color: rgb(102, 228, 102)">59.25% </b>
+                    <b style="color: rgb(102, 228, 102)">
+                        {{decimalPipe.transform(lphpuAPR, "1.5-5") || "0"}}%
+                    </b>
                     <b style="color: #ef4943">APR</b>
                     <br />
-                    <b style="color: rgb(0, 162, 255);">15.44M UMI </b>
+                    <b style="color: rgb(0, 162, 255);">
+                        {{decimalPipe.transform(lphpuTVL, "1.5-5") || "0"}} PHPU
+                    </b>
                     <b style="color: #ef4943">TVL</b>
                 </div>
             </div>
