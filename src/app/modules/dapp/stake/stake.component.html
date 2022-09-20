@@ -1,125 +1,318 @@
 <div class="dapp-container">
-    <div class="grid">
-        <div class="col-12 md:col-12 lg:col-12 px-2 pb-4 pt-2">
-            <span class="text-gray-600">
-                <img src="./../../../../assets/img/home/humedifi_logo.png" width="80"
-                    style="margin: 2px 3px -4px 3px;" /> is a modefied substrate chain with a proof-of-authority (PoA)
-                consensus that allows you to
-                stake from our authorized validators. Since they are authorized nodes, there is no risk of slashing, not
-                like on a typical proof-of-stake (PoS) consensus. The longer you stake the more reward (APR) you get.
-            </span>
-        </div>
+    <div class="w-full text-center" *ngIf="isLoading">
+        <br /><br /><br /><br /><br />
+        <p-progressSpinner></p-progressSpinner>
+        <br /><br />
+        Please wait...
+        <br /><br /><br /><br /><br />
     </div>
-    <div class="grid">
-        <div class="col-12 md:col-12 lg:col-12 px-2">
-            <div class="card border-round-2xl" style="box-shadow: 3px 2px 5px 0px #dfdfdf !important;">
-                <div class="flex-wrap card-container overflow-hidden w-full">
-                    <div class="bg-white px-6 pt-4 pb-4 border-round-2xl" style="min-height: 180px;">
-                        <div class="text-xl font-medium mb-3" style="color: #ef4943">
-                            Stake your UMI for 30 Days
-                            <span style="float: right; color: rgb(77, 77, 77);">
-                                <b style="color: rgb(102, 228, 102)">33.00% </b>
-                                <b style="color: #ef4943">APR</b>
-                                /
-                                <b style="color: rgb(0, 162, 255);">9.98M UMI </b>
-                                <b style="color: #ef4943">TVL</b>
+    <div class="w-full" *ngIf="!isLoading">
+        <div class="grid">
+            <div class="col-12 md:col-12 lg:col-12 px-2 pb-4 pt-2">
+                <span class="text-gray-600">
+                    <img src="./../../../../assets/img/home/humedifi_logo.png" width="80"
+                        style="margin: 2px 3px -4px 3px;" />
+                    allows you to staken your crypto currency/token to earn income. When you staken you will given an
+                    equivalent Liquidity
+                    Token whuch you can redeem when it expires. The income (APR) will vary based on the transaction and
+                    total vloume of the
+                    stake product provided by DEX.
+                </span>
+            </div>
+        </div>
+        <div class="grid">
+            <div class="col-12 md:col-12 lg:col-5">
+                <div class="p-inputgroup">
+                    <span class="p-inputgroup-addon">
+                        Currency:
+                    </span>
+                    <p-dropdown [options]="currencies" [(ngModel)]="selectedCurrency" placeholder="Select a Token"
+                        class="p-inputtext-lg" optionLabel="name" [style]="{'width':'100%'}"
+                        (onChange)="currencyOnChange($event)">
+                        <ng-template pTemplate="selectedItem">
+                            <div *ngIf="selectedCurrency">
+                                <img *ngIf="selectedCurrency.name == 'PHP'"
+                                    src="./../../../../assets/img/currency/PHP.png" width="27"
+                                    style="float: left; margin-top: 7px;" />
+                                <img *ngIf="selectedCurrency.name == 'USD'"
+                                    src="./../../../../assets/img/currency/USD.png" width="27"
+                                    style="float: left; margin-top: 7px;" />
+                                &nbsp;
+                                <span class="text-xl">
+                                    {{selectedCurrency.name}}
+                                </span>
+                            </div>
+                        </ng-template>
+                        <ng-template let-currency pTemplate="item">
+                            <img *ngIf="currency.name == 'PHP'" src="./../../../../assets/img/currency/PHP.png"
+                                width="27" style="float: left; margin-top: 7px;" />
+                            <img *ngIf="currency.name == 'USD'" src="./../../../../assets/img/currency/USD.png"
+                                width="27" style="float: left; margin-top: 7px;" />
+                            &nbsp;
+                            <span class="text-xl">
+                                {{currency.name}}
                             </span>
-                        </div>
-                        <div class="grid mt-2 px-4">
-                            <div class="col-12 md:col-12 lg:col-2 px-1 text-center">
-                                <img src="./../../../../assets/img/tokens/UMI.png" width="90" />
+                        </ng-template>
+                    </p-dropdown>
+                </div>
+            </div>
+            <div class="col-12 md:col-12 lg:col-7 text-right">
+                <div class="text-lg font-bold mb-3 text-green-500 mt-3 px-2">
+                    Total Value: {{total}} {{selectedCurrency.name}}
+                </div>
+            </div>
+        </div>
+        <div class="grid pt-2">
+            <div class="col-12 md:col-12 lg:col-12 px-2">
+                <div class="card border-round-2xl" style="box-shadow: 3px 2px 5px 0px #dfdfdf !important;">
+                    <div class="flex-wrap card-container overflow-hidden w-full">
+                        <div class="bg-white px-6 pt-4 pb-4 border-round-2xl" style="min-height: 180px;">
+                            <div class="w-full text-center" *ngIf="isInvestmentsLoading">
+                                <br /><br /><br />
+                                <p-progressSpinner></p-progressSpinner>
+                                <br /><br />
+                                Please wait...
+                                <br /><br /><br />
                             </div>
-                            <div class="col-12 md:col-12 lg:col-4 px-1">
-                                <div>
-                                    Next Reward
+                            <div class="w-full" *ngIf="!isInvestmentsLoading">
+                                <div class="text-xl font-medium mb-3" style="color: #ef4943">
+                                    Stake your UMI for 30 Days
+                                    <span style="float: right; color: rgb(77, 77, 77);">
+                                        <b style="color: rgb(102, 228, 102)">
+                                            {{decimalPipe.transform(lumiAPR, "1.5-5") || "0"}}%
+                                        </b>
+                                        <b style="color: #ef4943">APR</b>
+                                        /
+                                        <b style="color: rgb(0, 162, 255);">
+                                            {{decimalPipe.transform(lumiTVL, "1.5-5") || "0"}} UMI
+                                        </b>
+                                        <b style="color: #ef4943">TVL</b>
+                                    </span>
+                                </div>
+                                <div class="grid mt-2 px-4">
+                                    <div class="col-12 md:col-12 lg:col-2 px-1 text-center">
+                                        <img src="./../../../../assets/img/liquidity/LUMI.png" width="80"
+                                            style="margin-top: 5px;" />
+                                    </div>
+                                    <div class="col-12 md:col-12 lg:col-10 px-1">
+                                        <div class="grid">
+                                            <div class="col-12 md:col-12 lg:col-2 px-1">
+                                                <div>
+                                                    Name
+                                                </div>
+                                                <div class="text-sm">
+                                                    <span class="font-bold text-red-500">L</span>
+                                                    <span class="font-bold text-green-500">UMI</span>
+                                                    <br />
+                                                    <b>UMI Liquidity Token</b>
+                                                </div>
+                                            </div>
+                                            <div class="col-12 md:col-12 lg:col-2 px-1">
+                                                <div>
+                                                    Balance
+                                                </div>
+                                                <div class="text-sm">
+                                                    <span class="font-bold mr-1">
+                                                        {{decimalPipe.transform(lumiInvestment.balance, "1.5-5") ||
+                                                        "0"}}
+                                                    </span>
+                                                    <span class="font-bold text-red-500">L</span>
+                                                    <span class="font-bold text-green-500">UMI</span>
+                                                </div>
+                                            </div>
+                                            <div class="col-12 md:col-12 lg:col-2 px-1">
+                                                <div>
+                                                    Income
+                                                </div>
+                                                <div class="text-sm">
+                                                    <span class="font-bold mr-1">
+                                                        {{decimalPipe.transform(lumiInvestment.interest, "1.5-5") ||
+                                                        "0"}}
+                                                    </span>
+                                                    <span class="font-bold text-red-500">L</span>
+                                                    <span class="font-bold text-green-500">UMI</span>
+                                                </div>
+                                            </div>
+                                            <div class="col-12 md:col-12 lg:col-2 px-1">
+                                                <div>
+                                                    Total
+                                                </div>
+                                                <div class="text-sm">
+                                                    <span class="font-bold mr-1">
+                                                        {{decimalPipe.transform(lumiInvestment.balance +
+                                                        lumiInvestment.interest, "1.5-5") || "0"}}
+                                                    </span>
+                                                    <span class="font-bold text-red-500">L</span>
+                                                    <span class="font-bold text-green-500">UMI</span>
+                                                </div>
+                                            </div>
+                                            <div class="col-12 md:col-12 lg:col-2 px-1">
+                                                <div>
+                                                    Price
+                                                </div>
+                                                <div class="text-sm">
+                                                    <span class="font-bold mr-1">
+                                                        {{decimalPipe.transform(lumiInvestment.price, "1.5-5") || "0"}}
+                                                        {{selectedCurrency.name}} per
+                                                    </span>
+                                                    <span class="font-bold text-red-500">L</span>
+                                                    <span class="font-bold text-green-500">UMI</span>
+                                                </div>
+                                            </div>
+                                            <div class="col-12 md:col-12 lg:col-2 px-1">
+                                                <div>
+                                                    Value
+                                                </div>
+                                                <div class="text-sm">
+                                                    <span class="font-bold mr-1">
+                                                        {{decimalPipe.transform(lumiInvestment.value, "1.5-5") || "0"}}
+                                                        {{selectedCurrency.name}}
+                                                    </span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
                                 </div>
                                 <br />
-                                <div class="text-2xl">
-                                    0.020947 <span class="font-bold">UMI</span>
+                                <div class="mt-2 text-right">
+                                    <button pButton type="button" label="Stake"
+                                        class="p-button-text p-button-danger mr-2 text-white"
+                                        (click)="openStakeDialog('UMI')"
+                                        style="background: linear-gradient(90deg,rgba(244,60,113,1) 0%,rgba(240,73,65,1) 100%);"></button>
+                                    <button pButton type="button" label="Redeem"
+                                        class="p-button-text p-button-danger mr-2 text-white"
+                                        (click)="redeem(lumiInvestment.balance, lumiInvestment.ticker)"
+                                        style="background: linear-gradient(90deg,rgba(244,60,113,1) 0%,rgba(240,73,65,1) 100%);"></button>
                                 </div>
                             </div>
-                            <div class="col-12 md:col-12 lg:col-3 px-1">
-                                <div>
-                                    Your Rewards
-                                </div>
-                                <br />
-                                <div class="text-2xl">
-                                    0 <span class="font-bold">UMI</span>
-                                </div>
-                            </div>
-                            <div class="col-12 md:col-12 lg:col-3 px-1">
-                                <div>
-                                    Total Balance
-                                </div>
-                                <br />
-                                <div class="text-2xl">
-                                    0 <span class="font-bold">UMI</span>
-                                </div>
-                            </div>
-                        </div>
-                        <br />
-                        <div class="mt-2 px-3">
-                            <button pButton type="button" label="Stake" class="p-button-warning p-button-sm mr-2"
-                                (click)="openStakeDialog('UMI')"></button>
-                            <button pButton type="button" label="Claim" class="p-button-success p-button-sm"></button>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
-    </div>
-    <div class="grid pt-2">
-        <div class="col-12 md:col-12 lg:col-12 px-2">
-            <div class="card border-round-2xl" style="box-shadow: 3px 2px 5px 0px #dfdfdf !important;">
-                <div class="flex-wrap card-container overflow-hidden w-full">
-                    <div class="bg-white px-6 pt-4 pb-4 border-round-2xl" style="min-height: 180px;">
-                        <div class="text-xl font-medium mb-3" style="color: #ef4943">
-                            Stake your PHPU for 30 Days
-                            <span style="float: right; color: rgb(77, 77, 77);">
-                                <b style="color: rgb(102, 228, 102)">59.25% </b>
-                                <b style="color: #ef4943">APR</b>
-                                /
-                                <b style="color: rgb(0, 162, 255);">15.44M UMI </b>
-                                <b style="color: #ef4943">TVL</b>
-                            </span>
-                        </div>
-                        <div class="grid mt-2 px-4">
-                            <div class="col-12 md:col-12 lg:col-2 px-1 text-center">
-                                <img src="./../../../../assets/img/tokens/PHPU.png" width="90" />
+        <div class="grid pt-2">
+            <div class="col-12 md:col-12 lg:col-12 px-2">
+                <div class="card border-round-2xl" style="box-shadow: 3px 2px 5px 0px #dfdfdf !important;">
+                    <div class="flex-wrap card-container overflow-hidden w-full">
+                        <div class="bg-white px-6 pt-4 pb-4 border-round-2xl" style="min-height: 180px;">
+                            <div class="w-full text-center" *ngIf="isInvestmentsLoading">
+                                <br /><br /><br />
+                                <p-progressSpinner></p-progressSpinner>
+                                <br /><br />
+                                Please wait...
+                                <br /><br /><br />
                             </div>
-                            <div class="col-12 md:col-12 lg:col-4 px-1">
-                                <div>
-                                    Next Reward
+                            <div class="w-full" *ngIf="!isInvestmentsLoading">
+                                <div class="text-xl font-medium mb-3" style="color: #ef4943">
+                                    Stake your PHPU for 30 Days
+                                    <span style="float: right; color: rgb(77, 77, 77);">
+                                        <b style="color: rgb(102, 228, 102)">
+                                            {{decimalPipe.transform(lphpuAPR, "1.5-5") || "0"}}%
+                                        </b>
+                                        <b style="color: #ef4943">APR</b>
+                                        /
+                                        <b style="color: rgb(0, 162, 255);">
+                                            {{decimalPipe.transform(lphpuTVL, "1.5-5") || "0"}} PHPU
+                                        </b>
+                                        <b style="color: #ef4943">TVL</b>
+                                    </span>
+                                </div>
+                                <div class="grid mt-2 px-4">
+                                    <div class="col-12 md:col-12 lg:col-2 px-1 text-center">
+                                        <img src="./../../../../assets/img/liquidity/LPHPU.png" width="80"
+                                            style="margin-top: 5px;" />
+                                    </div>
+                                    <div class="col-12 md:col-12 lg:col-10 px-1">
+                                        <div class="grid">
+                                            <div class="col-12 md:col-12 lg:col-2 px-1">
+                                                <div>
+                                                    Name
+                                                </div>
+                                                <div class="text-sm">
+                                                    <span class="font-bold text-red-500">L</span>
+                                                    <span class="font-bold text-green-500">UMI</span>
+                                                    <br />
+                                                    <b>UMI Liquidity Token</b>
+                                                </div>
+                                            </div>
+                                            <div class="col-12 md:col-12 lg:col-2 px-1">
+                                                <div>
+                                                    Balance
+                                                </div>
+                                                <div class="text-sm">
+                                                    <span class="font-bold mr-1">
+                                                        {{decimalPipe.transform(lphpuInvestment.balance, "1.5-5") ||
+                                                        "0"}}
+                                                    </span>
+                                                    <span class="font-bold text-red-500">L</span>
+                                                    <span class="font-bold text-green-500">UMI</span>
+                                                </div>
+                                            </div>
+                                            <div class="col-12 md:col-12 lg:col-2 px-1">
+                                                <div>
+                                                    Income
+                                                </div>
+                                                <div class="text-sm">
+                                                    <span class="font-bold mr-1">
+                                                        {{decimalPipe.transform(lphpuInvestment.interest, "1.5-5") ||
+                                                        "0"}}
+                                                    </span>
+                                                    <span class="font-bold text-red-500">L</span>
+                                                    <span class="font-bold text-green-500">UMI</span>
+                                                </div>
+                                            </div>
+                                            <div class="col-12 md:col-12 lg:col-2 px-1">
+                                                <div>
+                                                    Total
+                                                </div>
+                                                <div class="text-sm">
+                                                    <span class="font-bold mr-1">
+                                                        {{decimalPipe.transform(lphpuInvestment.balance +
+                                                        lphpuInvestment.interest, "1.5-5") || "0"}}
+                                                    </span>
+                                                    <span class="font-bold text-red-500">L</span>
+                                                    <span class="font-bold text-green-500">UMI</span>
+                                                </div>
+                                            </div>
+                                            <div class="col-12 md:col-12 lg:col-2 px-1">
+                                                <div>
+                                                    Price
+                                                </div>
+                                                <div class="text-sm">
+                                                    <span class="font-bold mr-1">
+                                                        {{decimalPipe.transform(lphpuInvestment.price, "1.5-5") || "0"}}
+                                                        {{selectedCurrency.name}} per
+                                                    </span>
+                                                    <span class="font-bold text-red-500">L</span>
+                                                    <span class="font-bold text-green-500">UMI</span>
+                                                </div>
+                                            </div>
+                                            <div class="col-12 md:col-12 lg:col-2 px-1">
+                                                <div>
+                                                    Value
+                                                </div>
+                                                <div class="text-sm">
+                                                    <span class="font-bold mr-1">
+                                                        {{decimalPipe.transform(lphpuInvestment.value, "1.5-5") || "0"}}
+                                                        {{selectedCurrency.name}}
+                                                    </span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
                                 </div>
                                 <br />
-                                <div class="text-2xl">
-                                    0.020947 <span class="font-bold">UMI</span>
+                                <div class="mt-2 text-right">
+                                    <button pButton type="button" label="Stake"
+                                        class="p-button-text p-button-danger mr-2 text-white"
+                                        (click)="openStakeDialog('PHPU')"
+                                        style="background: linear-gradient(90deg,rgba(244,60,113,1) 0%,rgba(240,73,65,1) 100%);"></button>
+                                    <button pButton type="button" label="Redeem"
+                                        class="p-button-text p-button-danger mr-2 text-white"
+                                        (click)="redeem(lphpuInvestment.balance, lphpuInvestment.ticker)"
+                                        style="background: linear-gradient(90deg,rgba(244,60,113,1) 0%,rgba(240,73,65,1) 100%);"></button>
                                 </div>
                             </div>
-                            <div class="col-12 md:col-12 lg:col-3 px-1">
-                                <div>
-                                    Your Rewards
-                                </div>
-                                <br />
-                                <div class="text-2xl">
-                                    0 <span class="font-bold">UMI</span>
-                                </div>
-                            </div>
-                            <div class="col-12 md:col-12 lg:col-3 px-1">
-                                <div>
-                                    Total Balance
-                                </div>
-                                <br />
-                                <div class="text-2xl">
-                                    0 <span class="font-bold">UMI</span>
-                                </div>
-                            </div>
-                        </div>
-                        <br />
-                        <div class="mt-2 px-3">
-                            <button pButton type="button" label="Stake" class="p-button-warning p-button-sm mr-2"
-                                (click)="openStakeDialog('PHPU')"></button>
-                            <button pButton type="button" label="Claim" class="p-button-success p-button-sm"></button>
                         </div>
                     </div>
                 </div>
@@ -155,6 +348,33 @@
     </div>
 </p-dialog>
 
+<p-dialog [(visible)]="showProcessDialog" [style]="{width: '50vw'}" [modal]="true" [closable]="false">
+    <div class="w-full text-center">
+        <div class="w-full" *ngIf="!isRedeemProcessed && !isRedeemError">
+            <p-progressSpinner></p-progressSpinner>
+            <br /><br />
+        </div>
+        <div class="w-full" *ngIf="isRedeemProcessed">
+            <i class="pi pi-check" style="font-size: 5rem; font-weight: bold; color: rgb(119, 255, 119);"></i>
+            <br />
+        </div>
+        <div class="w-full" *ngIf="isRedeemError">
+            <i class="pi pi-times" style="font-size: 5rem; font-weight: bold; color: rgb(202, 74, 74);"></i>
+            <br />
+        </div>
+        <div style="width: 100%; white-space: pre-wrap;">
+            {{redeemProcessMessage}}
+        </div>
+        <br />
+        <div class="w-full" *ngIf="isRedeemProcessed || isRedeemError">
+            <br />
+            <button pButton type="button" label="OK" class="p-button-text p-button-danger text-white"
+                (click)="showProcessDialog = false"
+                style="background: linear-gradient(90deg,rgba(244,60,113,1) 0%,rgba(240,73,65,1) 100%);"></button>
+        </div>
+    </div>
+</p-dialog>
+
 <p-toast position="top-right" key="error-stake"></p-toast>
 
 <p-dialog [(visible)]="showStakeDialog" [style]="{width: '40vw'}" [modal]="true">
@@ -165,7 +385,8 @@
     <div class="w-full" style="border: 1px solid #ced4da; border-radius: 7px; " *ngIf="isStakeDialogLoading == false">
         <div class="grid p-3" *ngIf="selectedSourceToken == 'UMI'">
             <div class="col-12 md:col-12 lg:col-4 px-2 text-center">
-                <img *ngIf="selectedSourceToken == 'UMI'" src="./../../../../assets/img/tokens/UMI.png" width="115" />
+                <img *ngIf="selectedSourceToken == 'UMI'" src="./../../../../assets/img/liquidity/LUMI.png"
+                    width="115" />
             </div>
             <div class="col-12 md:col-12 lg:col-8 px-2">
                 <div class="text-xl font-medium" style="color: #ef4943">
@@ -181,7 +402,8 @@
         </div>
         <div class="grid p-3" *ngIf="selectedSourceToken == 'PHPU'">
             <div class="col-12 md:col-12 lg:col-4 px-2 text-center">
-                <img *ngIf="selectedSourceToken == 'PHPU'" src="./../../../../assets/img/tokens/PHPU.png" width="115" />
+                <img *ngIf="selectedSourceToken == 'PHPU'" src="./../../../../assets/img/liquidity/LPHPU.png"
+                    width="115" />
             </div>
             <div class="col-12 md:col-12 lg:col-8 px-2">
                 <div class="text-xl font-medium" style="color: #ef4943">

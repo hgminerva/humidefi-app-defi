@@ -8,6 +8,11 @@ import { DecimalPipe } from '@angular/common';
 import { ForexModel } from 'src/app/models/forex.model';
 import { DexService } from 'src/app/services/dex/dex.service';
 import { StakeModel } from 'src/app/models/stake.model';
+import { CurrenciesModel } from 'src/app/models/currencies.model';
+import { InvestmentsModel } from 'src/app/models/investments.model';
+import { LumiContractService } from 'src/app/services/lumi-contract/lumi-contract.service';
+import { LphpuContractService } from 'src/app/services/lphpu-contract/lphpu-contract.service';
+import { RedeemModel } from 'src/app/models/redeem.model';
 
 @Component({
   selector: 'app-stake',
@@ -24,26 +29,177 @@ export class StakeComponent implements OnInit {
 
   tokens: string[] = [];
   isLoading: boolean = true;
+  isInvestmentsLoading: boolean = true;
+  total: string = "0";
 
   stakeProcessMessage: string = "";
   isStakeProcessed: boolean = false;
   isStakeError: boolean = false;
-  subscription: Subscription = new Subscription;
+  stakeSubscription: Subscription = new Subscription;
+
+  currencies: CurrenciesModel[] = [];
+  selectedCurrency!: CurrenciesModel;
+
+  redeemProcessMessage: string = "";
+  isRedeemProcessed: boolean = false;
+  isRedeemError: boolean = false;
+  redeemSubscription: Subscription = new Subscription;
 
   constructor(
     public decimalPipe: DecimalPipe,
     private polkadotService: PolkadotService,
     private phpuContractService: PhpuContractService,
+    private lumiContractService: LumiContractService,
+    private lphpuContractService: LphpuContractService,
     private forexService: ForexService,
     private messageService: MessageService,
     private dexService: DexService
-  ) { }
+  ) {
+    this.currencies = [
+      { name: 'PHP' },
+      { name: 'USD' }
+    ];
+    this.selectedCurrency = this.currencies[0];
+  }
+
+  forex: ForexModel = new ForexModel();
+  lumiInvestment: InvestmentsModel = new InvestmentsModel();
+  lphpuInvestment: InvestmentsModel = new InvestmentsModel();
 
   selectedSourceToken: string = "";
   sourceQuantity: number = 0;
 
   showStakeDialog: boolean = false;
   isStakeDialogLoading: boolean = false;
+
+  umiBalance: number = 0;
+  lumiTVL: number = 0;
+  lumiAPR: number = 0;
+  lumiIncome: number = 0;
+
+  phpuBalance: number = 0;
+  lphpuTVL: number = 0;
+  lphpuAPR: number = 0;
+  lphpuIncome: number = 0;
+
+  getForex(): void {
+    this.forexService.getRates(this.selectedCurrency.name).subscribe(
+      data => {
+        if (data != new ForexModel()) {
+          this.forex = {
+            success: data.success,
+            timestamp: data.timestamp,
+            base: data.base,
+            date: data.date,
+            rates: {
+              PHP: data.rates.PHP,
+              USD: data.rates.USD
+            }
+          };
+        }
+
+        this.isLoading = false;
+        this.getUMIBalance();
+      }
+    );
+  }
+
+  async getUMIBalance(): Promise<void> {
+    let keypair = localStorage.getItem("wallet-keypair") || "";
+    let chainBalance: Promise<string> = this.polkadotService.getBalance(keypair);
+
+    let price = 1;
+    if (this.selectedCurrency.name == 'PHP') {
+      price = parseFloat((this.decimalPipe.transform(1 / this.forex.rates.USD, "1.5-5") || "0").replace(/,/g, ''));
+    }
+
+    let balance = parseFloat((this.decimalPipe.transform((await chainBalance), "1.5-5") || "0").replace(/,/g, ''));
+    this.umiBalance = balance;
+
+    this.getPHPUBalance();
+  }
+
+  async getPHPUBalance(): Promise<void> {
+    let keypair = localStorage.getItem("wallet-keypair") || "";
+    let phpuContractBalance = await this.phpuContractService.psp22BalanceOf(keypair);
+
+    let price = 1;
+    if (this.selectedCurrency.name == 'USD') {
+      price = parseFloat((this.decimalPipe.transform(1 / this.forex.rates.PHP, "1.5-5") || "0").replace(/,/g, ''));
+    }
+
+    let balance = parseFloat((this.decimalPipe.transform(phpuContractBalance, "1.5-5") || "0").replace(/,/g, ''));
+    this.phpuBalance = balance;
+
+    this.getLUMIContractSymbol();
+  }
+
+  async getLUMIContractSymbol(): Promise<void> {
+    let keypair = localStorage.getItem("wallet-keypair") || "";
+
+    let propSymbol = await this.lumiContractService.symbol();
+    let propName = await this.lumiContractService.name();
+    let lumiContractBalance = await this.lumiContractService.psp22BalanceOf(keypair);
+
+    let ticker = String(propSymbol);
+    let name = String(propName);
+
+    let price = 1;
+    if (this.selectedCurrency.name == 'PHP') {
+      price = parseFloat((this.decimalPipe.transform(1 / this.forex.rates.USD, "1.5-5") || "0").replace(/,/g, ''));
+    }
+
+    let balance = parseFloat((this.decimalPipe.transform(lumiContractBalance, "1.5-5") || "0").replace(/,/g, ''));
+
+    this.lumiTVL = await this.lumiContractService.psp22TotalSupply();
+    this.lumiAPR = (balance / this.lumiTVL) * 100;
+    this.lumiIncome = this.umiBalance * (this.lumiAPR / 100);
+
+    this.lumiInvestment = {
+      ticker: ticker,
+      name: name,
+      price: price,
+      balance: balance,
+      interest: this.lumiIncome,
+      value: price * balance
+    };
+
+    this.getLPHPUContractSymbol();
+  }
+
+  async getLPHPUContractSymbol(): Promise<void> {
+    let keypair = localStorage.getItem("wallet-keypair") || "";
+
+    let propSymbol = await this.lphpuContractService.symbol();
+    let propName = await this.lphpuContractService.name();
+    let lphpuContractBalance = await this.lphpuContractService.psp22BalanceOf(keypair);
+
+    let ticker = String(propSymbol);
+    let name = String(propName);
+
+    let price = 1;
+    if (this.selectedCurrency.name == 'USD') {
+      price = parseFloat((this.decimalPipe.transform(1 / this.forex.rates.PHP, "1.5-5") || "0").replace(/,/g, ''));
+    }
+
+    let balance = parseFloat((this.decimalPipe.transform(lphpuContractBalance, "1.5-5") || "0").replace(/,/g, ''));
+
+    this.lphpuTVL = await this.lphpuContractService.psp22TotalSupply();
+    this.lphpuAPR = (balance / this.lphpuTVL) * 100;
+    this.lphpuIncome = this.phpuBalance * (this.lphpuAPR / 100);
+
+    this.lphpuInvestment = {
+      ticker: ticker,
+      name: name,
+      price: price,
+      balance: balance,
+      interest: this.lphpuIncome,
+      value: price * balance
+    };
+
+    this.isInvestmentsLoading = false;
+    this.getTotal();
+  }
 
   async stake(): Promise<void> {
     if (this.sourceQuantity == 0) {
@@ -66,7 +222,7 @@ export class StakeComponent implements OnInit {
       this.dexService.doLiquidityStake(stake);
       let stakeEventMessages = this.dexService.stakeEventMessages.asObservable();
 
-      this.subscription = stakeEventMessages.subscribe(
+      this.stakeSubscription = stakeEventMessages.subscribe(
         message => {
           if (message != null) {
             if (message.hasError == true) {
@@ -75,7 +231,7 @@ export class StakeComponent implements OnInit {
               this.isStakeProcessed = false;
               this.isStakeError = true;
 
-              this.subscription.unsubscribe();
+              this.stakeSubscription.unsubscribe();
             } else {
               if (message.isFinalized != true) {
                 this.stakeProcessMessage = message.message;
@@ -88,7 +244,8 @@ export class StakeComponent implements OnInit {
                 this.sourceQuantity = 0;
                 this.showStakeDialog = false;
 
-                this.subscription.unsubscribe();
+                this.stakeSubscription.unsubscribe();
+                this.getUMIBalance();
               }
             }
           } else {
@@ -97,7 +254,7 @@ export class StakeComponent implements OnInit {
             this.isStakeProcessed = false;
             this.isStakeError = true;
 
-            this.subscription.unsubscribe();
+            this.stakeSubscription.unsubscribe();
           }
         }
       );
@@ -113,7 +270,75 @@ export class StakeComponent implements OnInit {
     this.stakeData.quantity = this.sourceQuantity;
   }
 
+  currencyOnChange(event: any): void {
+    this.isInvestmentsLoading = true;
+    this.getForex();
+  }
+
+  getTotal(): void {
+    let total = this.lumiInvestment.value + this.lphpuInvestment.value;
+
+    this.total = this.decimalPipe.transform(total, "1.5-5") || "0";
+    this.isLoading = false;
+  }
+
+  redeem(quantity: number, token: string): void {
+    this.showProcessDialog = true;
+
+    this.isProcessing = true;
+    this.redeemProcessMessage = "Processing..."
+    this.isRedeemProcessed = false;
+    this.isRedeemError = false;
+
+    let keypair = localStorage.getItem("wallet-keypair") || "";
+    let redeem: RedeemModel = {
+      source: keypair,
+      quantity: quantity,
+      sourceTicker: token
+    };
+
+    this.dexService.doLiquidityRedeem(redeem);
+    let redeemEventMessages = this.dexService.redeemEventMessages.asObservable();
+
+    this.redeemSubscription = redeemEventMessages.subscribe(
+      message => {
+        if (message != null) {
+          if (message.hasError == true) {
+            this.isProcessing = false;
+            this.redeemProcessMessage = message.message;
+            this.isRedeemProcessed = false;
+            this.isRedeemError = true;
+
+            this.redeemSubscription.unsubscribe();
+          } else {
+            if (message.isFinalized != true) {
+              this.redeemProcessMessage = message.message;
+            } else {
+              this.isProcessing = false;
+              this.redeemProcessMessage = "Redeem Complete!"
+              this.isRedeemProcessed = true;
+              this.isRedeemError = false;
+
+              this.redeemSubscription.unsubscribe();
+
+              this.isLoading = true;
+              this.getUMIBalance();
+            }
+          }
+        } else {
+          this.isProcessing = false;
+          this.redeemProcessMessage = "Somethings went wrong";
+          this.isRedeemProcessed = false;
+          this.isRedeemError = true;
+
+          this.redeemSubscription.unsubscribe();
+        }
+      }
+    );
+  }
+
   ngOnInit(): void {
+    this.getForex();
   }
 
 }

@@ -269,6 +269,10 @@ export class PortfolioComponent implements OnInit {
               this.isRedeemError = false;
 
               this.subscription.unsubscribe();
+
+              this.isInvestmentsLoading = true;
+              this.investments = [];
+              this.getLUMIContractSymbol();
             }
           }
         } else {

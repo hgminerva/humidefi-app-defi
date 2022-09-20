@@ -171,7 +171,7 @@
                             </div>
                             <div class="w-full" *ngIf="!isInvestmentsLoading">
                                 <div class="text-xl font-medium mb-3" style="color: #ef4943">
-                                    Investments
+                                    Stakes
                                 </div>
                                 <p-table responsiveLayout="stack" [value]="investments">
                                     <ng-template pTemplate="header">
@@ -180,7 +180,7 @@
                                             <th>Name</th>
                                             <th>Price</th>
                                             <th>Balance</th>
-                                            <th>Interests</th>
+                                            <th>Income</th>
                                             <th>Value</th>
                                             <th></th>
                                         </tr>
@@ -189,11 +189,11 @@
                                         <tr>
                                             <td>
                                                 <div *ngIf="investment.ticker == 'LUMI'">
-                                                    <img src="./../../../../assets/img/tokens/UMI.png" width="27"
+                                                    <img src="./../../../../assets/img/liquidity/LUMI.png" width="27"
                                                         style="float: left;" />
                                                 </div>
                                                 <div *ngIf="investment.ticker == 'LPHPU'">
-                                                    <img src="./../../../../assets/img/tokens/PHPU.png" width="27"
+                                                    <img src="./../../../../assets/img/liquidity/LPHPU.png" width="27"
                                                         style="float: left;" />
                                                 </div>
                                                 &nbsp;

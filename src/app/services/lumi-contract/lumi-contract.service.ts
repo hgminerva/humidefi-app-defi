@@ -142,9 +142,10 @@ export class LumiContractService {
     const contract = new ContractPromise(api, this.metadata, this.contractAddress);
     const options = { storageDepositLimit: null, gasLimit: -1 };
     const totalSupply = (await contract.query['psp22::totalSupply'](this.keypair, options)).output;
+    const decimals = await this.decimal();
 
     if (totalSupply != null) {
-      return parseFloat(String(totalSupply?.toHuman()).split(',').join(''));
+      return parseFloat(String(totalSupply?.toHuman()).split(',').join('')) / (10 ** decimals);
     }
 
     return 0;
