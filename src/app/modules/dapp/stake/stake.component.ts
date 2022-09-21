@@ -13,6 +13,7 @@ import { InvestmentsModel } from 'src/app/models/investments.model';
 import { LumiContractService } from 'src/app/services/lumi-contract/lumi-contract.service';
 import { LphpuContractService } from 'src/app/services/lphpu-contract/lphpu-contract.service';
 import { RedeemModel } from 'src/app/models/redeem.model';
+import { AppSettings } from 'src/app/app-settings';
 
 @Component({
   selector: 'app-stake',
@@ -53,7 +54,8 @@ export class StakeComponent implements OnInit {
     private lphpuContractService: LphpuContractService,
     private forexService: ForexService,
     private messageService: MessageService,
-    private dexService: DexService
+    private dexService: DexService,
+    private appSettings: AppSettings
   ) {
     this.currencies = [
       { name: 'PHP' },
@@ -72,12 +74,12 @@ export class StakeComponent implements OnInit {
   showStakeDialog: boolean = false;
   isStakeDialogLoading: boolean = false;
 
-  umiBalance: number = 0;
+  dexUmiBalance: number = 0;
   lumiTVL: number = 0;
   lumiAPR: number = 0;
   lumiIncome: number = 0;
 
-  phpuBalance: number = 0;
+  dexPhpuBalance: number = 0;
   lphpuTVL: number = 0;
   lphpuAPR: number = 0;
   lphpuIncome: number = 0;
@@ -99,37 +101,27 @@ export class StakeComponent implements OnInit {
         }
 
         this.isLoading = false;
-        this.getUMIBalance();
+        this.getDexUMIBalance();
       }
     );
   }
 
-  async getUMIBalance(): Promise<void> {
-    let keypair = localStorage.getItem("wallet-keypair") || "";
+  async getDexUMIBalance(): Promise<void> {
+    let keypair = this.appSettings.lumiAccountAddress;
     let chainBalance: Promise<string> = this.polkadotService.getBalance(keypair);
 
-    let price = 1;
-    if (this.selectedCurrency.name == 'PHP') {
-      price = parseFloat((this.decimalPipe.transform(1 / this.forex.rates.USD, "1.5-5") || "0").replace(/,/g, ''));
-    }
-
     let balance = parseFloat((this.decimalPipe.transform((await chainBalance), "1.5-5") || "0").replace(/,/g, ''));
-    this.umiBalance = balance;
+    this.dexUmiBalance = balance;
 
-    this.getPHPUBalance();
+    this.getDexPHPUBalance();
   }
 
-  async getPHPUBalance(): Promise<void> {
-    let keypair = localStorage.getItem("wallet-keypair") || "";
+  async getDexPHPUBalance(): Promise<void> {
+    let keypair = this.appSettings.lphpuAccountAddress;
     let phpuContractBalance = await this.phpuContractService.psp22BalanceOf(keypair);
 
-    let price = 1;
-    if (this.selectedCurrency.name == 'USD') {
-      price = parseFloat((this.decimalPipe.transform(1 / this.forex.rates.PHP, "1.5-5") || "0").replace(/,/g, ''));
-    }
-
     let balance = parseFloat((this.decimalPipe.transform(phpuContractBalance, "1.5-5") || "0").replace(/,/g, ''));
-    this.phpuBalance = balance;
+    this.dexPhpuBalance = balance;
 
     this.getLUMIContractSymbol();
   }
@@ -153,7 +145,7 @@ export class StakeComponent implements OnInit {
 
     this.lumiTVL = await this.lumiContractService.psp22TotalSupply();
     this.lumiAPR = (balance / this.lumiTVL) * 100;
-    this.lumiIncome = this.umiBalance * (this.lumiAPR / 100);
+    this.lumiIncome = this.dexUmiBalance * (this.lumiAPR / 100);
 
     this.lumiInvestment = {
       ticker: ticker,
@@ -186,7 +178,7 @@ export class StakeComponent implements OnInit {
 
     this.lphpuTVL = await this.lphpuContractService.psp22TotalSupply();
     this.lphpuAPR = (balance / this.lphpuTVL) * 100;
-    this.lphpuIncome = this.phpuBalance * (this.lphpuAPR / 100);
+    this.lphpuIncome = this.dexPhpuBalance * (this.lphpuAPR / 100);
 
     this.lphpuInvestment = {
       ticker: ticker,
@@ -245,7 +237,7 @@ export class StakeComponent implements OnInit {
                 this.showStakeDialog = false;
 
                 this.stakeSubscription.unsubscribe();
-                this.getUMIBalance();
+                this.getDexUMIBalance();
               }
             }
           } else {
@@ -322,7 +314,7 @@ export class StakeComponent implements OnInit {
               this.redeemSubscription.unsubscribe();
 
               this.isLoading = true;
-              this.getUMIBalance();
+              this.getDexUMIBalance();
             }
           }
         } else {

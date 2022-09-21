@@ -2,6 +2,7 @@ import { DecimalPipe } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { MessageService } from 'primeng/api';
 import { Subscription } from 'rxjs';
+import { AppSettings } from 'src/app/app-settings';
 import { CurrenciesModel } from 'src/app/models/currencies.model';
 import { ForexModel } from 'src/app/models/forex.model';
 import { HoldingsModel } from 'src/app/models/holdings.model';
@@ -44,7 +45,8 @@ export class PortfolioComponent implements OnInit {
     private lumiContractService: LumiContractService,
     private lphpuContractService: LphpuContractService,
     private forexService: ForexService,
-    private dexService: DexService
+    private dexService: DexService,
+    private appSettings: AppSettings
   ) {
     this.currencies = [
       { name: 'PHP' },
@@ -60,6 +62,16 @@ export class PortfolioComponent implements OnInit {
   investments: InvestmentsModel[] = [];
 
   displayChangeAccountDialog: boolean = false;
+
+  dexUmiBalance: number = 0;
+  lumiTVL: number = 0;
+  lumiAPR: number = 0;
+  lumiIncome: number = 0;
+
+  dexPhpuBalance: number = 0;
+  lphpuTVL: number = 0;
+  lphpuAPR: number = 0;
+  lphpuIncome: number = 0;
 
   changeAccount(): void {
     this.displayChangeAccountDialog = true;
@@ -84,7 +96,7 @@ export class PortfolioComponent implements OnInit {
         this.isLoading = false;
 
         this.getChainTokens();
-        this.getLUMIContractSymbol();
+        this.getDexUMIBalance();
       }
     );
   }
@@ -163,6 +175,26 @@ export class PortfolioComponent implements OnInit {
     this.isHoldingsLoading = false;
   }
 
+  async getDexUMIBalance(): Promise<void> {
+    let keypair = this.appSettings.lumiAccountAddress;
+    let chainBalance: Promise<string> = this.polkadotService.getBalance(keypair);
+
+    let balance = parseFloat((this.decimalPipe.transform((await chainBalance), "1.5-5") || "0").replace(/,/g, ''));
+    this.dexUmiBalance = balance;
+
+    this.getDexPHPUBalance();
+  }
+
+  async getDexPHPUBalance(): Promise<void> {
+    let keypair = this.appSettings.lphpuAccountAddress;
+    let phpuContractBalance = await this.phpuContractService.psp22BalanceOf(keypair);
+
+    let balance = parseFloat((this.decimalPipe.transform(phpuContractBalance, "1.5-5") || "0").replace(/,/g, ''));
+    this.dexPhpuBalance = balance;
+
+    this.getLUMIContractSymbol();
+  }
+
   async getLUMIContractSymbol(): Promise<void> {
     let keypair = localStorage.getItem("wallet-keypair") || "";
 
@@ -180,12 +212,16 @@ export class PortfolioComponent implements OnInit {
 
     let balance = parseFloat((this.decimalPipe.transform(lumiContractBalance, "1.5-5") || "0").replace(/,/g, ''));
 
+    this.lumiTVL = await this.lumiContractService.psp22TotalSupply();
+    this.lumiAPR = (balance / this.lumiTVL) * 100;
+    this.lumiIncome = this.dexUmiBalance * (this.lumiAPR / 100);
+
     this.investments.push({
       ticker: ticker,
       name: name,
       price: price,
       balance: balance,
-      interest: 0,
+      interest: this.lumiIncome,
       value: price * balance
     });
 
@@ -209,12 +245,16 @@ export class PortfolioComponent implements OnInit {
 
     let balance = parseFloat((this.decimalPipe.transform(lphpuContractBalance, "1.5-5") || "0").replace(/,/g, ''));
 
+    this.lphpuTVL = await this.lphpuContractService.psp22TotalSupply();
+    this.lphpuAPR = (balance / this.lphpuTVL) * 100;
+    this.lphpuIncome = this.dexPhpuBalance * (this.lphpuAPR / 100);
+
     this.investments.push({
       ticker: ticker,
       name: name,
       price: price,
       balance: balance,
-      interest: 0,
+      interest: this.lphpuIncome,
       value: price * balance
     });
 
@@ -272,7 +312,7 @@ export class PortfolioComponent implements OnInit {
 
               this.isInvestmentsLoading = true;
               this.investments = [];
-              this.getLUMIContractSymbol();
+              this.getDexUMIBalance();
             }
           }
         } else {

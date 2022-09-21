@@ -105,7 +105,7 @@
                                 <p-table responsiveLayout="stack" [value]="holdings">
                                     <ng-template pTemplate="header">
                                         <tr>
-                                            <th>Ticker</th>
+                                            <th style="width: 150px;">Ticker</th>
                                             <th>Name</th>
                                             <th>Price</th>
                                             <th>Balance</th>
@@ -135,7 +135,7 @@
                                             </td>
                                             <td>
                                                 <span class="text-base font-bold text-pink-700">
-                                                    {{holding.price}}
+                                                    {{decimalPipe.transform(holding.price, "1.5-5") || "0"}}
                                                 </span>
                                             </td>
                                             <td>
@@ -176,11 +176,11 @@
                                 <p-table responsiveLayout="stack" [value]="investments">
                                     <ng-template pTemplate="header">
                                         <tr>
-                                            <th>Ticker</th>
-                                            <th>Name</th>
-                                            <th>Price</th>
+                                            <th style="width: 150px;">Ticker</th>
                                             <th>Balance</th>
                                             <th>Income</th>
+                                            <th>Total</th>
+                                            <th>Price</th>
                                             <th>Value</th>
                                             <th></th>
                                         </tr>
@@ -202,16 +202,6 @@
                                                 </span>
                                             </td>
                                             <td>
-                                                <span class="text-base">
-                                                    {{investment.name}}
-                                                </span>
-                                            </td>
-                                            <td>
-                                                <span class="text-base font-bold text-pink-700">
-                                                    {{investment.price}}
-                                                </span>
-                                            </td>
-                                            <td>
                                                 <span class="text-base font-bold text-pink-700">
                                                     {{decimalPipe.transform(investment.balance, "1.5-5") || "0"}}
                                                 </span>
@@ -219,6 +209,17 @@
                                             <td>
                                                 <span class="text-base font-bold text-pink-700">
                                                     {{decimalPipe.transform(investment.interest, "1.5-5") || "0"}}
+                                                </span>
+                                            </td>
+                                            <td>
+                                                <span class="text-base font-bold text-pink-700">
+                                                    {{decimalPipe.transform(investment.balance + investment.interest,
+                                                    "1.5-5") || "0"}}
+                                                </span>
+                                            </td>
+                                            <td>
+                                                <span class="text-base font-bold text-pink-700">
+                                                    {{decimalPipe.transform(investment.price, "1.5-5") || "0"}}
                                                 </span>
                                             </td>
                                             <td>
