@@ -176,7 +176,7 @@ export class PortfolioComponent implements OnInit {
   }
 
   async getDexUMIBalance(): Promise<void> {
-    let keypair = this.appSettings.lumiAccountAddress;
+    let keypair = this.appSettings.dexAccount;
     let chainBalance: Promise<string> = this.polkadotService.getBalance(keypair);
 
     let balance = parseFloat((this.decimalPipe.transform((await chainBalance), "1.5-5") || "0").replace(/,/g, ''));
@@ -186,7 +186,7 @@ export class PortfolioComponent implements OnInit {
   }
 
   async getDexPHPUBalance(): Promise<void> {
-    let keypair = this.appSettings.lphpuAccountAddress;
+    let keypair = this.appSettings.dexAccount;
     let phpuContractBalance = await this.phpuContractService.psp22BalanceOf(keypair);
 
     let balance = parseFloat((this.decimalPipe.transform(phpuContractBalance, "1.5-5") || "0").replace(/,/g, ''));
