@@ -181,7 +181,7 @@
                                         style="background: linear-gradient(90deg,rgba(244,60,113,1) 0%,rgba(240,73,65,1) 100%);"></button>
                                     <button pButton type="button" label="Redeem"
                                         class="p-button-text p-button-danger mr-2 text-white"
-                                        (click)="redeem(lumiInvestment.balance, lumiInvestment.ticker)"
+                                        (click)="redeem(lumiInvestment.balance, 'lUMI')"
                                         style="background: linear-gradient(90deg,rgba(244,60,113,1) 0%,rgba(240,73,65,1) 100%);"></button>
                                 </div>
                             </div>
@@ -309,7 +309,7 @@
                                         style="background: linear-gradient(90deg,rgba(244,60,113,1) 0%,rgba(240,73,65,1) 100%);"></button>
                                     <button pButton type="button" label="Redeem"
                                         class="p-button-text p-button-danger mr-2 text-white"
-                                        (click)="redeem(lphpuInvestment.balance, lphpuInvestment.ticker)"
+                                        (click)="redeem(lphpuInvestment.balance, 'lPHPU')"
                                         style="background: linear-gradient(90deg,rgba(244,60,113,1) 0%,rgba(240,73,65,1) 100%);"></button>
                                 </div>
                             </div>
@@ -321,7 +321,7 @@
     </div>
 </div>
 
-<p-dialog [(visible)]="showProcessDialog" [style]="{width: '50vw'}" [modal]="true" [closable]="false">
+<p-dialog [(visible)]="showStakeProcessDialog" [style]="{width: '50vw'}" [modal]="true" [closable]="false">
     <div class="w-full text-center">
         <div class="w-full" *ngIf="!isStakeProcessed && !isStakeError">
             <p-progressSpinner></p-progressSpinner>
@@ -342,13 +342,13 @@
         <div class="w-full" *ngIf="isStakeProcessed || isStakeError">
             <br />
             <button pButton type="button" label="OK" class="p-button-text p-button-danger text-white"
-                (click)="showProcessDialog = false"
+                (click)="showStakeProcessDialog = false"
                 style="background: linear-gradient(90deg,rgba(244,60,113,1) 0%,rgba(240,73,65,1) 100%);"></button>
         </div>
     </div>
 </p-dialog>
 
-<p-dialog [(visible)]="showProcessDialog" [style]="{width: '50vw'}" [modal]="true" [closable]="false">
+<p-dialog [(visible)]="showRedeemProcessDialog" [style]="{width: '50vw'}" [modal]="true" [closable]="false">
     <div class="w-full text-center">
         <div class="w-full" *ngIf="!isRedeemProcessed && !isRedeemError">
             <p-progressSpinner></p-progressSpinner>
@@ -369,7 +369,7 @@
         <div class="w-full" *ngIf="isRedeemProcessed || isRedeemError">
             <br />
             <button pButton type="button" label="OK" class="p-button-text p-button-danger text-white"
-                (click)="showProcessDialog = false"
+                (click)="showRedeemProcessDialog = false"
                 style="background: linear-gradient(90deg,rgba(244,60,113,1) 0%,rgba(240,73,65,1) 100%);"></button>
         </div>
     </div>
@@ -443,3 +443,5 @@
             style="background: linear-gradient(90deg,rgba(244,60,113,1) 0%,rgba(240,73,65,1) 100%);"></button>
     </div>
 </p-dialog>
+
+<p-confirmDialog header="Confirmation" [style]="{width: '30vw'}" icon="pi pi-exclamation-triangle"></p-confirmDialog>

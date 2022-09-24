@@ -14,19 +14,21 @@ import { LumiContractService } from 'src/app/services/lumi-contract/lumi-contrac
 import { LphpuContractService } from 'src/app/services/lphpu-contract/lphpu-contract.service';
 import { RedeemModel } from 'src/app/models/redeem.model';
 import { AppSettings } from 'src/app/app-settings';
+import { ConfirmationService } from 'primeng/api';
 
 @Component({
   selector: 'app-stake',
   templateUrl: './stake.component.html',
   styleUrls: ['./stake.component.scss'],
-  providers: [MessageService]
+  providers: [MessageService, ConfirmationService]
 })
 export class StakeComponent implements OnInit {
 
   stakeData: StakeModel = new StakeModel();
 
   isProcessing: boolean = false;
-  showProcessDialog: boolean = false;
+  showStakeProcessDialog: boolean = false;
+  showRedeemProcessDialog: boolean = false;
 
   tokens: string[] = [];
   isLoading: boolean = true;
@@ -55,7 +57,8 @@ export class StakeComponent implements OnInit {
     private forexService: ForexService,
     private messageService: MessageService,
     private dexService: DexService,
-    private appSettings: AppSettings
+    private appSettings: AppSettings,
+    private confirmationService: ConfirmationService
   ) {
     this.currencies = [
       { name: 'PHP' },
@@ -197,7 +200,7 @@ export class StakeComponent implements OnInit {
     if (this.sourceQuantity == 0) {
       this.messageService.add({ key: 'error-stake', severity: 'error', summary: 'Error', detail: 'Invalid quantity' });
     } else {
-      this.showProcessDialog = true;
+      this.showStakeProcessDialog = true;
 
       this.isProcessing = true;
       this.stakeProcessMessage = "Processing..."
@@ -275,58 +278,63 @@ export class StakeComponent implements OnInit {
   }
 
   redeem(quantity: number, token: string): void {
-    this.showProcessDialog = true;
+    this.confirmationService.confirm({
+      message: 'Are you sure that you want to redeem?',
+      accept: () => {
+        this.showRedeemProcessDialog = true;
 
-    this.isProcessing = true;
-    this.redeemProcessMessage = "Processing..."
-    this.isRedeemProcessed = false;
-    this.isRedeemError = false;
+        this.isProcessing = true;
+        this.redeemProcessMessage = "Processing..."
+        this.isRedeemProcessed = false;
+        this.isRedeemError = false;
 
-    let keypair = localStorage.getItem("wallet-keypair") || "";
-    let redeem: RedeemModel = {
-      source: keypair,
-      quantity: quantity,
-      sourceTicker: token
-    };
+        let keypair = localStorage.getItem("wallet-keypair") || "";
+        let redeem: RedeemModel = {
+          source: keypair,
+          quantity: quantity,
+          sourceTicker: token
+        };
 
-    this.dexService.doLiquidityRedeem(redeem);
-    let redeemEventMessages = this.dexService.redeemEventMessages.asObservable();
+        this.dexService.doLiquidityRedeem(redeem);
+        let redeemEventMessages = this.dexService.redeemEventMessages.asObservable();
 
-    this.redeemSubscription = redeemEventMessages.subscribe(
-      message => {
-        if (message != null) {
-          if (message.hasError == true) {
-            this.isProcessing = false;
-            this.redeemProcessMessage = message.message;
-            this.isRedeemProcessed = false;
-            this.isRedeemError = true;
+        this.redeemSubscription = redeemEventMessages.subscribe(
+          message => {
+            if (message != null) {
+              if (message.hasError == true) {
+                this.isProcessing = false;
+                this.redeemProcessMessage = message.message;
+                this.isRedeemProcessed = false;
+                this.isRedeemError = true;
 
-            this.redeemSubscription.unsubscribe();
-          } else {
-            if (message.isFinalized != true) {
-              this.redeemProcessMessage = message.message;
+                this.redeemSubscription.unsubscribe();
+              } else {
+                if (message.isFinalized != true) {
+                  this.redeemProcessMessage = message.message;
+                } else {
+                  this.isProcessing = false;
+                  this.redeemProcessMessage = "Redeem Complete!"
+                  this.isRedeemProcessed = true;
+                  this.isRedeemError = false;
+
+                  this.redeemSubscription.unsubscribe();
+
+                  this.isLoading = true;
+                  this.getDexUMIBalance();
+                }
+              }
             } else {
               this.isProcessing = false;
-              this.redeemProcessMessage = "Redeem Complete!"
-              this.isRedeemProcessed = true;
-              this.isRedeemError = false;
+              this.redeemProcessMessage = "Somethings went wrong";
+              this.isRedeemProcessed = false;
+              this.isRedeemError = true;
 
               this.redeemSubscription.unsubscribe();
-
-              this.isLoading = true;
-              this.getDexUMIBalance();
             }
           }
-        } else {
-          this.isProcessing = false;
-          this.redeemProcessMessage = "Somethings went wrong";
-          this.isRedeemProcessed = false;
-          this.isRedeemError = true;
-
-          this.redeemSubscription.unsubscribe();
-        }
+        );
       }
-    );
+    });
   }
 
   ngOnInit(): void {

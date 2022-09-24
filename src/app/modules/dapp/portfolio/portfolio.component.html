@@ -228,10 +228,18 @@
                                                 </span>
                                             </td>
                                             <td>
-                                                <button pButton type="button" label="Redeem"
-                                                    class="p-button-text p-button-danger p-button-sm text-white"
-                                                    (click)="redeem(investment.balance, investment.ticker)"
-                                                    style="background: linear-gradient(90deg,rgba(244,60,113,1) 0%,rgba(240,73,65,1) 100%);"></button>
+                                                <div *ngIf="investment.ticker == 'LUMI'">
+                                                    <button pButton type="button" label="Redeem"
+                                                        class="p-button-text p-button-danger p-button-sm text-white"
+                                                        (click)="redeem(investment.balance, 'lUMI')"
+                                                        style="background: linear-gradient(90deg,rgba(244,60,113,1) 0%,rgba(240,73,65,1) 100%);"></button>
+                                                </div>
+                                                <div *ngIf="investment.ticker == 'LPHPU'">
+                                                    <button pButton type="button" label="Redeem"
+                                                        class="p-button-text p-button-danger p-button-sm text-white"
+                                                        (click)="redeem(investment.balance, 'lPHPU')"
+                                                        style="background: linear-gradient(90deg,rgba(244,60,113,1) 0%,rgba(240,73,65,1) 100%);"></button>
+                                                </div>
                                             </td>
                                         </tr>
                                     </ng-template>
@@ -250,7 +258,7 @@
     <app-wallet [isLogin]="true"></app-wallet>
 </p-dialog>
 
-<p-dialog [(visible)]="showProcessDialog" [style]="{width: '50vw'}" [modal]="true" [closable]="false">
+<p-dialog [(visible)]="showRedeemProcessDialog" [style]="{width: '50vw'}" [modal]="true" [closable]="false">
     <div class="w-full text-center">
         <div class="w-full" *ngIf="!isRedeemProcessed && !isRedeemError">
             <p-progressSpinner></p-progressSpinner>
@@ -271,10 +279,11 @@
         <div class="w-full" *ngIf="isRedeemProcessed || isRedeemError">
             <br />
             <button pButton type="button" label="OK" class="p-button-text p-button-danger text-white"
-                (click)="showProcessDialog = false"
+                (click)="showRedeemProcessDialog = false"
                 style="background: linear-gradient(90deg,rgba(244,60,113,1) 0%,rgba(240,73,65,1) 100%);"></button>
         </div>
     </div>
 </p-dialog>
 
 <p-toast position="top-right" key="error-redeem"></p-toast>
+<p-confirmDialog header="Confirmation" [style]="{width: '30vw'}" icon="pi pi-exclamation-triangle"></p-confirmDialog>
