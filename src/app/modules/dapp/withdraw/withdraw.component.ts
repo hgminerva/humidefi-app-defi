@@ -39,13 +39,7 @@ export class WithdrawComponent implements OnInit {
   }
 
   getPhpValue(): void {
-    let phpCurrency = this.appSettings.currencies.filter(d => d.currency == "PHP")[0];
-    if (phpCurrency != null) {
-      let selectedToken = phpCurrency.tokensPrices.filter(d => d.token == this.selectedToken)[0];
-      if (selectedToken != null) {
-        this.phpValue = this.quantity * selectedToken.price;
-      }
-    }
+    
   }
 
   ngOnInit(): void {
