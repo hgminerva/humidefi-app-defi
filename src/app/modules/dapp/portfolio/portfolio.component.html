@@ -105,7 +105,7 @@
                                 <p-table responsiveLayout="stack" [value]="holdings">
                                     <ng-template pTemplate="header">
                                         <tr>
-                                            <th>Ticker</th>
+                                            <th style="width: 150px;">Ticker</th>
                                             <th>Name</th>
                                             <th>Price</th>
                                             <th>Balance</th>
@@ -135,7 +135,7 @@
                                             </td>
                                             <td>
                                                 <span class="text-base font-bold text-pink-700">
-                                                    {{holding.price}}
+                                                    {{decimalPipe.transform(holding.price, "1.5-5") || "0"}}
                                                 </span>
                                             </td>
                                             <td>
@@ -157,6 +157,99 @@
                 </div>
             </div>
         </div>
+        <div class="grid pt-2">
+            <div class="col-12 md:col-12 lg:col-12 px-2">
+                <div class="card border-round-2xl" style="box-shadow: 3px 2px 5px 0px #dfdfdf !important;">
+                    <div class="flex-wrap card-container overflow-hidden w-full">
+                        <div class="bg-white px-6 pt-4 pb-4 border-round-2xl" style="min-height: 180px;">
+                            <div class="w-full text-center" *ngIf="isInvestmentsLoading">
+                                <br /><br /><br />
+                                <p-progressSpinner></p-progressSpinner>
+                                <br /><br />
+                                Please wait...
+                                <br /><br /><br />
+                            </div>
+                            <div class="w-full" *ngIf="!isInvestmentsLoading">
+                                <div class="text-xl font-medium mb-3" style="color: #ef4943">
+                                    Stakes
+                                </div>
+                                <p-table responsiveLayout="stack" [value]="investments">
+                                    <ng-template pTemplate="header">
+                                        <tr>
+                                            <th style="width: 150px;">Ticker</th>
+                                            <th>Balance</th>
+                                            <th>Income</th>
+                                            <th>Total</th>
+                                            <th>Price</th>
+                                            <th>Value</th>
+                                            <th></th>
+                                        </tr>
+                                    </ng-template>
+                                    <ng-template pTemplate="body" let-investment>
+                                        <tr>
+                                            <td>
+                                                <div *ngIf="investment.ticker == 'LUMI'">
+                                                    <img src="./../../../../assets/img/liquidity/LUMI.png" width="27"
+                                                        style="float: left;" />
+                                                </div>
+                                                <div *ngIf="investment.ticker == 'LPHPU'">
+                                                    <img src="./../../../../assets/img/liquidity/LPHPU.png" width="27"
+                                                        style="float: left;" />
+                                                </div>
+                                                &nbsp;
+                                                <span class="text-xl font-bold text-pink-700">
+                                                    {{investment.ticker}}
+                                                </span>
+                                            </td>
+                                            <td>
+                                                <span class="text-base font-bold text-pink-700">
+                                                    {{decimalPipe.transform(investment.balance, "1.5-5") || "0"}}
+                                                </span>
+                                            </td>
+                                            <td>
+                                                <span class="text-base font-bold text-pink-700">
+                                                    {{decimalPipe.transform(investment.interest, "1.5-5") || "0"}}
+                                                </span>
+                                            </td>
+                                            <td>
+                                                <span class="text-base font-bold text-pink-700">
+                                                    {{decimalPipe.transform(investment.balance + investment.interest,
+                                                    "1.5-5") || "0"}}
+                                                </span>
+                                            </td>
+                                            <td>
+                                                <span class="text-base font-bold text-pink-700">
+                                                    {{decimalPipe.transform(investment.price, "1.5-5") || "0"}}
+                                                </span>
+                                            </td>
+                                            <td>
+                                                <span class="text-base font-bold text-pink-700">
+                                                    {{decimalPipe.transform(investment.value, "1.5-5") || "0"}}
+                                                </span>
+                                            </td>
+                                            <td>
+                                                <div *ngIf="investment.ticker == 'LUMI'">
+                                                    <button pButton type="button" label="Redeem"
+                                                        class="p-button-text p-button-danger p-button-sm text-white"
+                                                        (click)="redeem(investment.balance, 'lUMI')"
+                                                        style="background: linear-gradient(90deg,rgba(244,60,113,1) 0%,rgba(240,73,65,1) 100%);"></button>
+                                                </div>
+                                                <div *ngIf="investment.ticker == 'LPHPU'">
+                                                    <button pButton type="button" label="Redeem"
+                                                        class="p-button-text p-button-danger p-button-sm text-white"
+                                                        (click)="redeem(investment.balance, 'lPHPU')"
+                                                        style="background: linear-gradient(90deg,rgba(244,60,113,1) 0%,rgba(240,73,65,1) 100%);"></button>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    </ng-template>
+                                </p-table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
 </div>
 
@@ -164,3 +257,33 @@
     [(visible)]="displayChangeAccountDialog" [modal]="true" [maximizable]="true">
     <app-wallet [isLogin]="true"></app-wallet>
 </p-dialog>
+
+<p-dialog [(visible)]="showRedeemProcessDialog" [style]="{width: '50vw'}" [modal]="true" [closable]="false">
+    <div class="w-full text-center">
+        <div class="w-full" *ngIf="!isRedeemProcessed && !isRedeemError">
+            <p-progressSpinner></p-progressSpinner>
+            <br /><br />
+        </div>
+        <div class="w-full" *ngIf="isRedeemProcessed">
+            <i class="pi pi-check" style="font-size: 5rem; font-weight: bold; color: rgb(119, 255, 119);"></i>
+            <br />
+        </div>
+        <div class="w-full" *ngIf="isRedeemError">
+            <i class="pi pi-times" style="font-size: 5rem; font-weight: bold; color: rgb(202, 74, 74);"></i>
+            <br />
+        </div>
+        <div style="width: 100%; white-space: pre-wrap;">
+            {{redeemProcessMessage}}
+        </div>
+        <br />
+        <div class="w-full" *ngIf="isRedeemProcessed || isRedeemError">
+            <br />
+            <button pButton type="button" label="OK" class="p-button-text p-button-danger text-white"
+                (click)="showRedeemProcessDialog = false"
+                style="background: linear-gradient(90deg,rgba(244,60,113,1) 0%,rgba(240,73,65,1) 100%);"></button>
+        </div>
+    </div>
+</p-dialog>
+
+<p-toast position="top-right" key="error-redeem"></p-toast>
+<p-confirmDialog header="Confirmation" [style]="{width: '30vw'}" icon="pi pi-exclamation-triangle"></p-confirmDialog>

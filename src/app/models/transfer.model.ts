@@ -1,5 +1,5 @@
 export class TransferModel {
-    keypair: string = "";
-    recipient: string = "";
-    amount: number = 0;
+    to: string = "";
+    value: number = 0;
+    data: string = "";
 }

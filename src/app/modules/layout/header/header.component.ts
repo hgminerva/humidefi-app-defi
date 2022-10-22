@@ -85,6 +85,14 @@ export class HeaderComponent implements OnInit {
               { label: 'Stake' }
             ];
             break;
+          case '/dapp/redeem':
+            this.iconName = "pi pi-money-bill";
+            this.titleName = "Redeem";
+            this.menuItems = [
+              { label: 'Home' },
+              { label: 'Redeem' }
+            ];
+            break;
           case '/dapp/pay':
             this.iconName = "pi pi-wallet";
             this.titleName = "Pay";

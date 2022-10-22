@@ -18,6 +18,7 @@ import { ToastModule } from 'primeng/toast';
 import { MessagesModule } from 'primeng/messages';
 import { MessageModule } from 'primeng/message';
 import { InputNumberModule } from 'primeng/inputnumber';
+import { ConfirmDialogModule } from 'primeng/confirmdialog';
 
 import { DappComponent } from './dapp.component';
 import { DashboardComponent } from './dashboard/dashboard.component';
@@ -26,6 +27,7 @@ import { LoadComponent } from './load/load.component';
 import { WithdrawComponent } from './withdraw/withdraw.component';
 import { SwapComponent } from './swap/swap.component';
 import { StakeComponent } from './stake/stake.component';
+import { RedeemComponent } from './redeem/redeem.component';
 import { PayComponent } from './pay/pay.component';
 
 @NgModule({
@@ -37,6 +39,7 @@ import { PayComponent } from './pay/pay.component';
     WithdrawComponent,
     SwapComponent,
     StakeComponent,
+    RedeemComponent,
     PayComponent
   ],
   imports: [
@@ -57,7 +60,8 @@ import { PayComponent } from './pay/pay.component';
     ToastModule,
     MessagesModule,
     MessageModule,
-    InputNumberModule
+    InputNumberModule,
+    ConfirmDialogModule
   ],
   providers: [
     DecimalPipe

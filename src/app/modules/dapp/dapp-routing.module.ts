@@ -8,6 +8,7 @@ import { LoadComponent } from './load/load.component';
 import { WithdrawComponent } from './withdraw/withdraw.component';
 import { SwapComponent } from './swap/swap.component';
 import { StakeComponent } from './stake/stake.component';
+import { RedeemComponent } from './redeem/redeem.component';
 import { PayComponent } from './pay/pay.component';
 
 const routes: Routes = [
@@ -23,6 +24,7 @@ const routes: Routes = [
       { path: 'withdraw', component: WithdrawComponent },
       { path: 'swap', component: SwapComponent },
       { path: 'stake', component: StakeComponent },
+      { path: 'redeem', component: RedeemComponent },
       { path: 'pay', component: PayComponent },
     ]
   }

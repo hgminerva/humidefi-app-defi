@@ -1,5 +1,4 @@
 import { Component, OnInit } from '@angular/core';
-import { Hash } from '@polkadot/types/interfaces';
 import { MessageService } from 'primeng/api';
 import { TransferModel } from 'src/app/models/transfer.model';
 import { PolkadotService } from 'src/app/services/polkadot/polkadot.service';
@@ -18,6 +17,7 @@ import { DecimalPipe } from '@angular/common';
 export class PayComponent implements OnInit {
 
   transferData: TransferModel = new TransferModel();
+
   isProcessing: boolean = false;
   showProcessDialog: boolean = false;
 
@@ -84,11 +84,9 @@ export class PayComponent implements OnInit {
   }
 
   async getPHPUContractSymbol(): Promise<void> {
-    let prop = await this.phpuContractService.getProperties();
-    if (prop != null) {
-      let ticker = String(prop.symbol);
-      this.sourceTokens.push(ticker);
-    }
+    let propSymbol = await this.phpuContractService.symbol();
+    let ticker = String(propSymbol);
+    this.sourceTokens.push(ticker);
 
     this.isLoading = false;
   }
@@ -96,9 +94,9 @@ export class PayComponent implements OnInit {
   async transfer(): Promise<void> {
     if (this.selectedSourceToken == '' || null) {
       this.messageService.add({ key: 'error-payment', severity: 'error', summary: 'Error', detail: 'Please select token' });
-    } else if (this.transferData.amount == 0 || null || '') {
+    } else if (this.transferData.value == 0 || null || '') {
       this.messageService.add({ key: 'error-payment', severity: 'error', summary: 'Error', detail: 'Invalid amount' });
-    } else if (this.transferData.recipient == '' || null) {
+    } else if (this.transferData.to == '' || null) {
       this.messageService.add({ key: 'error-payment', severity: 'error', summary: 'Error', detail: 'Please enter a valid address' });
     } else {
       this.showProcessDialog = true;
@@ -108,8 +106,6 @@ export class PayComponent implements OnInit {
       this.isTransferProcessed = false;
       this.isTransferError = false;
 
-      let keypair = localStorage.getItem("wallet-keypair") || "";
-      this.transferData.keypair = keypair;
       let transferEventMessages = this.polkadotService.transferEventMessages.asObservable();
 
       if (this.selectedSourceToken == 'UMI') {
@@ -118,7 +114,7 @@ export class PayComponent implements OnInit {
       }
 
       if (this.selectedSourceToken == 'PHPU') {
-        this.phpuContractService.transfer(this.transferData);
+        this.phpuContractService.psp22Transfer(this.transferData.to, this.transferData.value, "Sample Transfer");
         transferEventMessages = this.phpuContractService.transferEventMessages.asObservable();
       }
 
@@ -141,9 +137,8 @@ export class PayComponent implements OnInit {
                 this.isTransferProcessed = true;
                 this.isTransferError = false;
 
-                this.transferData.keypair = "";
-                this.transferData.recipient = "";
-                this.transferData.amount = 0;
+                this.transferData.to = "";
+                this.transferData.value = 0;
                 this.sourceQuantity = 0;
                 this.destinationQuantity = 0;
 
@@ -169,7 +164,7 @@ export class PayComponent implements OnInit {
   }
 
   sourceQuantityOnBlur(event: any): void {
-    this.transferData.amount = this.sourceQuantity;
+    this.transferData.value = this.sourceQuantity;
     this.computeDestinationQuantity();
   }
 

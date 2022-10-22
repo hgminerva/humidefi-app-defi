@@ -4,12 +4,11 @@ import { ApiPromise, WsProvider } from '@polkadot/api';
 import { ContractPromise } from '@polkadot/api-contract';
 import { web3FromAddress } from '@polkadot/extension-dapp';
 import { Subject } from 'rxjs';
-import { TransferModel } from 'src/app/models/transfer.model';
 
 @Injectable({
   providedIn: 'root'
 })
-export class PhpuContractService {
+export class LphpuContractService {
 
   constructor(
     private appSettings: AppSettings
@@ -18,8 +17,8 @@ export class PhpuContractService {
   wsProvider = new WsProvider(this.appSettings.wsProviderEndpoint);
   api = ApiPromise.create({ provider: this.wsProvider });
   keypair = this.appSettings.keypair;
-  metadata: any = require("./../../../assets/contracts/phpu_abi.json");
-  contractAddress: string = this.appSettings.phpuContractAddress;
+  metadata: any = require("./../../../assets/contracts/lphpu_and_lumi_abi.json");
+  contractAddress: string = this.appSettings.lphpuContractAddress;
 
   transferEventMessages = new Subject<any>();
 
@@ -108,7 +107,7 @@ export class PhpuContractService {
       return String(name?.toHuman());
     }
 
-    return "PHPU";
+    return "LPHPU";
   }
 
   async psp22Allowance(owner: string, spender: string): Promise<number> {
@@ -143,9 +142,10 @@ export class PhpuContractService {
     const contract = new ContractPromise(api, this.metadata, this.contractAddress);
     const options = { storageDepositLimit: null, gasLimit: -1 };
     const totalSupply = (await contract.query['psp22::totalSupply'](this.keypair, options)).output;
+    const decimals = await this.decimal();
 
     if (totalSupply != null) {
-      return parseFloat(String(totalSupply?.toHuman()).split(',').join(''));
+      return parseFloat(String(totalSupply?.toHuman()).split(',').join('')) / (10 ** decimals);
     }
 
     return 0;
@@ -161,6 +161,6 @@ export class PhpuContractService {
       return String(symbol?.toHuman());
     }
 
-    return "PHPU";
+    return "LPHPU";
   }
 }
