@@ -1,5 +1,5 @@
 export class AppSettings {
-    public wsProviderEndpoint = 'wss://bootnode001.humidefi.com';
+    public wsProviderEndpoint = 'wss://huminary.humidefi.com';
     public keypair = localStorage.getItem("wallet-keypair") || "";
 
     public dexAccount = '5HNfKk7JdZRiwt9UZVpJRmpFpt4fPDhnh1uPEeFEQhZtggQt';

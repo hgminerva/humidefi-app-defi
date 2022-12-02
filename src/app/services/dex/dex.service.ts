@@ -35,22 +35,25 @@ export class DexService {
 
   async loadDexConfigs(): Promise<void> {
     const api = await this.api;
+    const dexModule = api.query['dexModule'];
 
-    const phpuDataStore = (await api.query['dexModule']['phpuDataStore']()).toHuman();
-    const phpuLiquidityAccountDataStore = (await api.query['dexModule']['phpuLiquidityAccountDataStore']()).toHuman();
-    const phpuLiquidityDataStore = (await api.query['dexModule']['phpuLiquidityDataStore']()).toHuman();
-    const umiLiquidityAccountDataStore = (await api.query['dexModule']['umiLiquidityAccountDataStore']()).toHuman();
-    const umiLiquidityDataStore = (await api.query['dexModule']['umiLiquidityDataStore']()).toHuman();
-    const swapFeesDataStore = (await api.query['dexModule']['swapFeesDataStore']()).toHuman();
-    const tickerDataStore = (await api.query['dexModule']['tickerDataStore']()).toHuman();
+    if (dexModule != null) {
+      const phpuDataStore = (await dexModule['phpuDataStore']()).toHuman();
+      const phpuLiquidityAccountDataStore = (await dexModule['phpuLiquidityAccountDataStore']()).toHuman();
+      const phpuLiquidityDataStore = (await dexModule['phpuLiquidityDataStore']()).toHuman();
+      const umiLiquidityAccountDataStore = (await dexModule['umiLiquidityAccountDataStore']()).toHuman();
+      const umiLiquidityDataStore = (await dexModule['umiLiquidityDataStore']()).toHuman();
+      const swapFeesDataStore = (await dexModule['swapFeesDataStore']()).toHuman();
+      const tickerDataStore = (await dexModule['tickerDataStore']()).toHuman();
 
-    localStorage.setItem('phpu-contract-address', String(phpuDataStore));
-    localStorage.setItem('lphpu-account-address', String(phpuLiquidityAccountDataStore));
-    localStorage.setItem('lphpu-contract-address', String(phpuLiquidityDataStore));
-    localStorage.setItem('lumi-account-address', String(umiLiquidityAccountDataStore));
-    localStorage.setItem('lumi-contract-address', String(umiLiquidityDataStore));
-    localStorage.setItem('swap-fees', String(swapFeesDataStore));
-    localStorage.setItem('forex-updates', String(tickerDataStore));
+      localStorage.setItem('phpu-contract-address', String(phpuDataStore));
+      localStorage.setItem('lphpu-account-address', String(phpuLiquidityAccountDataStore));
+      localStorage.setItem('lphpu-contract-address', String(phpuLiquidityDataStore));
+      localStorage.setItem('lumi-account-address', String(umiLiquidityAccountDataStore));
+      localStorage.setItem('lumi-contract-address', String(umiLiquidityDataStore));
+      localStorage.setItem('swap-fees', String(swapFeesDataStore));
+      localStorage.setItem('forex-updates', String(tickerDataStore));
+    }
   }
 
   async doLiquidityRedeem(redeem: RedeemModel): Promise<void> {
